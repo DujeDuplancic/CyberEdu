@@ -1,34 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import HomePage from "./Homepage/Homepage"
+
+// Placeholder komponente za druge rute
+function CTFPage() {
+  return <div className="min-h-screen flex items-center justify-center">CTF Page - Coming Soon</div>
+}
+
+function LecturesPage() {
+  return <div className="min-h-screen flex items-center justify-center">Lectures Page - Coming Soon</div>
+}
+
+function RegisterPage() {
+  return <div className="min-h-screen flex items-center justify-center">Register Page - Coming Soon</div>
+}
+
+function AboutPage() {
+  return <div className="min-h-screen flex items-center justify-center">About Page - Coming Soon</div>
+}
+
+function ContactPage() {
+  return <div className="min-h-screen flex items-center justify-center">Contact Page - Coming Soon</div>
+}
+
+function LoginPage() {
+  return <div className="min-h-screen flex items-center justify-center">Login Page - Coming Soon</div>
+}
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/ctf" element={<CTFPage />} />
+        <Route path="/ctf/:category" element={<CTFPage />} />
+        <Route path="/lectures" element={<LecturesPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/leaderboard" element={<div className="min-h-screen flex items-center justify-center">Leaderboard - Coming Soon</div>} />
+        <Route path="/wiki" element={<div className="min-h-screen flex items-center justify-center">Wiki - Coming Soon</div>} />
+        <Route path="/community" element={<div className="min-h-screen flex items-center justify-center">Community - Coming Soon</div>} />
+        <Route path="/profile" element={<div className="min-h-screen flex items-center justify-center">Profile - Coming Soon</div>} />
+        <Route path="/admin" element={<div className="min-h-screen flex items-center justify-center">Admin - Coming Soon</div>} />
+      </Routes>
+    </Router>
   )
 }
 
