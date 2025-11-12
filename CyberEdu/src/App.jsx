@@ -8,13 +8,7 @@ import Contact from "./Contact/Contact";
 import Admin from "./Admin/Admin";
 import Wiki from "./Wiki/Wiki";
 import CTFPage from "./CTF/Ctf";
-
-// Placeholder komponente za druge rute
-
-
-function LecturesPage() {
-  return <div className="min-h-screen flex items-center justify-center">Lectures Page - Coming Soon</div>
-}
+import Lectures from "./Lectures/Lectures";
 
 function AboutPage() {
   return <div className="min-h-screen flex items-center justify-center">About Page - Coming Soon</div>
@@ -28,7 +22,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/ctf" element={<CTFPage />} />
         <Route path="/ctf/:category" element={<CTFPage />} />
-        <Route path="/lectures" element={<LecturesPage />} />
+        <Route path="/lectures" element={<Lectures />} />
         <Route path="/register" element={<Register />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<Contact />} />
