@@ -10,10 +10,7 @@ import Wiki from "./Wiki/Wiki";
 import CTFPage from "./CTF/Ctf";
 import Community from "./Community/Community";
 import Lectures from "./Lectures/Lectures";
-
-function AboutPage() {
-  return <div className="min-h-screen flex items-center justify-center">About Page - Coming Soon</div>
-}
+import AboutPage from "./About/About"
 
 
 function App() {
