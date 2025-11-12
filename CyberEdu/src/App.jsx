@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import HomePage from "./Homepage/Homepage"
 
+import Login from "./Login/Login";
+
 // Placeholder komponente za druge rute
 function CTFPage() {
   return <div className="min-h-screen flex items-center justify-center">CTF Page - Coming Soon</div>
@@ -37,7 +39,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/leaderboard" element={<div className="min-h-screen flex items-center justify-center">Leaderboard - Coming Soon</div>} />
         <Route path="/wiki" element={<div className="min-h-screen flex items-center justify-center">Wiki - Coming Soon</div>} />
         <Route path="/community" element={<div className="min-h-screen flex items-center justify-center">Community - Coming Soon</div>} />
