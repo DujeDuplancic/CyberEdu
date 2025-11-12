@@ -1,12 +1,12 @@
 "use client"
 
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { Header } from "../Components/Header"
+import { Footer } from "../Components/Footer"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Components/ui/card"
+import { Button } from "../Components/ui/button"
+import { Input } from "../Components/ui/input"
+import { Label } from "../Components/ui/label"
+import { Textarea } from "../Components/ui/textarea"
 import { Mail, MessageSquare, Phone } from "lucide-react"
 
 export default function ContactPage() {
@@ -14,7 +14,7 @@ export default function ContactPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 container py-12">
+      <main className="flex-1 container mx-auto py-12">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
