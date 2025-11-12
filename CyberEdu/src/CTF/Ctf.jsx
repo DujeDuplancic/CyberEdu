@@ -6,7 +6,11 @@ import { Button } from "../Components/ui/button"
 import { Input } from "../Components/ui/input"
 import { Search, Filter } from "lucide-react"
 import { useState } from "react"
+import { useEffect } from "react"
 export default function CTFPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const challenges = [
     {
       id: 1,

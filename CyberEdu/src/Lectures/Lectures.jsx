@@ -4,8 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Co
 import { Badge } from "../Components/ui/badge"
 import { Button } from "../Components/ui/button"
 import { ImageIcon, Play, Clock, BarChart } from "lucide-react"
+import { useEffect } from "react"
 
 export default function LecturesPage() {
+    useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const lectures = [
     {
       id: 1,

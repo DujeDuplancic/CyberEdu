@@ -5,8 +5,12 @@ import { Badge } from "../Components/ui/badge"
 import { Button } from "../Components/ui/button"
 import { Users, Target, Shield, GraduationCap, Globe, Award, Code } from "lucide-react"
 import { Link } from "react-router-dom"
+import { useEffect } from "react"
 
 export default function AboutPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const teamMembers = [
     {
       name: "Duje Duplančić",

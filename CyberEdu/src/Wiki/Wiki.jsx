@@ -4,8 +4,12 @@ import { Footer } from "@/components/footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Lock, Code, Key, ImageIcon, Globe, Search, BookOpen } from "lucide-react"
+import { useEffect } from "react"
 
 export default function WikiPage() {
+    useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const categories = [
     {
       icon: Code,

@@ -7,8 +7,11 @@ import { Label } from "../Components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../Components/ui/card"
 import { Link } from "react-router-dom"
 import { Terminal } from "lucide-react"
-
+import { useEffect } from "react"
 export default function LoginPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="min-h-screen flex flex-col">
       <Header />

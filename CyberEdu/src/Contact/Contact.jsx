@@ -8,8 +8,12 @@ import { Input } from "../Components/ui/input"
 import { Label } from "../Components/ui/label"
 import { Textarea } from "../Components/ui/textarea"
 import { Mail, MessageSquare, Phone } from "lucide-react"
+import { useEffect } from "react"
 
 export default function ContactPage() {
+    useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
