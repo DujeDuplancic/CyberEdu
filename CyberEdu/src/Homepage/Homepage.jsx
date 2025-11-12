@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Co
 import { Badge } from "../Components/ui/badge"
 import { Lock, Code, Key, ImageIcon, Globe, Trophy, Users, BookOpen, ChevronRight } from "lucide-react"
 import { Link } from "react-router-dom"
+import cyberSecHacker from '../public/cybersecurity-hacker-terminal-dark-theme-code.jpg'
+import cyberSecCodeEditor from '../public/cybersecurity-code-editor-terminal-hacking.jpg'
 
 export default function HomePage() {
   const categories = [
@@ -96,7 +98,7 @@ export default function HomePage() {
         <section className="container mx-auto pb-16 md:pb-24">
           <div className="max-w-5xl mx-auto">
             <img
-              src="/cybersecurity-hacker-terminal-dark-theme-code.jpg"
+              src={cyberSecHacker}
               alt="Cybersecurity CTF Platform"
               className="w-full rounded-lg border border-border shadow-2xl"
             />
@@ -177,7 +179,7 @@ export default function HomePage() {
 
               <div className="relative">
                 <img
-                  src="/cybersecurity-code-editor-terminal-hacking.jpg"
+                  src={cyberSecCodeEditor}
                   alt="CTF Platform Features"
                   className="w-full rounded-lg border border-border shadow-xl"
                 />

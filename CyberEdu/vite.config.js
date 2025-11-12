@@ -4,6 +4,7 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [react()],
+  base: '/', // DODAJ OVO
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
