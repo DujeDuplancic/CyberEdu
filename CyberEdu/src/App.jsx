@@ -3,7 +3,7 @@ import HomePage from "./Homepage/Homepage"
 import Leaderboard from "./Leaderboard/Leaderboard"
 import Profile from "./Profile/Profile"
 import Login from "./Login/Login";
-
+import Register from "./Register/Register";
 // Placeholder komponente za druge rute
 function CTFPage() {
   return <div className="min-h-screen flex items-center justify-center">CTF Page - Coming Soon</div>
@@ -37,7 +37,7 @@ function App() {
         <Route path="/ctf" element={<CTFPage />} />
         <Route path="/ctf/:category" element={<CTFPage />} />
         <Route path="/lectures" element={<LecturesPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={<Login />} />

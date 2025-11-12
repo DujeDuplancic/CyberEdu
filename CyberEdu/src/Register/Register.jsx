@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Link } from "react-router-dom"
 import { Terminal } from "lucide-react"
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -17,36 +17,39 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <Terminal className="h-12 w-12 text-primary mx-auto mb-4" />
-            <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
-            <p className="text-muted-foreground">Sign in to access challenges and track your progress</p>
+            <h1 className="text-3xl font-bold mb-2">Join CyberEdu</h1>
+            <p className="text-muted-foreground">Create your account to start your cybersecurity journey</p>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle>Login</CardTitle>
-              <CardDescription>Enter your credentials to access your account</CardDescription>
+              <CardTitle>Create Account</CardTitle>
+              <CardDescription>Sign up to start your cybersecurity journey</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="login-email">Email</Label>
-                <Input id="login-email" type="email" placeholder="name@example.com" />
+                <Label htmlFor="register-username">Username</Label>
+                <Input id="register-username" placeholder="cyb3r_ninja" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="login-password">Password</Label>
-                <Input id="login-password" type="password" />
+                <Label htmlFor="register-email">Email</Label>
+                <Input id="register-email" type="email" placeholder="name@example.com" />
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <Link to="/forgot-password" className="text-primary hover:underline">
-                  Forgot password?
-                </Link>
+              <div className="space-y-2">
+                <Label htmlFor="register-password">Password</Label>
+                <Input id="register-password" type="password" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="register-confirm">Confirm Password</Label>
+                <Input id="register-confirm" type="password" />
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
-              <Button className="w-full">Sign In</Button>
+              <Button className="w-full">Create Account</Button>
               <p className="text-sm text-center text-muted-foreground">
-                Don't have an account?{" "}
-                <Link to="/register" className="text-primary hover:underline">
-                  Sign up
+                Already have an account?{" "}
+                <Link to="/login" className="text-primary hover:underline">
+                  Sign in
                 </Link>
               </p>
             </CardFooter>
