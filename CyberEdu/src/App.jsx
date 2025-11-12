@@ -8,7 +8,7 @@ import Contact from "./Contact/Contact";
 import Admin from "./Admin/Admin";
 import Wiki from "./Wiki/Wiki";
 import CTFPage from "./CTF/Ctf";
-
+import Community from "./Community/Community";
 // Placeholder komponente za druge rute
 
 
@@ -35,7 +35,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/leaderboard" element={<Leaderboard/>} />
         <Route path="/wiki" element={<Wiki/>} />
-        <Route path="/community" element={<div className="min-h-screen flex items-center justify-center">Community - Coming Soon</div>} />
+        <Route path="/community" element={<Community/>} />
         <Route path="/profile" element={<Profile/>} />
         <Route path="/admin" element={<Admin/>} />
       </Routes>
