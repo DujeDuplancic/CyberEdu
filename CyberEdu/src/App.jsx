@@ -6,6 +6,8 @@ import Login from "./Login/Login";
 import Register from "./Register/Register";
 import Contact from "./Contact/Contact";
 import Admin from "./Admin/Admin";
+import Wiki from "./Wiki/Wiki";
+
 // Placeholder komponente za druge rute
 function CTFPage() {
   return <div className="min-h-screen flex items-center justify-center">CTF Page - Coming Soon</div>
@@ -44,7 +46,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/leaderboard" element={<Leaderboard/>} />
-        <Route path="/wiki" element={<div className="min-h-screen flex items-center justify-center">Wiki - Coming Soon</div>} />
+        <Route path="/wiki" element={<Wiki/>} />
         <Route path="/community" element={<div className="min-h-screen flex items-center justify-center">Community - Coming Soon</div>} />
         <Route path="/profile" element={<Profile/>} />
         <Route path="/admin" element={<Admin/>} />
