@@ -7,31 +7,19 @@ import Register from "./Register/Register";
 import Contact from "./Contact/Contact";
 import Admin from "./Admin/Admin";
 import Wiki from "./Wiki/Wiki";
+import CTFPage from "./CTF/Ctf";
 
 // Placeholder komponente za druge rute
-function CTFPage() {
-  return <div className="min-h-screen flex items-center justify-center">CTF Page - Coming Soon</div>
-}
+
 
 function LecturesPage() {
   return <div className="min-h-screen flex items-center justify-center">Lectures Page - Coming Soon</div>
-}
-
-function RegisterPage() {
-  return <div className="min-h-screen flex items-center justify-center">Register Page - Coming Soon</div>
 }
 
 function AboutPage() {
   return <div className="min-h-screen flex items-center justify-center">About Page - Coming Soon</div>
 }
 
-function ContactPage() {
-  return <div className="min-h-screen flex items-center justify-center">Contact Page - Coming Soon</div>
-}
-
-function LoginPage() {
-  return <div className="min-h-screen flex items-center justify-center">Login Page - Coming Soon</div>
-}
 
 function App() {
   return (
