@@ -1,8 +1,8 @@
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Header } from "../Components/Header"
+import { Footer } from "../Components/Footer"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Components/ui/card"
+import { Badge } from "../Components/ui/badge"
+import { Button } from "../Components/ui/button"
 import { ImageIcon, Play, Clock, BarChart } from "lucide-react"
 
 export default function LecturesPage() {
@@ -86,7 +86,7 @@ export default function LecturesPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 container py-12">
+      <main className="flex-1 container mx-auto py-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4">Video Lectures</h1>
           <p className="text-lg text-muted-foreground">
