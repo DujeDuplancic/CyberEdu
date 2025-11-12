@@ -4,6 +4,7 @@ import Leaderboard from "./Leaderboard/Leaderboard"
 import Profile from "./Profile/Profile"
 import Login from "./Login/Login";
 import Register from "./Register/Register";
+import Contact from "./Contact/Contact";
 // Placeholder komponente za druge rute
 function CTFPage() {
   return <div className="min-h-screen flex items-center justify-center">CTF Page - Coming Soon</div>
@@ -39,7 +40,7 @@ function App() {
         <Route path="/lectures" element={<LecturesPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/about" element={<AboutPage />} />
-        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/leaderboard" element={<Leaderboard/>} />
         <Route path="/wiki" element={<div className="min-h-screen flex items-center justify-center">Wiki - Coming Soon</div>} />
