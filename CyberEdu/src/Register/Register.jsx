@@ -48,7 +48,7 @@ export default function RegisterPage() {
       console.log("🔄 Pokrećem registraciju...")
       
       // ISPRAVAN URL - dodan dupli CyberEdu
-      const response = await fetch('http://localhost/CyberEdu/CyberEdu/Backend/auth/register.php', {
+      const response = await fetch('http://localhost/CyberEdu/Backend/auth/register.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
