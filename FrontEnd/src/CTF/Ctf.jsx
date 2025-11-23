@@ -1,52 +1,157 @@
 import { Header } from "../Components/Header"
 import { Footer } from "../Components/Footer"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Components/ui/card"
-import { Badge } from "../Components/ui/badge"
-import { Button } from "../Components/ui/button"
-import { Input } from "../Components/ui/input"
-import { Search, Filter } from "lucide-react"
-import { useState } from "react"
-import { useEffect } from "react"
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+
+// Import komponenti
+import SearchBar from "./components/SearchBar"
+import CategoryFilter from "./CategoryFilter"
+import ChallengeList from "./ChallengeList"
+import ChallengeModal from "./ChallengeModal"
+
 export default function CTFPage() {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-  const challenges = [
-    {
-      id: 1,
-      title: "Buffer Overflow Basics",
-      category: "Binary Exploitation",
-      difficulty: "Easy",
-      points: 100,
-      solves: 234,
-    },
-    { id: 2, title: "RSA Decryption", category: "Cryptography", difficulty: "Medium", points: 250, solves: 87 },
-    { id: 3, title: "Hidden Pixels", category: "Steganography", difficulty: "Easy", points: 150, solves: 156 },
-    { id: 4, title: "SQL Injection Lab", category: "Web", difficulty: "Medium", points: 200, solves: 123 },
-    { id: 5, title: "Reverse Me", category: "Reverse Engineering", difficulty: "Hard", points: 400, solves: 34 },
-    { id: 6, title: "XSS Playground", category: "Web", difficulty: "Easy", points: 100, solves: 289 },
-    { id: 7, title: "AES CBC Attack", category: "Cryptography", difficulty: "Hard", points: 500, solves: 21 },
-    { id: 8, title: "ELF Crackme", category: "Reverse Engineering", difficulty: "Medium", points: 300, solves: 67 },
-  ]
-
+  const [challenges, setChallenges] = useState([])
+  const [categories, setCategories] = useState([])
   const [activeCategory, setActiveCategory] = useState("all")
+  const [loading, setLoading] = useState(true)
+  const [selectedChallenge, setSelectedChallenge] = useState(null)
+  const [flagInput, setFlagInput] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+  const [message, setMessage] = useState("")
+  const navigate = useNavigate()
 
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty) {
-      case "Easy":
-        return "bg-green-500/10 text-green-500 border-green-500/20"
-      case "Medium":
-        return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-      case "Hard":
-        return "bg-red-500/10 text-red-500 border-red-500/20"
-      default:
-        return "bg-muted text-muted-foreground"
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    loadCategories()
+    loadChallenges()
+  }, [])
+
+  const loadCategories = async () => {
+    try {
+      const response = await fetch('http://localhost/CyberEdu/Backend/challenges/get_categories.php')
+      const data = await response.json()
+      
+      if (data.success) {
+        setCategories(data.categories)
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error)
     }
   }
 
+  const loadChallenges = async () => {
+    try {
+      const userData = localStorage.getItem('user')
+      const user = userData ? JSON.parse(userData) : null
+      
+      const url = user 
+        ? `http://localhost/CyberEdu/Backend/challenges/get_challenges.php?user_id=${user.id}`
+        : 'http://localhost/CyberEdu/Backend/challenges/get_challenges.php'
+      
+      const response = await fetch(url)
+      const data = await response.json()
+      
+      if (data.success) {
+        setChallenges(data.challenges)
+      }
+    } catch (error) {
+      console.error('Error loading challenges:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty) {
+      case "Easy": return "bg-green-500/10 text-green-500 border-green-500/20"
+      case "Medium": return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
+      case "Hard": return "bg-red-500/10 text-red-500 border-red-500/20"
+      default: return "bg-muted text-muted-foreground"
+    }
+  }
+
+  const handleSubmitFlag = async () => {
+    if (!flagInput.trim()) {
+      setMessage("Unesite flag!")
+      return
+    }
+
+    const userData = localStorage.getItem('user')
+    if (!userData) {
+      setMessage("Morate biti prijavljeni!")
+      navigate('/login')
+      return
+    }
+
+    const user = JSON.parse(userData)
+    setSubmitting(true)
+    setMessage("")
+
+    try {
+      const response = await fetch('http://localhost/CyberEdu/Backend/challenges/submit_flag.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          challenge_id: selectedChallenge.id,
+          flag: flagInput
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setMessage(`✅ ${data.message} +${data.points} points!`)
+        setFlagInput("")
+        loadChallenges() // Reload to update solved status
+      } else {
+        setMessage(`❌ ${data.message}`)
+      }
+    } catch (error) {
+      console.error('Error submitting flag:', error)
+      setMessage("❌ Greška pri slanju flag-a")
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleAttemptChallenge = (challenge) => {
+    setSelectedChallenge(challenge)
+    setFlagInput("")
+    setMessage("")
+  }
+
+  const handleCloseModal = () => {
+    setSelectedChallenge(null)
+    setFlagInput("")
+    setMessage("")
+  }
+
+  const handleFlagChange = (e) => {
+    setFlagInput(e.target.value)
+  }
+
+  const handleCategoryChange = (categoryId) => {
+    setActiveCategory(categoryId)
+  }
+
   const filteredChallenges = challenges.filter(challenge => 
-    activeCategory === "all" || challenge.category.toLowerCase().includes(activeCategory.toLowerCase())
+    activeCategory === "all" || challenge.category_id.toString() === activeCategory
   )
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 container mx-auto py-12 flex items-center justify-center">
+          <div className="text-center">Učitavanje challengea...</div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -60,66 +165,34 @@ export default function CTFPage() {
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search challenges..." className="pl-9" />
-          </div>
-          <Button variant="outline">
-            <Filter className="mr-2 h-4 w-4" />
-            Filter
-          </Button>
-        </div>
+        <SearchBar />
 
-        {/* Category Navigation */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {["all", "reverse", "binary", "crypto", "stego", "web"].map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors capitalize ${
-                activeCategory === category 
-                  ? "bg-primary text-primary-foreground" 
-                  : "bg-muted text-muted-foreground hover:bg-muted/80"
-              }`}
-            >
-              {category === "all" ? "All" : 
-               category === "reverse" ? "Reverse Engineering" :
-               category === "binary" ? "Binary Exploitation" :
-               category === "crypto" ? "Cryptography" :
-               category === "stego" ? "Steganography" :
-               "Web Security"}
-            </button>
-          ))}
-        </div>
+        <CategoryFilter
+          categories={categories}
+          activeCategory={activeCategory}
+          onCategoryChange={handleCategoryChange}
+        />
 
-        {/* Challenges List */}
-        <div className="space-y-4">
-          {filteredChallenges.map((challenge) => (
-            <Card key={challenge.id} className="hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-2 flex-1">
-                    <CardTitle className="text-xl">{challenge.title}</CardTitle>
-                    <CardDescription>{challenge.category}</CardDescription>
-                  </div>
-                  <Badge className={getDifficultyColor(challenge.difficulty)} variant="outline">
-                    {challenge.difficulty}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-6 text-sm text-muted-foreground">
-                    <span className="font-mono font-semibold text-primary">{challenge.points} pts</span>
-                    <span>{challenge.solves} solves</span>
-                  </div>
-                  <Button>Attempt Challenge</Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <ChallengeList
+          challenges={challenges}
+          filteredChallenges={filteredChallenges}
+          activeCategory={activeCategory}
+          onAttemptChallenge={handleAttemptChallenge}
+          getDifficultyColor={getDifficultyColor}
+        />
+
+        {/* Challenge Modal */}
+        {selectedChallenge && (
+          <ChallengeModal
+            challenge={selectedChallenge}
+            onClose={handleCloseModal}
+            flagInput={flagInput}
+            onFlagChange={handleFlagChange}
+            onSubmitFlag={handleSubmitFlag}
+            submitting={submitting}
+            message={message}
+          />
+        )}
       </main>
 
       <Footer />

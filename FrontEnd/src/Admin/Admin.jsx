@@ -1,10 +1,16 @@
 import { Header } from "../Components/Header"
 import { Footer } from "../Components/Footer"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "../Components/ui/card"
 import { Button } from "../Components/ui/button"
-import { Users, Flag, BookOpen, MessageSquare, Plus, Edit, Trash2, Shield, ShieldOff } from "lucide-react"
+import { Users, Flag, BookOpen, MessageSquare } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+
+// Import komponenti
+import AdminUsers from "./AdminUsers"
+import AdminChallenges from "./AdminChallenges"
+import AdminContent from "./AdminContent"
+import AdminSettings from "./AdminSettings"
 
 export default function AdminPage() {
   const [stats, setStats] = useState([
@@ -14,14 +20,24 @@ export default function AdminPage() {
     { label: "Forum Posts", value: "0", icon: MessageSquare, change: "+0" },
   ])
   const [users, setUsers] = useState([])
+  const [challenges, setChallenges] = useState([])
+  const [categories, setCategories] = useState([])
   const [activeTab, setActiveTab] = useState("users")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [message, setMessage] = useState("")
+  
   const navigate = useNavigate()
 
   useEffect(() => {
     checkAdminAccess()
   }, [])
+
+  useEffect(() => {
+    if (activeTab === "challenges" && categories.length === 0) {
+      loadCategories()
+    }
+  }, [activeTab])
 
   const checkAdminAccess = async () => {
     try {
@@ -92,6 +108,32 @@ export default function AdminPage() {
     }
   }
 
+  const loadChallenges = async () => {
+    try {
+      const response = await fetch('http://localhost/CyberEdu/Backend/challenges/get_challenges.php')
+      const data = await response.json()
+      
+      if (data.success) {
+        setChallenges(data.challenges)
+      }
+    } catch (error) {
+      console.error('Error loading challenges:', error)
+    }
+  }
+
+  const loadCategories = async () => {
+    try {
+      const response = await fetch('http://localhost/CyberEdu/Backend/challenges/get_categories.php')
+      const data = await response.json()
+      
+      if (data.success) {
+        setCategories(data.categories)
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error)
+    }
+  }
+
   const handleToggleAdmin = async (userId, currentStatus) => {
     try {
       const response = await fetch('http://localhost/CyberEdu/Backend/admin/users.php', {
@@ -115,12 +157,13 @@ export default function AdminPage() {
             ? { ...user, is_admin: !currentStatus }
             : user
         ))
+        setMessage(`✅ ${data.message}`)
       } else {
-        alert(data.message)
+        setMessage(`❌ ${data.message}`)
       }
     } catch (error) {
       console.error('Error toggling admin:', error)
-      alert('Greška pri promjeni admin statusa')
+      setMessage("❌ Greška pri promjeni admin statusa")
     }
   }
 
@@ -146,14 +189,166 @@ export default function AdminPage() {
       if (data.success) {
         // Ukloni korisnika iz liste
         setUsers(users.filter(user => user.id !== userId))
+        setMessage("✅ Korisnik obrisan uspješno")
       } else {
-        alert(data.message)
+        setMessage(`❌ ${data.message}`)
       }
     } catch (error) {
       console.error('Error deleting user:', error)
-      alert('Greška pri brisanju korisnika')
+      setMessage("❌ Greška pri brisanju korisnika")
     }
   }
+
+  const handleCreateChallenge = async (challengeData) => {
+    try {
+      const userData = localStorage.getItem('user')
+      const user = JSON.parse(userData)
+
+      const response = await fetch('http://localhost/CyberEdu/Backend/admin/create_challenge.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...challengeData,
+          created_by: user.id
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setMessage("✅ Challenge uspješno kreiran!")
+        return Promise.resolve()
+      } else {
+        setMessage(`❌ ${data.message}`)
+        return Promise.reject(new Error(data.message))
+      }
+    } catch (error) {
+      console.error('Error creating challenge:', error)
+      setMessage("❌ Greška pri kreiranju challengea")
+      return Promise.reject(error)
+    }
+  }
+
+  const handleUpdateChallenge = async (challengeData) => {
+    try {
+      const response = await fetch('http://localhost/CyberEdu/Backend/admin/update_challenge.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(challengeData)
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setMessage("✅ Challenge uspješno ažuriran!")
+        return Promise.resolve()
+      } else {
+        setMessage(`❌ ${data.message}`)
+        return Promise.reject(new Error(data.message))
+      }
+    } catch (error) {
+      console.error('Error updating challenge:', error)
+      setMessage("❌ Greška pri ažuriranju challengea")
+      return Promise.reject(error)
+    }
+  }
+
+  const handleDeleteChallenge = async (challengeId, challengeTitle) => {
+    if (!confirm(`Jesi li siguran da želiš obrisati challenge "${challengeTitle}"? Ova akcija se ne može poništiti!`)) {
+      return
+    }
+
+    try {
+      const response = await fetch('http://localhost/CyberEdu/Backend/admin/delete_challenge.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: challengeId })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Remove from local state
+        setChallenges(challenges.filter(challenge => challenge.id !== challengeId))
+        setMessage("✅ Challenge obrisan uspješno!")
+      } else {
+        setMessage(`❌ ${data.message}`)
+      }
+    } catch (error) {
+      console.error('Error deleting challenge:', error)
+      setMessage("❌ Greška pri brisanju challengea")
+    }
+  }
+
+  const handleFileUpload = async (file, challengeId) => {
+  try {
+    const userData = localStorage.getItem('user')
+    if (!userData) {
+      throw new Error('User not logged in')
+    }
+
+    const user = JSON.parse(userData)
+
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('challenge_id', challengeId)
+    formData.append('user_id', user.id)  // DODAJ OVO
+
+    const response = await fetch('http://localhost/CyberEdu/Backend/utils/upload_file.php', {
+      method: 'POST',
+      body: formData
+      // NE DODAJ headers za Content-Type - FormData ga automatski postavlja
+    })
+
+    const data = await response.json()
+
+    if (data.success) {
+      // Update challenge with file URL
+      const updateResponse = await fetch('http://localhost/CyberEdu/Backend/admin/update_challenge.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: challengeId,
+          file_url: data.file_url
+        })
+      })
+
+      const updateData = await updateResponse.json()
+      
+      if (updateData.success) {
+        setMessage("✅ File uspješno uploadan!")
+        loadChallenges()
+        return Promise.resolve()
+      } else {
+        throw new Error(updateData.message)
+      }
+    } else {
+      throw new Error(data.message)
+    }
+  } catch (error) {
+    console.error('Error uploading file:', error)
+    setMessage(`❌ ${error.message}`)
+    return Promise.reject(error)
+  }
+}
+
+  // Clear message after 3 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage("")
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [message])
 
   if (loading) {
     return (
@@ -189,6 +384,17 @@ export default function AdminPage() {
           <p className="text-lg text-muted-foreground">Manage users, challenges, content, and platform settings.</p>
         </div>
 
+        {/* Global Message */}
+        {message && (
+          <div className={`mb-6 p-4 rounded-md ${
+            message.includes('✅') 
+              ? 'bg-green-100 text-green-800 border border-green-200' 
+              : 'bg-red-100 text-red-800 border border-red-200'
+          }`}>
+            {message}
+          </div>
+        )}
+
         {/* Statistics Cards */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
           {stats.map((stat) => (
@@ -222,124 +428,31 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* Users Tab */}
+        {/* Tab Content */}
         {activeTab === "users" && (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>User Management</CardTitle>
-                    <CardDescription>Manage registered users and permissions</CardDescription>
-                  </div>
-                  <Button onClick={() => loadUsers()}>
-                    Refresh
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {users.map((user) => (
-                    <div
-                      key={user.id}
-                      className="flex items-center justify-between p-4 rounded-lg border border-border"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-semibold">{user.username}</p>
-                          {user.is_admin && (
-                            <span className="px-2 py-1 text-xs bg-red-500 text-white rounded-md">
-                              Admin
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">{user.email}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Joined {new Date(user.created_at).toLocaleDateString()} • 
-                          Points: {user.points} • 
-                          Rank: #{user.rank}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleToggleAdmin(user.id, user.is_admin)}
-                        >
-                          {user.is_admin ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
-                          {user.is_admin ? ' Remove Admin' : ' Make Admin'}
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleDeleteUser(user.id, user.username)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <AdminUsers
+            users={users}
+            onToggleAdmin={handleToggleAdmin}
+            onDeleteUser={handleDeleteUser}
+            onRefresh={loadUsers}
+          />
         )}
 
-        {/* Challenges Tab */}
-        {activeTab === "challenges" && (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Challenge Management</CardTitle>
-                  <CardDescription>Create and manage CTF challenges</CardDescription>
-                </div>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  New Challenge
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Challenge management interface coming soon...</p>
-            </CardContent>
-          </Card>
-        )}
+        // U return dijelu, u AdminChallenges komponenti:
+{activeTab === "challenges" && (
+  <AdminChallenges
+    challenges={challenges}
+    categories={categories}
+    onRefresh={loadChallenges}
+    onDeleteChallenge={handleDeleteChallenge}
+    onCreateChallenge={handleCreateChallenge}
+    onUpdateChallenge={handleUpdateChallenge}
+    onFileUpload={handleFileUpload}  // OVO JE KLJUČNO
+  />
+)}
 
-        {/* Content Tab */}
-        {activeTab === "content" && (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Content Management</CardTitle>
-                  <CardDescription>Manage lectures, wiki articles, and educational content</CardDescription>
-                </div>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  New Content
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Content management interface coming soon...</p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Settings Tab */}
-        {activeTab === "settings" && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Platform Settings</CardTitle>
-              <CardDescription>Configure platform-wide settings and preferences</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Settings interface coming soon...</p>
-            </CardContent>
-          </Card>
-        )}
+        {activeTab === "content" && <AdminContent />}
+        {activeTab === "settings" && <AdminSettings />}
       </main>
 
       <Footer />
