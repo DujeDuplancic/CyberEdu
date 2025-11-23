@@ -5,30 +5,90 @@ import { Badge } from "../Components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "../Components/ui/avatar"
 import { Button } from "../Components/ui/button"
 import { Trophy, Target, Clock, Award } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
 export default function ProfilePage() {
-  const userStats = {
-    username: "cyb3r_ninja",
-    rank: 1,
-    points: 8450,
-    solves: 67,
-    joinedDate: "January 2024",
-    lastActive: "2 hours ago",
+  const [userStats, setUserStats] = useState(null)
+  const [recentSolves, setRecentSolves] = useState([])
+  const [categoryProgress, setCategoryProgress] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    fetchProfileData()
+  }, [])
+
+  const fetchProfileData = async () => {
+    try {
+      // Dobavi user podatke iz localStorage
+      const userData = localStorage.getItem('user')
+      if (!userData) {
+        navigate('/login')
+        return
+      }
+
+      const user = JSON.parse(userData)
+      
+      const response = await fetch(`http://localhost/CyberEdu/Backend/profile/get_profile.php?user_id=${user.id}`)
+      const data = await response.json()
+
+      if (data.success) {
+        setUserStats(data.profile)
+        setRecentSolves(data.recentSolves)
+        setCategoryProgress(data.categoryProgress)
+      } else {
+        setError(data.message)
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error)
+      setError("Greška pri učitavanju profila")
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const recentSolves = [
-    { challenge: "Buffer Overflow Basics", category: "Binary Exploitation", points: 100, time: "2 hours ago" },
-    { challenge: "RSA Decryption", category: "Cryptography", points: 250, time: "1 day ago" },
-    { challenge: "SQL Injection Lab", category: "Web", points: 200, time: "2 days ago" },
-  ]
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 container mx-auto py-12 flex items-center justify-center">
+          <div className="text-center">Učitavanje profila...</div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
-  const categoryProgress = [
-    { name: "Reverse Engineering", solved: 15, total: 24, percentage: 62 },
-    { name: "Binary Exploitation", solved: 12, total: 18, percentage: 66 },
-    { name: "Cryptography", solved: 20, total: 32, percentage: 62 },
-    { name: "Steganography", solved: 8, total: 15, percentage: 53 },
-    { name: "Web Security", solved: 12, total: 28, percentage: 42 },
-  ]
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 container mx-auto py-12 flex items-center justify-center">
+          <div className="text-center text-red-500">{error}</div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (!userStats) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 container mx-auto py-12 flex items-center justify-center">
+          <div className="text-center">
+            <p>Nema podataka o korisniku</p>
+            <Button onClick={() => navigate('/login')} className="mt-4">
+              Prijavi se
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -41,13 +101,16 @@ export default function ProfilePage() {
             <CardContent className="pt-6">
               <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src="/placeholder.svg?height=96&width=96" />
-                  <AvatarFallback className="text-2xl">CN</AvatarFallback>
+                  <AvatarImage src={userStats.avatar_url || "/placeholder.svg?height=96&width=96"} />
+                  <AvatarFallback className="text-2xl">
+                    {userStats.username.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h1 className="text-3xl font-bold">{userStats.username}</h1>
                     <Badge variant="secondary">Rank #{userStats.rank}</Badge>
+                    {userStats.is_admin && <Badge variant="destructive">Admin</Badge>}
                   </div>
                   <p className="text-muted-foreground mb-4">
                     Member since {userStats.joinedDate} • Last active {userStats.lastActive}
@@ -109,7 +172,7 @@ export default function ProfilePage() {
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">2h</div>
+                <div className="text-2xl font-bold">{userStats.lastActive}</div>
                 <p className="text-xs text-muted-foreground mt-1">Last seen</p>
               </CardContent>
             </Card>
@@ -130,7 +193,10 @@ export default function ProfilePage() {
                     </span>
                   </div>
                   <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-primary transition-all" style={{ width: `${category.percentage}%` }} />
+                    <div 
+                      className="h-full bg-primary transition-all" 
+                      style={{ width: `${category.percentage}%` }} 
+                    />
                   </div>
                 </div>
               ))}
@@ -144,23 +210,29 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentSolves.map((solve) => (
-                  <div
-                    key={solve.challenge}
-                    className="flex items-center justify-between p-4 rounded-lg border border-border"
-                  >
-                    <div>
-                      <p className="font-semibold">{solve.challenge}</p>
-                      <p className="text-sm text-muted-foreground">{solve.category}</p>
+                {recentSolves.length > 0 ? (
+                  recentSolves.map((solve, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 rounded-lg border border-border"
+                    >
+                      <div>
+                        <p className="font-semibold">{solve.challenge}</p>
+                        <p className="text-sm text-muted-foreground">{solve.category}</p>
+                      </div>
+                      <div className="text-right">
+                        <Badge variant="secondary" className="font-mono">
+                          {solve.points} pts
+                        </Badge>
+                        <p className="text-xs text-muted-foreground mt-1">{solve.time}</p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <Badge variant="secondary" className="font-mono">
-                        {solve.points} pts
-                      </Badge>
-                      <p className="text-xs text-muted-foreground mt-1">{solve.time}</p>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">
+                    No challenges solved yet. Start hacking!
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
