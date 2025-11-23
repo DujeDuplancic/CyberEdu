@@ -25,10 +25,19 @@ class Challenges {
 
     public function getAllChallenges($userId = null) {
         try {
-            $query = "SELECT c.id, c.title, c.description, c.difficulty, c.points, c.created_at,
-                             cat.name as category_name, cat.id as category_id,
-                             COUNT(s.id) as solves_count,
-                             EXISTS(SELECT 1 FROM solves WHERE user_id = :user_id AND challenge_id = c.id) as solved
+            // DODAJ file_url U QUERY - OVO JE KLJUČNO!
+            $query = "SELECT 
+                         c.id, 
+                         c.title, 
+                         c.description, 
+                         c.difficulty, 
+                         c.points, 
+                         c.file_url,  -- OVO JE DODANO
+                         c.created_at,
+                         cat.name as category_name, 
+                         cat.id as category_id,
+                         COUNT(s.id) as solves_count,
+                         EXISTS(SELECT 1 FROM solves WHERE user_id = :user_id AND challenge_id = c.id) as solved
                       FROM " . $this->challengesTable . " c
                       LEFT JOIN " . $this->categoriesTable . " cat ON c.category_id = cat.id
                       LEFT JOIN " . $this->solvesTable . " s ON c.id = s.challenge_id
@@ -41,10 +50,17 @@ class Challenges {
             $stmt->execute();
 
             $challenges = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Debug logging
+            error_log("📋 Returning " . count($challenges) . " challenges");
+            foreach ($challenges as $challenge) {
+                error_log("  Challenge {$challenge['id']}: '{$challenge['title']}' - file_url: '{$challenge['file_url']}'");
+            }
 
             return ['success' => true, 'challenges' => $challenges];
 
         } catch (PDOException $e) {
+            error_log("❌ Database error in get_challenges.php: " . $e->getMessage());
             return ['success' => false, 'message' => 'Database error: ' . $e->getMessage()];
         }
     }

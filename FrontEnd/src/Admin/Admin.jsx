@@ -108,18 +108,23 @@ export default function AdminPage() {
     }
   }
 
-  const loadChallenges = async () => {
-    try {
-      const response = await fetch('http://localhost/CyberEdu/Backend/challenges/get_challenges.php')
-      const data = await response.json()
-      
-      if (data.success) {
-        setChallenges(data.challenges)
-      }
-    } catch (error) {
-      console.error('Error loading challenges:', error)
+const loadChallenges = async () => {
+  try {
+    const response = await fetch('http://localhost/CyberEdu/Backend/challenges/get_challenges.php')
+    const data = await response.json()
+    
+    if (data.success) {
+      console.log("📋 Loaded challenges:", data.challenges)
+      // Provjeri da li challenge ima file_url
+      data.challenges.forEach(challenge => {
+        console.log(`Challenge ${challenge.id}: ${challenge.title} - file_url: ${challenge.file_url}`)
+      })
+      setChallenges(data.challenges)
     }
+  } catch (error) {
+    console.error('Error loading challenges:', error)
   }
+}
 
   const loadCategories = async () => {
     try {
@@ -286,30 +291,65 @@ export default function AdminPage() {
     }
   }
 
-  const handleFileUpload = async (file, challengeId) => {
+ const handleFileUpload = async (file, challengeId) => {
+  console.log("🔄 Starting file upload...", { 
+    fileName: file.name, 
+    fileSize: file.size, 
+    fileType: file.type,
+    challengeId: challengeId 
+  });
+  
   try {
-    const userData = localStorage.getItem('user')
+    const userData = localStorage.getItem('user');
     if (!userData) {
-      throw new Error('User not logged in')
+      throw new Error('User not logged in');
     }
 
-    const user = JSON.parse(userData)
+    const user = JSON.parse(userData);
+    console.log("👤 User ID from localStorage:", user.id);
 
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('challenge_id', challengeId)
-    formData.append('user_id', user.id)  // DODAJ OVO
+    // Kreiraj FormData
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('challenge_id', challengeId.toString());
+    formData.append('user_id', user.id.toString());
+
+    // Debug FormData contents
+    console.log("📦 FormData contents:");
+    for (let [key, value] of formData.entries()) {
+      console.log(`  ${key}:`, value);
+    }
+
+    console.log("📤 Sending POST request to upload_file.php...");
 
     const response = await fetch('http://localhost/CyberEdu/Backend/utils/upload_file.php', {
       method: 'POST',
       body: formData
-      // NE DODAJ headers za Content-Type - FormData ga automatski postavlja
-    })
+      // NE DODAJ headers - FormData automatski postavlja Content-Type
+    });
 
-    const data = await response.json()
+    console.log("📥 Response status:", response.status);
+    console.log("📥 Response headers:", response.headers);
+
+    const responseText = await response.text();
+    console.log("📥 Raw response:", responseText);
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (e) {
+      console.error("❌ Failed to parse JSON response:", e);
+      throw new Error('Invalid response from server');
+    }
+
+    console.log("📄 Parsed response data:", data);
 
     if (data.success) {
-      // Update challenge with file URL
+      console.log("✅ File uploaded successfully! File URL:", data.file_url);
+      
+      // Update challenge with the new file URL
+      console.log("🔄 Updating challenge with file URL...");
+      
       const updateResponse = await fetch('http://localhost/CyberEdu/Backend/admin/update_challenge.php', {
         method: 'POST',
         headers: {
@@ -319,26 +359,27 @@ export default function AdminPage() {
           id: challengeId,
           file_url: data.file_url
         })
-      })
+      });
 
-      const updateData = await updateResponse.json()
+      const updateData = await updateResponse.json();
+      console.log("🔄 Challenge update response:", updateData);
       
       if (updateData.success) {
-        setMessage("✅ File uspješno uploadan!")
-        loadChallenges()
-        return Promise.resolve()
+        setMessage("✅ File uploaded successfully!");
+        loadChallenges(); // Refresh the challenges list
+        return Promise.resolve();
       } else {
-        throw new Error(updateData.message)
+        throw new Error('Failed to update challenge: ' + updateData.message);
       }
     } else {
-      throw new Error(data.message)
+      throw new Error(data.message || 'Upload failed');
     }
   } catch (error) {
-    console.error('Error uploading file:', error)
-    setMessage(`❌ ${error.message}`)
-    return Promise.reject(error)
+    console.error('❌ File upload error:', error);
+    setMessage(`❌ Upload failed: ${error.message}`);
+    return Promise.reject(error);
   }
-}
+};
 
   // Clear message after 3 seconds
   useEffect(() => {

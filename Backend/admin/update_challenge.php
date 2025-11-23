@@ -21,48 +21,85 @@ class ChallengeUpdater {
         $this->db = $database->getConnection();
     }
 
-    public function updateChallenge($challengeId, $title, $description, $categoryId, $difficulty, $points, $flag = null, $fileUrl = null) {
+    public function updateChallenge($challengeId, $title = null, $description = null, $categoryId = null, $difficulty = null, $points = null, $flag = null, $fileUrl = null) {
         try {
-            $query = "UPDATE " . $this->table . " SET 
-                     title = :title, 
-                     description = :description, 
-                     category_id = :category_id, 
-                     difficulty = :difficulty, 
-                     points = :points";
-            
-            $params = [
-                ':title' => $title,
-                ':description' => $description,
-                ':category_id' => $categoryId,
-                ':difficulty' => $difficulty,
-                ':points' => $points,
-                ':id' => $challengeId
-            ];
+            error_log("🔄 Updating challenge $challengeId with data:");
+            error_log("  Title: " . ($title ?? 'not provided'));
+            error_log("  Description: " . ($description ?? 'not provided')); 
+            error_log("  Category ID: " . ($categoryId ?? 'not provided'));
+            error_log("  Difficulty: " . ($difficulty ?? 'not provided'));
+            error_log("  Points: " . ($points ?? 'not provided'));
+            error_log("  Flag: " . ($flag ? 'provided' : 'not provided'));
+            error_log("  File URL: " . ($fileUrl ?? 'not provided'));
 
-            // Dodaj flag samo ako je promijenjen
+            // Start building the query
+            $query = "UPDATE " . $this->table . " SET ";
+            $params = [];
+            $updates = [];
+
+            // Add fields only if they are provided
+            if ($title !== null) {
+                $updates[] = "title = :title";
+                $params[':title'] = $title;
+            }
+
+            if ($description !== null) {
+                $updates[] = "description = :description";
+                $params[':description'] = $description;
+            }
+
+            if ($categoryId !== null) {
+                $updates[] = "category_id = :category_id";
+                $params[':category_id'] = $categoryId;
+            }
+
+            if ($difficulty !== null) {
+                $updates[] = "difficulty = :difficulty";
+                $params[':difficulty'] = $difficulty;
+            }
+
+            if ($points !== null) {
+                $updates[] = "points = :points";
+                $params[':points'] = $points;
+            }
+
             if ($flag !== null) {
                 $hashedFlag = password_hash($flag, PASSWORD_DEFAULT);
-                $query .= ", flag = :flag";
+                $updates[] = "flag = :flag";
                 $params[':flag'] = $hashedFlag;
             }
 
-            // Dodaj file_url samo ako je promijenjen
             if ($fileUrl !== null) {
-                $query .= ", file_url = :file_url";
+                $updates[] = "file_url = :file_url";
                 $params[':file_url'] = $fileUrl;
             }
 
+            // If no fields to update, return error
+            if (empty($updates)) {
+                return ['success' => false, 'message' => 'No fields to update'];
+            }
+
+            $query .= implode(', ', $updates);
             $query .= " WHERE id = :id";
+            $params[':id'] = $challengeId;
+
+            error_log("📝 Executing query: " . $query);
+            error_log("📦 Parameters: " . print_r($params, true));
 
             $stmt = $this->db->prepare($query);
             
             if ($stmt->execute($params)) {
+                $affectedRows = $stmt->rowCount();
+                error_log("✅ Challenge updated successfully. Affected rows: $affectedRows");
                 return ['success' => true, 'message' => 'Challenge updated successfully'];
             } else {
-                return ['success' => false, 'message' => 'Error updating challenge'];
+                $errorInfo = $stmt->errorInfo();
+                error_log("❌ Error updating challenge: " . $errorInfo[2]);
+                return ['success' => false, 'message' => 'Error updating challenge: ' . $errorInfo[2]];
             }
 
         } catch (PDOException $e) {
+            error_log("❌ Database error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Database error: ' . $e->getMessage()];
         }
     }
@@ -108,21 +145,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
     
+    error_log("📨 Received update request: " . print_r($input, true));
+    
     $challengeId = $input['id'] ?? '';
-    $title = $input['title'] ?? '';
-    $description = $input['description'] ?? '';
-    $categoryId = $input['category_id'] ?? '';
-    $difficulty = $input['difficulty'] ?? '';
-    $points = $input['points'] ?? '';
-    $flag = $input['flag'] ?? null;
-    $fileUrl = $input['file_url'] ?? null;
-
-    // Validacija
-    if (empty($challengeId) || empty($title) || empty($description) || empty($categoryId) || empty($difficulty) || empty($points)) {
+    
+    if (empty($challengeId)) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'All fields except flag and file are required']);
+        echo json_encode(['success' => false, 'message' => 'Challenge ID is required']);
         exit();
     }
+
+    // Extract optional fields - only those that are provided
+    $title = $input['title'] ?? null;
+    $description = $input['description'] ?? null;
+    $categoryId = $input['category_id'] ?? null;
+    $difficulty = $input['difficulty'] ?? null;
+    $points = $input['points'] ?? null;
+    $flag = $input['flag'] ?? null;
+    $fileUrl = $input['file_url'] ?? null;
 
     $updater = new ChallengeUpdater();
     $result = $updater->updateChallenge($challengeId, $title, $description, $categoryId, $difficulty, $points, $flag, $fileUrl);
