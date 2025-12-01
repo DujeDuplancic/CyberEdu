@@ -1,5 +1,4 @@
 <?php
-// CORS headers
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
@@ -27,7 +26,6 @@ class Profile {
 
     public function getUserProfile($userId) {
         try {
-            // Osnovni podaci o korisniku
             $query = "SELECT id, username, email, avatar_url, points, rank, created_at, is_admin 
                      FROM " . $this->userTable . " WHERE id = :id";
             $stmt = $this->db->prepare($query);
@@ -40,14 +38,12 @@ class Profile {
 
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Broj riješenih challengea
             $query = "SELECT COUNT(*) as total_solves FROM " . $this->solvesTable . " WHERE user_id = :user_id";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':user_id', $userId);
             $stmt->execute();
             $solvesData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Zadnja aktivnost (zadnji solve)
             $query = "SELECT solved_at FROM " . $this->solvesTable . " 
                      WHERE user_id = :user_id ORDER BY solved_at DESC LIMIT 1";
             $stmt = $this->db->prepare($query);
@@ -55,8 +51,7 @@ class Profile {
             $stmt->execute();
             $lastActivity = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Recent solves (zadnja 3)
-            $query = "SELECT c.name as challenge, cat.name as category, c.points, s.solved_at 
+            $query = "SELECT c.title as challenge, cat.name as category, c.points, s.solved_at 
                      FROM " . $this->solvesTable . " s
                      JOIN " . $this->challengesTable . " c ON s.challenge_id = c.id
                      JOIN " . $this->categoriesTable . " cat ON c.category_id = cat.id
@@ -67,7 +62,6 @@ class Profile {
             $stmt->execute();
             $recentSolves = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Category progress
             $query = "SELECT cat.name, 
                              COUNT(s.id) as solved,
                              (SELECT COUNT(*) FROM challenges WHERE category_id = cat.id) as total
@@ -80,7 +74,6 @@ class Profile {
             $stmt->execute();
             $categoryProgress = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Formatiranje podataka
             $formattedSolves = [];
             foreach ($recentSolves as $solve) {
                 $formattedSolves[] = [
@@ -137,12 +130,9 @@ class Profile {
     }
 }
 
-// Handle GET request
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    // Dobavi user ID iz query parametra ili iz sesije/tokena
     $userId = $_GET['user_id'] ?? '';
     
-    // Ako nema user_id, probaj iz localStorage podataka
     if (empty($userId)) {
         $input = json_decode(file_get_contents('php://input'), true);
         $userId = $input['user_id'] ?? '';
