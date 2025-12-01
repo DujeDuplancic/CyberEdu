@@ -31,7 +31,8 @@ $migrations = [
     '009_create_user_achievements_table.php',
     '010_create_wiki_articles_table.php',
     '011_create_leaderboard_snapshots_table.php',
-    '012_create_leaderboard_entries_table.php'
+    '012_create_leaderboard_entries_table.php',
+    '013_add_file_url_to_challenges.php'
 ];
 
 $batch = 1;

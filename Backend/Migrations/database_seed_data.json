@@ -1,0 +1,360 @@
+{
+    "achievements": [
+        {
+            "id": 1,
+            "name": "First Blood",
+            "description": "Solve your first challenge",
+            "icon_url": "\/icons\/first-blood.png",
+            "points_reward": 50,
+            "criteria_type": "solves_count",
+            "criteria_value": 1,
+            "category_id": null,
+            "is_hidden": 0
+        },
+        {
+            "id": 2,
+            "name": "Reverse Engineering Novice",
+            "description": "Solve 5 Reverse Engineering challenges",
+            "icon_url": "\/icons\/re-novice.png",
+            "points_reward": 100,
+            "criteria_type": "solves_count",
+            "criteria_value": 5,
+            "category_id": 1,
+            "is_hidden": 0
+        },
+        {
+            "id": 3,
+            "name": "Binary Master",
+            "description": "Solve 10 Binary Exploitation challenges",
+            "icon_url": "\/icons\/binary-master.png",
+            "points_reward": 200,
+            "criteria_type": "solves_count",
+            "criteria_value": 10,
+            "category_id": 2,
+            "is_hidden": 0
+        },
+        {
+            "id": 4,
+            "name": "Cryptography Expert",
+            "description": "Solve 8 Cryptography challenges",
+            "icon_url": "\/icons\/crypto-expert.png",
+            "points_reward": 150,
+            "criteria_type": "solves_count",
+            "criteria_value": 8,
+            "category_id": 3,
+            "is_hidden": 0
+        },
+        {
+            "id": 5,
+            "name": "Point Collector",
+            "description": "Earn 1000 total points",
+            "icon_url": "\/icons\/point-collector.png",
+            "points_reward": 150,
+            "criteria_type": "points_total",
+            "criteria_value": 1000,
+            "category_id": null,
+            "is_hidden": 0
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "name": "Reverse Engineering",
+            "description": "Disassemble and analyze binary code",
+            "icon_name": "Code"
+        },
+        {
+            "id": 2,
+            "name": "Binary Exploitation",
+            "description": "Master buffer overflows and memory corruption",
+            "icon_name": "Lock"
+        },
+        {
+            "id": 3,
+            "name": "Cryptography",
+            "description": "Break encryption schemes and protocols",
+            "icon_name": "Key"
+        },
+        {
+            "id": 4,
+            "name": "Steganography",
+            "description": "Uncover hidden messages in digital media",
+            "icon_name": "ImageIcon"
+        },
+        {
+            "id": 5,
+            "name": "Web Security",
+            "description": "Exploit web vulnerabilities",
+            "icon_name": "Globe"
+        }
+    ],
+    "challenges": [
+        {
+            "id": 2,
+            "title": "Buffer Overflow 101",
+            "description": "Learn basic buffer overflow techniques",
+            "category_id": 2,
+            "difficulty": "Easy",
+            "points": 100,
+            "flag": "$2y$10$2RJotQUjokKrZeq8cKyzAOWjc7iMYgw2Z0o04AVUbqtEi5n2w8hvW",
+            "file_url": null,
+            "created_by": 1,
+            "is_active": 1,
+            "created_at": "2025-11-23 17:05:10"
+        },
+        {
+            "id": 3,
+            "title": "Caesar Cipher",
+            "description": "Break the classic Caesar cipher encryption",
+            "category_id": 3,
+            "difficulty": "Easy",
+            "points": 100,
+            "flag": "$2y$10$wmtHXMOqG7LEGwZ.yYWC0eQuo5EJOKKvZZftnia3\/FxW3lm7qU0Qi",
+            "file_url": null,
+            "created_by": 1,
+            "is_active": 1,
+            "created_at": "2025-11-23 17:05:10"
+        },
+        {
+            "id": 4,
+            "title": "Hidden Message",
+            "description": "Find the hidden message in this image",
+            "category_id": 4,
+            "difficulty": "Easy",
+            "points": 100,
+            "flag": "$2y$10$5ttegs7mDRlWiQCPlQyLRun.\/d9qd\/CHl\/2iQ.3d1E8i.1PNJ1MHG",
+            "file_url": null,
+            "created_by": 1,
+            "is_active": 1,
+            "created_at": "2025-11-23 17:05:10"
+        },
+        {
+            "id": 5,
+            "title": "SQL Injection",
+            "description": "Basic SQL injection challenge",
+            "category_id": 5,
+            "difficulty": "Easy",
+            "points": 100,
+            "flag": "$2y$10$I\/SxeGF1\/a\/JixMMwZLde.e4CLKuEzmslS63eZdT1BGTIP66NtEde",
+            "file_url": null,
+            "created_by": 1,
+            "is_active": 1,
+            "created_at": "2025-11-23 17:05:11"
+        },
+        {
+            "id": 6,
+            "title": "Medium Reverse",
+            "description": "Intermediate reverse engineering challenge",
+            "category_id": 1,
+            "difficulty": "Medium",
+            "points": 250,
+            "flag": "$2y$10$dVMh85u53y49YxapdIWcoOf.2X8.feO\/GG1XAmdHPGB00RWA9xkfS",
+            "file_url": null,
+            "created_by": 1,
+            "is_active": 1,
+            "created_at": "2025-11-23 17:05:11"
+        },
+        {
+            "id": 7,
+            "title": "ROP Chain",
+            "description": "Return Oriented Programming challenge",
+            "category_id": 2,
+            "difficulty": "Medium",
+            "points": 300,
+            "flag": "$2y$10$X4EqGpcnSX76sR3HCsdqiOEddADyVA7wdz8noYOL93EL6OaAYeHsu",
+            "file_url": null,
+            "created_by": 1,
+            "is_active": 1,
+            "created_at": "2025-11-23 17:05:11"
+        },
+        {
+            "id": 8,
+            "title": "RSA Challenge",
+            "description": "Break RSA encryption",
+            "category_id": 3,
+            "difficulty": "Hard",
+            "points": 500,
+            "flag": "$2y$10$veQnADqNrdqCL6aXB6VIV.skVvDPNtVyOYzhWhAPAKtzrTA6rqiWO",
+            "file_url": null,
+            "created_by": 1,
+            "is_active": 1,
+            "created_at": "2025-11-23 17:05:11"
+        },
+        {
+            "id": 10,
+            "title": "Friday the 13th",
+            "description": "Although this string strongly resembles the real solution, Marko made sure to rotate it well so you would still have to put in some effort to obtain it.",
+            "category_id": 3,
+            "difficulty": "Easy",
+            "points": 20,
+            "flag": "$2y$10$EuTWRTASW3AeyFJQkuKHCuQcBCW.lSoJuuWHtnEfOJd\/CSZnuwNie",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_10_sifra_1763918430.txt",
+            "created_by": 1,
+            "is_active": 1,
+            "created_at": "2025-11-23 18:20:23"
+        }
+    ],
+    "discussions": [],
+    "leaderboard_entries": [],
+    "leaderboard_snapshots": [],
+    "lectures": [],
+    "migrations": [
+        {
+            "id": 1,
+            "migration_name": "001_create_users_table.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:08:29"
+        },
+        {
+            "id": 2,
+            "migration_name": "002_create_categories_table.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:08:29"
+        },
+        {
+            "id": 3,
+            "migration_name": "003_create_challenges_table.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:08:29"
+        },
+        {
+            "id": 4,
+            "migration_name": "004_create_solves_table.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:08:30"
+        },
+        {
+            "id": 5,
+            "migration_name": "005_create_lectures_table.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:08:30"
+        },
+        {
+            "id": 6,
+            "migration_name": "006_create_discussions_table.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:08:30"
+        },
+        {
+            "id": 7,
+            "migration_name": "007_create_replies_table.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:08:30"
+        },
+        {
+            "id": 8,
+            "migration_name": "008_create_achievements_table.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:08:30"
+        },
+        {
+            "id": 9,
+            "migration_name": "009_create_user_achievements_table.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:08:30"
+        },
+        {
+            "id": 10,
+            "migration_name": "010_create_wiki_articles_table.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:08:30"
+        },
+        {
+            "id": 11,
+            "migration_name": "011_create_leaderboard_snapshots_table.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:08:30"
+        },
+        {
+            "id": 12,
+            "migration_name": "012_create_leaderboard_entries_table.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:08:30"
+        },
+        {
+            "id": 13,
+            "migration_name": "013_add_file_url_to_challenges.php",
+            "batch": 1,
+            "executed_at": "2025-12-01 23:15:21"
+        }
+    ],
+    "replies": [],
+    "solves": [
+        {
+            "id": 1,
+            "user_id": 1,
+            "challenge_id": 10,
+            "solved_at": "2025-11-23 18:31:47"
+        }
+    ],
+    "user_achievements": [],
+    "users": [
+        {
+            "id": 1,
+            "username": "testuser2",
+            "email": "duje.duplancic03@gmail.com",
+            "password_hash": "$2y$10$VD0cWQrDPszAm99IPJ7o2OMiUak0EkjYMxTFdi7uqjZ6zgHYq0fma",
+            "avatar_url": null,
+            "points": 20,
+            "rank": 0,
+            "created_at": "2025-11-23 16:15:34",
+            "is_admin": 1
+        },
+        {
+            "id": 2,
+            "username": "cyberNapadac",
+            "email": "duple.duplamcic@gmail.com",
+            "password_hash": "$2y$10$8ffhc2xSp5Q7DAG9YgHdYuJa8IzN3HvaKa4CIcSjrh9wLZKI4YsKy",
+            "avatar_url": null,
+            "points": 0,
+            "rank": 0,
+            "created_at": "2025-11-23 16:36:37",
+            "is_admin": 1
+        },
+        {
+            "id": 3,
+            "username": "admin",
+            "email": "admin@cyberedu.com",
+            "password_hash": "$2y$10$EPka4dOjJQYSExkUCxTbPOR68a2xSTqAKR6tNgStBwfyRQ8Jv3jDm",
+            "avatar_url": null,
+            "points": 0,
+            "rank": 0,
+            "created_at": "2025-11-23 17:05:10",
+            "is_admin": 1
+        },
+        {
+            "id": 4,
+            "username": "student1",
+            "email": "student1@cyberedu.com",
+            "password_hash": "$2y$10$yLB238h8dD\/QXx2mmbd.eekrKD7putSHt8UnnPL9Q1wyZN.D8SfB.",
+            "avatar_url": null,
+            "points": 0,
+            "rank": 0,
+            "created_at": "2025-11-23 17:05:10",
+            "is_admin": 0
+        },
+        {
+            "id": 5,
+            "username": "student2",
+            "email": "student2@cyberedu.com",
+            "password_hash": "$2y$10$UyOKx5ETrfXQ5NU8VY87f.gl09BgsaZZgsPCzL5iYns.4.fCjViFi",
+            "avatar_url": null,
+            "points": 0,
+            "rank": 0,
+            "created_at": "2025-11-23 17:05:10",
+            "is_admin": 0
+        },
+        {
+            "id": 6,
+            "username": "lalalalal",
+            "email": "lalalalal@gmail.com",
+            "password_hash": "$2y$10$bvzzWYMFzt9LmHEfu\/J3WOuPH\/mYGskM.B2TcKd23OsAOdJ4fj6MC",
+            "avatar_url": null,
+            "points": 0,
+            "rank": 0,
+            "created_at": "2025-12-01 23:17:40",
+            "is_admin": 0
+        }
+    ],
+    "wiki_articles": []
+}

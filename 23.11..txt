@@ -1,36 +1,36 @@
 CyberEdu/
 │
-├── 📁 BackEnd/
-│   ├── 📁 auth/
-│   │   ├── 🔐 login.php
-│   │   └── 🔐 register.php
+├── BackEnd/
+│   ├── auth/
+│   │   ├── login.php
+│   │   └── register.php
 │   │
-│   ├── 📁 admin/
-│   │   ├── 🛡️ check_admin.php
-│   │   ├── 👥 users.php
-│   │   ├── 📊 stats.php
-│   │   ├── 🎯 create_challenge.php
-│   │   ├── ✏️ update_challenge.php
-│   │   └── 🗑️ delete_challenge.php
+│   ├── admin/
+│   │   ├── check_admin.php
+│   │   ├── users.php
+│   │   ├── stats.php
+│   │   ├── create_challenge.php
+│   │   ├── update_challenge.php
+│   │   └── delete_challenge.php
 │   │
-│   ├── 📁 challenges/
-│   │   ├── 📋 get_categories.php
-│   │   ├── 🎯 get_challenges.php
-│   │   ├── 🏴 submit_flag.php
-│   │   └── 📄 get_challenge_details.php
+│   ├── challenges/
+│   │   ├── get_categories.php
+│   │   ├── get_challenges.php
+│   │   ├── submit_flag.php
+│   │   └── get_challenge_details.php
 │   │
-│   ├── 📁 profile/
-│   │   └── 👤 get_profile.php
+│   ├── profile/
+│   │   └── get_profile.php
 │   │
-│   ├── 📁 utils/
-│   │   └── 📤 upload_file.php
+│   ├── utils/
+│   │   └── upload_file.php
 │   │
-│   ├── 📁 config/
-│   │   ├── ⚙️ database.php
-│   │   └── ⚙️ database_cli.php
+│   ├── config/
+│   │   ├── database.php
+│   │   └── database_cli.php
 │   │
-│   ├── 📁 Migrations/
-│   │   ├── 📁 migrations/
+│   ├── Migrations/
+│   │   ├── migrations/
 │   │   │   ├── 001_create_users_table.php
 │   │   │   ├── 002_create_categories_table.php
 │   │   │   ├── 003_create_challenges_table.php
@@ -45,92 +45,95 @@ CyberEdu/
 │   │   │   ├── 012_create_leaderboard_entries_table.php
 │   │   │   └── 013_add_file_url_to_challenges.php
 │   │   │
-│   │   ├── 📁 seeds/
-│   │   │   └── 🌱 seed_complete.php
+│   │   ├── seeds/
+│   │   │   └── seed_complete.php
 │   │   │
-│   │   ├── 🚀 migration_runner.php
-│   │   ├── 🚀 run_seeds_cli.php
-│   │   └── 🚀 seed_complete.php
+│   │   ├── database_seed_data.json
+│   │   ├── export_database.php
+│   │   ├── force_migrate.php
+│   │   ├── import_seed_only.php
+│   │   └── run_seeds_cli.php
 │   │
-│   └── 🧪 test.php
+│   │   └── test.php
 │
-├── 📁 FrontEnd/
-│   ├── 📁 src/
-│   │   ├── 📁 Components/
-│   │   │   ├── 🧩 Header.jsx
-│   │   │   ├── 🧩 Footer.jsx
-│   │   │   └── 📁 ui/
-│   │   │       ├── 🎨 button.jsx
-│   │   │       ├── 🎨 card.jsx
-│   │   │       ├── 🎨 input.jsx
-│   │   │       ├── 🎨 label.jsx
-│   │   │       ├── 🎨 badge.jsx
-│   │   │       └── 🎨 avatar.jsx
+├── FrontEnd/
+│   ├── src/
+│   │   ├── Components/
+│   │   │   ├── Header.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   └── ui/
+│   │   │       ├── button.jsx
+│   │   │       ├── card.jsx
+│   │   │       ├── input.jsx
+│   │   │       ├── label.jsx
+│   │   │       ├── badge.jsx
+│   │   │       └── avatar.jsx
 │   │   │
-│   │   ├── 📁 Admin/
-│   │   │   ├── 🏠 Admin.jsx
-│   │   │   ├── 👥 AdminUsers.jsx
-│   │   │   ├── 🎯 AdminChallenges.jsx
-│   │   │   ├── 📚 AdminContent.jsx
-│   │   │   ├── ⚙️ AdminSettings.jsx
-│   │   │   └── 📁 components/
-│   │   │       ├── 📝 CreateChallengeForm.jsx
-│   │   │       └── ✏️ EditChallengeForm.jsx
+│   │   ├── Admin/
+│   │   │   ├── Admin.jsx
+│   │   │   ├── AdminUsers.jsx
+│   │   │   ├── AdminChallenges.jsx
+│   │   │   ├── AdminContent.jsx
+│   │   │   ├── AdminSettings.jsx
+│   │   │   └── components/
+│   │   │       ├── CreateChallengeForm.jsx
+│   │   │       └── EditChallengeForm.jsx
 │   │   │
-│   │   ├── 📁 CTF/
-│   │   │   ├── 🏠 CTF.jsx
-│   │   │   ├── 📋 ChallengeList.jsx
-│   │   │   ├── 🎯 ChallengeModal.jsx
-│   │   │   ├── 📑 CategoryFilter.jsx
-│   │   │   └── 📁 components/
-│   │   │       ├── 🃏 ChallengeCard.jsx
-│   │   │       └── 🔍 SearchBar.jsx
+│   │   ├── CTF/
+│   │   │   ├── CTF.jsx
+│   │   │   ├── ChallengeList.jsx
+│   │   │   ├── ChallengeModal.jsx
+│   │   │   ├── CategoryFilter.jsx
+│   │   │   └── components/
+│   │   │       ├── ChallengeCard.jsx
+│   │   │       └── SearchBar.jsx
 │   │   │
-│   │   ├── 📁 Login/
-│   │   │   └── 🔑 Login.jsx
+│   │   ├── Login/
+│   │   │   └── Login.jsx
 │   │   │
-│   │   ├── 📁 Register/
-│   │   │   └── 📝 Register.jsx
+│   │   ├── Register/
+│   │   │   └── Register.jsx
 │   │   │
-│   │   ├── 📁 Profile/
-│   │   │   └── 👤 Profile.jsx
+│   │   ├── Profile/
+│   │   │   └── Profile.jsx
 │   │   │
-│   │   ├── 📁 Homepage/
-│   │   │   └── 🏠 Homepage.jsx
+│   │   ├── Homepage/
+│   │   │   └── Homepage.jsx
 │   │   │
-│   │   ├── 📁 Leaderboard/
-│   │   │   └── 🏆 Leaderboard.jsx
+│   │   ├── Leaderboard/
+│   │   │   └── Leaderboard.jsx
 │   │   │
-│   │   ├── 📁 Lectures/
-│   │   │   └── 📚 Lectures.jsx
+│   │   ├── Lectures/
+│   │   │   └── Lectures.jsx
 │   │   │
-│   │   ├── 📁 Wiki/
-│   │   │   └── 📖 Wiki.jsx
+│   │   ├── Wiki/
+│   │   │   └── Wiki.jsx
 │   │   │
-│   │   ├── 📁 Community/
-│   │   │   └── 💬 Community.jsx
+│   │   ├── Community/
+│   │   │   └── Community.jsx
 │   │   │
-│   │   ├── 📁 Contact/
-│   │   │   └── 📞 Contact.jsx
+│   │   ├── Contact/
+│   │   │   └── Contact.jsx
 │   │   │
-│   │   ├── 📁 About/
-│   │   │   └── ℹ️ About.jsx
+│   │   ├── About/
+│   │   │   └── About.jsx
 │   │   │
-│   │   ├── 🚀 App.jsx
-│   │   ├── 🎨 Globals.css
-│   │   └── 🔧 main.jsx
+│   │   ├── App.jsx
+│   │   ├── Globals.css
+│   │   └── main.jsx
 │   │
-│   ├── 📁 public/
-│   ├── 📁 uploads/
-│   │   └── 📁 challenges/
+│   ├── public/
+│   ├── uploads/
+│   │   └── challenges/
 │   │
-│   ├── ⚙️ vite.config.js
-│   ├── ⚙️ tailwind.config.js
-│   ├── ⚙️ postcss.config.js
-│   ├── 📦 package.json
-│   └── 📄 index.html
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   ├── package.json
+│   └── index.html
 │
-└── 📄 README.md
+└── README.md
+
 
 
 ✅ COMPLETED FUNCTIONALITIES
