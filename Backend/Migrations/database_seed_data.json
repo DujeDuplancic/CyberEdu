@@ -203,79 +203,79 @@
             "id": 1,
             "migration_name": "001_create_users_table.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:08:29"
+            "executed_at": "2025-12-01 22:28:35"
         },
         {
             "id": 2,
             "migration_name": "002_create_categories_table.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:08:29"
+            "executed_at": "2025-12-01 22:28:35"
         },
         {
             "id": 3,
             "migration_name": "003_create_challenges_table.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:08:29"
+            "executed_at": "2025-12-01 22:28:35"
         },
         {
             "id": 4,
             "migration_name": "004_create_solves_table.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:08:30"
+            "executed_at": "2025-12-01 22:28:35"
         },
         {
             "id": 5,
             "migration_name": "005_create_lectures_table.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:08:30"
+            "executed_at": "2025-12-01 22:28:35"
         },
         {
             "id": 6,
             "migration_name": "006_create_discussions_table.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:08:30"
+            "executed_at": "2025-12-01 22:28:35"
         },
         {
             "id": 7,
             "migration_name": "007_create_replies_table.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:08:30"
+            "executed_at": "2025-12-01 22:28:35"
         },
         {
             "id": 8,
             "migration_name": "008_create_achievements_table.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:08:30"
+            "executed_at": "2025-12-01 22:28:35"
         },
         {
             "id": 9,
             "migration_name": "009_create_user_achievements_table.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:08:30"
+            "executed_at": "2025-12-01 22:28:35"
         },
         {
             "id": 10,
             "migration_name": "010_create_wiki_articles_table.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:08:30"
+            "executed_at": "2025-12-01 22:28:35"
         },
         {
             "id": 11,
             "migration_name": "011_create_leaderboard_snapshots_table.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:08:30"
+            "executed_at": "2025-12-01 22:28:35"
         },
         {
             "id": 12,
             "migration_name": "012_create_leaderboard_entries_table.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:08:30"
+            "executed_at": "2025-12-01 22:28:35"
         },
         {
             "id": 13,
             "migration_name": "013_add_file_url_to_challenges.php",
             "batch": 1,
-            "executed_at": "2025-12-01 23:15:21"
+            "executed_at": "2025-12-02 18:24:06"
         }
     ],
     "replies": [],

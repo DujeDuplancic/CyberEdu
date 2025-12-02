@@ -1,0 +1,9 @@
+FrontEnd part
+C:\xampp\htdocs\CyberEdu\Frontend
+npm run dev
+
+BackEnd part
+cd C:\xampp\htdocs\CyberEdu\Backend
+php -S localhost:8000
+
+Without these commands application cannot run!
