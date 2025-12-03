@@ -13,7 +13,7 @@ export default function LeaderboardPage() {
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
+  const API_BASE = 'http://localhost/CyberEdu/Backend/'
   useEffect(() => {
     fetchCategories()
     fetchLeaderboard()
@@ -22,7 +22,7 @@ export default function LeaderboardPage() {
   const fetchCategories = async () => {
   try {
     // POKUŠAJ OVAJ URL
-    const response = await fetch('/api/challenges/get_categories.php')
+    const response = await fetch(`${API_BASE}/challenges/get_categories.php`)
     const data = await response.json()
     if (data.success) {
       setCategories(data.categories)
@@ -38,7 +38,7 @@ const fetchLeaderboard = async () => {
   
   try {
     // POKUŠAJ OVAJ URL
-    let url = '/api/leaderboard/get_leaderboard.php'
+    let url = `${API_BASE}/leaderboard/get_leaderboard.php`
     if (selectedCategory) {
       url += `?category_id=${selectedCategory}`
     }

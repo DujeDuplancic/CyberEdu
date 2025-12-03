@@ -5,6 +5,7 @@ function up() {
             id INT PRIMARY KEY AUTO_INCREMENT,
             snapshot_id INT,
             user_id INT,
+            username VARCHAR(100) NOT NULL, -- DODAJTE OVO!
             rank INT NOT NULL,
             points INT NOT NULL,
             solves_count INT NOT NULL,

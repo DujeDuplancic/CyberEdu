@@ -20,12 +20,27 @@ class Categories {
     private $table = 'categories';
 
     public function __construct() {
-        $database = new Database();
-        $this->db = $database->getConnection();
+        try {
+            $database = new Database();
+            $this->db = $database->getConnection();
+            
+            // Proveri da li je konekcija uspostavljena
+            if (!$this->db) {
+                throw new Exception("Database connection failed");
+            }
+        } catch (Exception $e) {
+            // Vrati JSON error umesto da baci izuzetak
+            $this->db = null;
+        }
     }
 
     public function getAllCategories() {
         try {
+            // Proveri da li postoji konekcija pre upita
+            if (!$this->db) {
+                return ['success' => false, 'message' => 'Database connection not established'];
+            }
+
             $query = "SELECT id, name, description, icon_name FROM " . $this->table . " ORDER BY name";
             $stmt = $this->db->prepare($query);
             $stmt->execute();
@@ -36,6 +51,8 @@ class Categories {
 
         } catch (PDOException $e) {
             return ['success' => false, 'message' => 'Database error: ' . $e->getMessage()];
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
         }
     }
 }
