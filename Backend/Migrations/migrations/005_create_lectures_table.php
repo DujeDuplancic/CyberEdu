@@ -1,5 +1,4 @@
 <?php
-function up() {
     return "
         CREATE TABLE lectures (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -15,9 +14,5 @@ function up() {
             FOREIGN KEY (category_id) REFERENCES categories(id)
         );
     ";
-}
 
-function down() {
-    return "DROP TABLE IF EXISTS lectures;";
-}
 ?>

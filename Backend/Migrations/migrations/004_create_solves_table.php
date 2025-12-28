@@ -1,5 +1,5 @@
 <?php
-function up() {
+
     return "
         CREATE TABLE solves (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -11,9 +11,6 @@ function up() {
             UNIQUE KEY unique_solve (user_id, challenge_id)
         );
     ";
-}
 
-function down() {
-    return "DROP TABLE IF EXISTS solves;";
-}
+
 ?>

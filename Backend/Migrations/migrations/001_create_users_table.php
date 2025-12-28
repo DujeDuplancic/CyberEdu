@@ -1,5 +1,4 @@
 <?php
-function up() {
     return "
         CREATE TABLE users (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -13,9 +12,5 @@ function up() {
             is_admin BOOLEAN DEFAULT FALSE
         );
     ";
-}
 
-function down() {
-    return "DROP TABLE IF EXISTS users;";
-}
 ?>

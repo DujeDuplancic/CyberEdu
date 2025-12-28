@@ -1,5 +1,4 @@
 <?php
-function up() {
     return "
         CREATE TABLE challenges (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -16,9 +15,4 @@ function up() {
             FOREIGN KEY (created_by) REFERENCES users(id)
         );
     ";
-}
-
-function down() {
-    return "DROP TABLE IF EXISTS challenges;";
-}
 ?>

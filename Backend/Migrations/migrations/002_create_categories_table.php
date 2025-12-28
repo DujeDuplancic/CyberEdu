@@ -1,5 +1,5 @@
 <?php
-function up() {
+
     return "
         CREATE TABLE categories (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -8,9 +8,6 @@ function up() {
             icon_name VARCHAR(50)
         );
     ";
-}
 
-function down() {
-    return "DROP TABLE IF EXISTS categories;";
-}
+
 ?>

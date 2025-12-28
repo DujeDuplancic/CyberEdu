@@ -1,5 +1,4 @@
 <?php
-function up() {
     return "
         CREATE TABLE wiki_articles (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -14,9 +13,4 @@ function up() {
             FOREIGN KEY (author_id) REFERENCES users(id)
         );
     ";
-}
-
-function down() {
-    return "DROP TABLE IF EXISTS wiki_articles;";
-}
 ?>

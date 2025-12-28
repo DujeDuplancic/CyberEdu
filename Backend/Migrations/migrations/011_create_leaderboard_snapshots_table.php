@@ -1,5 +1,4 @@
 <?php
-function up() {
     return "
         CREATE TABLE leaderboard_snapshots (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -10,9 +9,4 @@ function up() {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     ";
-}
-
-function down() {
-    return "DROP TABLE IF EXISTS leaderboard_snapshots;";
-}
 ?>

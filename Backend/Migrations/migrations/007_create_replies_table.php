@@ -1,5 +1,4 @@
 <?php
-function up() {
     return "
         CREATE TABLE replies (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -11,9 +10,4 @@ function up() {
             FOREIGN KEY (author_id) REFERENCES users(id)
         );
     ";
-}
-
-function down() {
-    return "DROP TABLE IF EXISTS replies;";
-}
 ?>

@@ -1,5 +1,4 @@
 <?php
-function up() {
     return "
         CREATE TABLE user_achievements (
             id INT PRIMARY KEY AUTO_INCREMENT,
@@ -11,9 +10,5 @@ function up() {
             UNIQUE KEY unique_user_achievement (user_id, achievement_id)
         );
     ";
-}
 
-function down() {
-    return "DROP TABLE IF EXISTS user_achievements;";
-}
 ?>
