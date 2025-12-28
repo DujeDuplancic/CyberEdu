@@ -197,7 +197,25 @@
     "discussions": [],
     "leaderboard_entries": [],
     "leaderboard_snapshots": [],
-    "lectures": [],
+    "lectures": [
+        {
+            "id": 2,
+            "title": "Networking",
+            "description": "gvasgasdgagdasdgdsagsda",
+            "category_id": 5,
+            "instructor": "Ryan John",
+            "duration_minutes": 0,
+            "level": "Advanced",
+            "video_url": "https:\/\/youtu.be\/lYvijnPI1Rg?si=aUcEyGBvBEt3XFyE",
+            "embed_url": "https:\/\/www.youtube.com\/embed\/lYvijnPI1Rg?rel=0",
+            "thumbnail_url": "https:\/\/img.youtube.com\/vi\/lYvijnPI1Rg\/hqdefault.jpg",
+            "views": 6,
+            "is_published": 1,
+            "author_id": 2,
+            "created_at": "2025-12-28 23:37:58",
+            "updated_at": "2025-12-28 23:43:11"
+        }
+    ],
     "replies": [],
     "solves": [
         {
