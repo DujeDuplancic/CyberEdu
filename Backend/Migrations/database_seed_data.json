@@ -420,5 +420,34 @@
             "is_admin": 0
         }
     ],
-    "wiki_articles": []
+    "wiki_articles": [
+    {
+        "id": 1,
+        "title": "Getting Started with Reverse Engineering",
+        "content": "<h2>Introduction to Reverse Engineering</h2><p>Reverse engineering is the process of analyzing a system...</p>",
+        "category_id": 1,
+        "author_id": 1,
+        "slug": "getting-started-reverse-engineering",
+        "excerpt": "Learn the basics of reverse engineering including tools and techniques.",
+        "reading_time": 10,
+        "views": 1234,
+        "difficulty_level": "beginner",
+        "is_published": true,
+        "created_at": "2025-11-23 17:05:10"
+    },
+    {
+        "id": 2,
+        "title": "Understanding Buffer Overflows",
+        "content": "<h2>Buffer Overflow Basics</h2><p>A buffer overflow occurs when...</p>",
+        "category_id": 2,
+        "author_id": 1,
+        "slug": "understanding-buffer-overflows",
+        "excerpt": "Learn about buffer overflow vulnerabilities and how to exploit them.",
+        "reading_time": 15,
+        "views": 987,
+        "difficulty_level": "intermediate",
+        "is_published": true,
+        "created_at": "2025-11-23 17:05:10"
+    }
+]
 }
