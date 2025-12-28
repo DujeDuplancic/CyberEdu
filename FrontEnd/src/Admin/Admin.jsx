@@ -2,13 +2,14 @@ import { Header } from "../Components/Header"
 import { Footer } from "../Components/Footer"
 import { Card, CardContent, CardHeader, CardTitle } from "../Components/ui/card"
 import { Button } from "../Components/ui/button"
-import { Users, Flag, BookOpen, MessageSquare } from "lucide-react"
+import { Users, Flag, BookOpen, MessageSquare, FileText } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
 // Import komponenti
 import AdminUsers from "./AdminUsers"
 import AdminChallenges from "./AdminChallenges"
+import AdminWiki from "./Components/AdminWiki"  // DODAJ OVO
 import AdminContent from "./AdminContent"
 import AdminSettings from "./AdminSettings"
 
@@ -17,7 +18,7 @@ export default function AdminPage() {
     { label: "Total Users", value: "0", icon: Users, change: "+0%" },
     { label: "Active Challenges", value: "0", icon: Flag, change: "+0" },
     { label: "Total Lectures", value: "0", icon: BookOpen, change: "+0" },
-    { label: "Forum Posts", value: "0", icon: MessageSquare, change: "+0" },
+    { label: "Wiki Articles", value: "0", icon: FileText, change: "+0" },  // PROMIJENJENO
   ])
   const [users, setUsers] = useState([])
   const [challenges, setChallenges] = useState([])
@@ -83,11 +84,14 @@ export default function AdminPage() {
       const data = await response.json()
 
       if (data.success) {
+        // Dodaj Wiki statistiku ako postoji
+        const wikiCount = data.stats.wiki_articles || 0;
+        
         setStats([
           { label: "Total Users", value: data.stats.total_users.toString(), icon: Users, change: "+12%" },
           { label: "Active Challenges", value: data.stats.total_challenges.toString(), icon: Flag, change: "+3" },
           { label: "Total Lectures", value: data.stats.total_lectures.toString(), icon: BookOpen, change: "+2" },
-          { label: "Forum Posts", value: data.stats.total_posts.toString(), icon: MessageSquare, change: "+456" },
+          { label: "Wiki Articles", value: wikiCount.toString(), icon: FileText, change: "+5" },
         ])
       }
     } catch (error) {
@@ -108,23 +112,23 @@ export default function AdminPage() {
     }
   }
 
-const loadChallenges = async () => {
-  try {
-    const response = await fetch('http://localhost/CyberEdu/Backend/challenges/get_challenges.php')
-    const data = await response.json()
-    
-    if (data.success) {
-      console.log("📋 Loaded challenges:", data.challenges)
-      // Provjeri da li challenge ima file_url
-      data.challenges.forEach(challenge => {
-        console.log(`Challenge ${challenge.id}: ${challenge.title} - file_url: ${challenge.file_url}`)
-      })
-      setChallenges(data.challenges)
+  const loadChallenges = async () => {
+    try {
+      const response = await fetch('http://localhost/CyberEdu/Backend/challenges/get_challenges.php')
+      const data = await response.json()
+      
+      if (data.success) {
+        console.log("📋 Loaded challenges:", data.challenges)
+        // Provjeri da li challenge ima file_url
+        data.challenges.forEach(challenge => {
+          console.log(`Challenge ${challenge.id}: ${challenge.title} - file_url: ${challenge.file_url}`)
+        })
+        setChallenges(data.challenges)
+      }
+    } catch (error) {
+      console.error('Error loading challenges:', error)
     }
-  } catch (error) {
-    console.error('Error loading challenges:', error)
   }
-}
 
   const loadCategories = async () => {
     try {
@@ -291,95 +295,95 @@ const loadChallenges = async () => {
     }
   }
 
- const handleFileUpload = async (file, challengeId) => {
-  console.log("🔄 Starting file upload...", { 
-    fileName: file.name, 
-    fileSize: file.size, 
-    fileType: file.type,
-    challengeId: challengeId 
-  });
-  
-  try {
-    const userData = localStorage.getItem('user');
-    if (!userData) {
-      throw new Error('User not logged in');
-    }
-
-    const user = JSON.parse(userData);
-    console.log("👤 User ID from localStorage:", user.id);
-
-    // Kreiraj FormData
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('challenge_id', challengeId.toString());
-    formData.append('user_id', user.id.toString());
-
-    // Debug FormData contents
-    console.log("📦 FormData contents:");
-    for (let [key, value] of formData.entries()) {
-      console.log(`  ${key}:`, value);
-    }
-
-    console.log("📤 Sending POST request to upload_file.php...");
-
-    const response = await fetch('http://localhost/CyberEdu/Backend/utils/upload_file.php', {
-      method: 'POST',
-      body: formData
-      // NE DODAJ headers - FormData automatski postavlja Content-Type
+  const handleFileUpload = async (file, challengeId) => {
+    console.log("🔄 Starting file upload...", { 
+      fileName: file.name, 
+      fileSize: file.size, 
+      fileType: file.type,
+      challengeId: challengeId 
     });
-
-    console.log("📥 Response status:", response.status);
-    console.log("📥 Response headers:", response.headers);
-
-    const responseText = await response.text();
-    console.log("📥 Raw response:", responseText);
-
-    let data;
+    
     try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      console.error("❌ Failed to parse JSON response:", e);
-      throw new Error('Invalid response from server');
-    }
+      const userData = localStorage.getItem('user');
+      if (!userData) {
+        throw new Error('User not logged in');
+      }
 
-    console.log("📄 Parsed response data:", data);
+      const user = JSON.parse(userData);
+      console.log("👤 User ID from localStorage:", user.id);
 
-    if (data.success) {
-      console.log("✅ File uploaded successfully! File URL:", data.file_url);
-      
-      // Update challenge with the new file URL
-      console.log("🔄 Updating challenge with file URL...");
-      
-      const updateResponse = await fetch('http://localhost/CyberEdu/Backend/admin/update_challenge.php', {
+      // Kreiraj FormData
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('challenge_id', challengeId.toString());
+      formData.append('user_id', user.id.toString());
+
+      // Debug FormData contents
+      console.log("📦 FormData contents:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`  ${key}:`, value);
+      }
+
+      console.log("📤 Sending POST request to upload_file.php...");
+
+      const response = await fetch('http://localhost/CyberEdu/Backend/utils/upload_file.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: challengeId,
-          file_url: data.file_url
-        })
+        body: formData
+        // NE DODAJ headers - FormData automatski postavlja Content-Type
       });
 
-      const updateData = await updateResponse.json();
-      console.log("🔄 Challenge update response:", updateData);
-      
-      if (updateData.success) {
-        setMessage("✅ File uploaded successfully!");
-        loadChallenges(); // Refresh the challenges list
-        return Promise.resolve();
-      } else {
-        throw new Error('Failed to update challenge: ' + updateData.message);
+      console.log("📥 Response status:", response.status);
+      console.log("📥 Response headers:", response.headers);
+
+      const responseText = await response.text();
+      console.log("📥 Raw response:", responseText);
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error("❌ Failed to parse JSON response:", e);
+        throw new Error('Invalid response from server');
       }
-    } else {
-      throw new Error(data.message || 'Upload failed');
+
+      console.log("📄 Parsed response data:", data);
+
+      if (data.success) {
+        console.log("✅ File uploaded successfully! File URL:", data.file_url);
+        
+        // Update challenge with the new file URL
+        console.log("🔄 Updating challenge with file URL...");
+        
+        const updateResponse = await fetch('http://localhost/CyberEdu/Backend/admin/update_challenge.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: challengeId,
+            file_url: data.file_url
+          })
+        });
+
+        const updateData = await updateResponse.json();
+        console.log("🔄 Challenge update response:", updateData);
+        
+        if (updateData.success) {
+          setMessage("✅ File uploaded successfully!");
+          loadChallenges(); // Refresh the challenges list
+          return Promise.resolve();
+        } else {
+          throw new Error('Failed to update challenge: ' + updateData.message);
+        }
+      } else {
+        throw new Error(data.message || 'Upload failed');
+      }
+    } catch (error) {
+      console.error('❌ File upload error:', error);
+      setMessage(`❌ Upload failed: ${error.message}`);
+      return Promise.reject(error);
     }
-  } catch (error) {
-    console.error('❌ File upload error:', error);
-    setMessage(`❌ Upload failed: ${error.message}`);
-    return Promise.reject(error);
-  }
-};
+  };
 
   // Clear message after 3 seconds
   useEffect(() => {
@@ -453,18 +457,24 @@ const loadChallenges = async () => {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex space-x-1 mb-6 p-1 bg-muted rounded-lg">
-          {["users", "challenges", "content", "settings"].map((tab) => (
+        <div className="flex space-x-1 mb-6 p-1 bg-muted rounded-lg overflow-x-auto">
+          {[
+            { id: "users", label: "Users" },
+            { id: "challenges", label: "Challenges" },
+            { id: "wiki", label: "Wiki" },
+            { id: "content", label: "Content" },
+            { id: "settings", label: "Settings" }
+          ].map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors capitalize ${
-                activeTab === tab 
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-shrink-0 py-2 px-4 rounded-md text-sm font-medium transition-colors capitalize ${
+                activeTab === tab.id 
                   ? "bg-background text-foreground shadow-sm" 
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {tab}
+              {tab.label}
             </button>
           ))}
         </div>
@@ -479,18 +489,21 @@ const loadChallenges = async () => {
           />
         )}
 
-        // U return dijelu, u AdminChallenges komponenti:
-{activeTab === "challenges" && (
-  <AdminChallenges
-    challenges={challenges}
-    categories={categories}
-    onRefresh={loadChallenges}
-    onDeleteChallenge={handleDeleteChallenge}
-    onCreateChallenge={handleCreateChallenge}
-    onUpdateChallenge={handleUpdateChallenge}
-    onFileUpload={handleFileUpload}  // OVO JE KLJUČNO
-  />
-)}
+        {activeTab === "challenges" && (
+          <AdminChallenges
+            challenges={challenges}
+            categories={categories}
+            onRefresh={loadChallenges}
+            onDeleteChallenge={handleDeleteChallenge}
+            onCreateChallenge={handleCreateChallenge}
+            onUpdateChallenge={handleUpdateChallenge}
+            onFileUpload={handleFileUpload}
+          />
+        )}
+
+        {activeTab === "wiki" && (
+          <AdminWiki />
+        )}
 
         {activeTab === "content" && <AdminContent />}
         {activeTab === "settings" && <AdminSettings />}

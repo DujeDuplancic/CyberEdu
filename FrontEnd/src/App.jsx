@@ -7,11 +7,12 @@ import Register from "./Register/Register";
 import Contact from "./Contact/Contact";
 import Admin from "./Admin/Admin";
 import Wiki from "./Wiki/Wiki";
+import WikiCategory from "./Wiki/WikiCategory";  // DODAJ
+import WikiArticle from "./Wiki/WikiArticle";    // DODAJ
 import CTFPage from "./CTF/Ctf";
 import Community from "./Community/Community";
 import Lectures from "./Lectures/Lectures";
 import AboutPage from "./About/About"
-
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/leaderboard" element={<Leaderboard/>} />
         <Route path="/wiki" element={<Wiki/>} />
+        <Route path="/wiki/:category" element={<WikiCategory/>} />      {/* DODAJ */}
+        <Route path="/wiki/:category/:articleSlug" element={<WikiArticle/>} /> {/* DODAJ */}
         <Route path="/community" element={<Community/>} />
         <Route path="/profile" element={<Profile/>} />
         <Route path="/admin" element={<Admin/>} />
