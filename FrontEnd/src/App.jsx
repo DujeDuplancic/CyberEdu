@@ -14,6 +14,8 @@ import Community from "./Community/Community";
 import Lectures from "./Lectures/Lectures";
 import LectureDetail from "./Lectures/LectureDetail"; // DODAJ OVO
 import AboutPage from "./About/About"
+import DiscussionDetail from './Community/DiscussionDetail';
+import CreateDiscussion from './Community/CreateDiscussion';
 
 function App() {
   return (
@@ -28,13 +30,15 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/leaderboard" element={<Leaderboard/>} />
-        <Route path="/wiki" element={<Wiki/>} />
-        <Route path="/wiki/:category" element={<WikiCategory/>} />
-        <Route path="/wiki/:category/:articleSlug" element={<WikiArticle/>} />
-        <Route path="/community" element={<Community/>} />
-        <Route path="/profile" element={<Profile/>} />
-        <Route path="/admin" element={<Admin/>} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/wiki" element={<Wiki />} />
+        <Route path="/wiki/:category" element={<WikiCategory />} />
+        <Route path="/wiki/:category/:articleSlug" element={<WikiArticle />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/community/discussion/:id" element={<DiscussionDetail />} />
+        <Route path="/community/new" element={<CreateDiscussion />} />
       </Routes>
     </Router>
   )

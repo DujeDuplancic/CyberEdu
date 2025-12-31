@@ -194,7 +194,38 @@
             "created_at": "2025-11-23 18:20:23"
         }
     ],
-    "discussions": [],
+    "discussions": [
+        {
+            "id": 1,
+            "title": "dsdsgds",
+            "content": "sgddsgdsg",
+            "author_id": 1,
+            "category": "General",
+            "is_pinned": 0,
+            "views": 10,
+            "created_at": "2025-12-31 01:26:15"
+        },
+        {
+            "id": 2,
+            "title": "afasfafsfsa",
+            "content": "fsaasfasfsfasfa",
+            "author_id": 2,
+            "category": "General",
+            "is_pinned": 0,
+            "views": 10,
+            "created_at": "2025-12-31 01:53:08"
+        },
+        {
+            "id": 3,
+            "title": "Jel",
+            "content": "je",
+            "author_id": 2,
+            "category": "General",
+            "is_pinned": 0,
+            "views": 5,
+            "created_at": "2025-12-31 01:58:14"
+        }
+    ],
     "leaderboard_entries": [],
     "leaderboard_snapshots": [],
     "lectures": [
@@ -209,14 +240,36 @@
             "video_url": "https:\/\/youtu.be\/lYvijnPI1Rg?si=aUcEyGBvBEt3XFyE",
             "embed_url": "https:\/\/www.youtube.com\/embed\/lYvijnPI1Rg?rel=0",
             "thumbnail_url": "https:\/\/img.youtube.com\/vi\/lYvijnPI1Rg\/hqdefault.jpg",
-            "views": 6,
+            "views": 10,
             "is_published": 1,
             "author_id": 2,
             "created_at": "2025-12-28 23:37:58",
-            "updated_at": "2025-12-28 23:43:11"
+            "updated_at": "2025-12-31 02:07:45"
         }
     ],
-    "replies": [],
+    "replies": [
+        {
+            "id": 1,
+            "discussion_id": 2,
+            "author_id": 1,
+            "content": "sgsdgdsgdgs",
+            "created_at": "2025-12-31 01:56:13"
+        },
+        {
+            "id": 2,
+            "discussion_id": 2,
+            "author_id": 2,
+            "content": "ffddffdgfdgfg",
+            "created_at": "2025-12-31 01:57:35"
+        },
+        {
+            "id": 3,
+            "discussion_id": 3,
+            "author_id": 2,
+            "content": "je",
+            "created_at": "2025-12-31 01:58:20"
+        }
+    ],
     "solves": [
         {
             "id": 1,
