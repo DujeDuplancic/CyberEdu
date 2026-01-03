@@ -12,35 +12,40 @@ import WikiArticle from "./Wiki/WikiArticle";
 import CTFPage from "./CTF/Ctf";
 import Community from "./Community/Community";
 import Lectures from "./Lectures/Lectures";
-import LectureDetail from "./Lectures/LectureDetail"; // DODAJ OVO
+import LectureDetail from "./Lectures/LectureDetail";
 import AboutPage from "./About/About"
 import DiscussionDetail from './Community/DiscussionDetail';
 import CreateDiscussion from './Community/CreateDiscussion';
+import AchievementsPage from './Achievements/AchievementsPage';
+import { NotificationProvider } from './contexts/NotificationContext'; // DODAJ OVO
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/ctf" element={<CTFPage />} />
-        <Route path="/ctf/:category" element={<CTFPage />} />
-        <Route path="/lectures" element={<Lectures />} />
-        <Route path="/lectures/:id" element={<LectureDetail />} /> {/* DODAJ OVO */}
-        <Route path="/register" element={<Register />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/wiki" element={<Wiki />} />
-        <Route path="/wiki/:category" element={<WikiCategory />} />
-        <Route path="/wiki/:category/:articleSlug" element={<WikiArticle />} />
-        <Route path="/community" element={<Community />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/community/discussion/:id" element={<DiscussionDetail />} />
-        <Route path="/community/new" element={<CreateDiscussion />} />
-      </Routes>
-    </Router>
+    <NotificationProvider> 
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/ctf" element={<CTFPage />} />
+          <Route path="/ctf/:category" element={<CTFPage />} />
+          <Route path="/lectures" element={<Lectures />} />
+          <Route path="/lectures/:id" element={<LectureDetail />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/wiki" element={<Wiki />} />
+          <Route path="/wiki/:category" element={<WikiCategory />} />
+          <Route path="/wiki/:category/:articleSlug" element={<WikiArticle />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/achievements" element={<AchievementsPage />} />
+          <Route path="/community/discussion/:id" element={<DiscussionDetail />} />
+          <Route path="/community/new" element={<CreateDiscussion />} />
+        </Routes>
+      </Router>
+    </NotificationProvider>
   )
 }
 

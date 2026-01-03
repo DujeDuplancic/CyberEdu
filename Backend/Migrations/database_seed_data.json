@@ -187,11 +187,37 @@
             "category_id": 3,
             "difficulty": "Easy",
             "points": 20,
-            "flag": "$2y$10$EuTWRTASW3AeyFJQkuKHCuQcBCW.lSoJuuWHtnEfOJd\/CSZnuwNie",
+            "flag": "$2y$10$vug\/KtQ3anc6XupWFJZJeelSQy4\/wjH1t6f6QQREE1qq9PmknCAiy",
             "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_10_sifra_1763918430.txt",
             "created_by": 1,
             "is_active": 1,
             "created_at": "2025-11-23 18:20:23"
+        },
+        {
+            "id": 11,
+            "title": "rasprseni podaci",
+            "description": "test\n\nserver: http:\/\/chal.platforma.hacknite.hr:7067",
+            "category_id": 5,
+            "difficulty": "Easy",
+            "points": 40,
+            "flag": "$2y$10$8rupQ8w9G98dJAYYTHxdAuKJWz4rRHO.16NYbkvpSYgeEe9N5j3qa",
+            "file_url": null,
+            "created_by": 2,
+            "is_active": 1,
+            "created_at": "2026-01-02 23:01:42"
+        },
+        {
+            "id": 12,
+            "title": "test",
+            "description": "achivmenti",
+            "category_id": 2,
+            "difficulty": "Easy",
+            "points": 1000,
+            "flag": "$2y$10$kp5UkAXmoaod53fiQurCseraLVISNfE5AOnh6lNi\/6y2U3JZwfm7i",
+            "file_url": null,
+            "created_by": 1,
+            "is_active": 1,
+            "created_at": "2026-01-02 23:51:12"
         }
     ],
     "discussions": [
@@ -222,7 +248,7 @@
             "author_id": 2,
             "category": "General",
             "is_pinned": 0,
-            "views": 5,
+            "views": 7,
             "created_at": "2025-12-31 01:58:14"
         }
     ],
@@ -240,11 +266,11 @@
             "video_url": "https:\/\/youtu.be\/lYvijnPI1Rg?si=aUcEyGBvBEt3XFyE",
             "embed_url": "https:\/\/www.youtube.com\/embed\/lYvijnPI1Rg?rel=0",
             "thumbnail_url": "https:\/\/img.youtube.com\/vi\/lYvijnPI1Rg\/hqdefault.jpg",
-            "views": 10,
+            "views": 12,
             "is_published": 1,
             "author_id": 2,
             "created_at": "2025-12-28 23:37:58",
-            "updated_at": "2025-12-31 02:07:45"
+            "updated_at": "2026-01-02 23:04:26"
         }
     ],
     "replies": [
@@ -276,9 +302,100 @@
             "user_id": 1,
             "challenge_id": 10,
             "solved_at": "2025-11-23 18:31:47"
+        },
+        {
+            "id": 2,
+            "user_id": 2,
+            "challenge_id": 11,
+            "solved_at": "2026-01-02 23:02:40"
+        },
+        {
+            "id": 3,
+            "user_id": 2,
+            "challenge_id": 10,
+            "solved_at": "2026-01-02 23:03:39"
+        },
+        {
+            "id": 4,
+            "user_id": 1,
+            "challenge_id": 11,
+            "solved_at": "2026-01-02 23:31:46"
+        },
+        {
+            "id": 5,
+            "user_id": 1,
+            "challenge_id": 12,
+            "solved_at": "2026-01-02 23:51:24"
+        },
+        {
+            "id": 6,
+            "user_id": 7,
+            "challenge_id": 10,
+            "solved_at": "2026-01-03 00:33:33"
+        },
+        {
+            "id": 7,
+            "user_id": 7,
+            "challenge_id": 11,
+            "solved_at": "2026-01-03 00:34:03"
+        },
+        {
+            "id": 8,
+            "user_id": 8,
+            "challenge_id": 10,
+            "solved_at": "2026-01-03 00:38:23"
+        },
+        {
+            "id": 9,
+            "user_id": 8,
+            "challenge_id": 11,
+            "solved_at": "2026-01-03 00:42:37"
+        },
+        {
+            "id": 10,
+            "user_id": 9,
+            "challenge_id": 10,
+            "solved_at": "2026-01-03 00:46:42"
+        },
+        {
+            "id": 11,
+            "user_id": 9,
+            "challenge_id": 11,
+            "solved_at": "2026-01-03 01:01:50"
         }
     ],
-    "user_achievements": [],
+    "user_achievements": [
+        {
+            "id": 1,
+            "user_id": 1,
+            "achievement_id": 1,
+            "unlocked_at": "2026-01-02 23:51:24"
+        },
+        {
+            "id": 2,
+            "user_id": 1,
+            "achievement_id": 5,
+            "unlocked_at": "2026-01-02 23:51:24"
+        },
+        {
+            "id": 3,
+            "user_id": 7,
+            "achievement_id": 1,
+            "unlocked_at": "2026-01-03 00:33:33"
+        },
+        {
+            "id": 4,
+            "user_id": 8,
+            "achievement_id": 1,
+            "unlocked_at": "2026-01-03 00:38:23"
+        },
+        {
+            "id": 5,
+            "user_id": 9,
+            "achievement_id": 1,
+            "unlocked_at": "2026-01-03 00:46:42"
+        }
+    ],
     "users": [
         {
             "id": 1,
@@ -286,7 +403,7 @@
             "email": "duje.duplancic03@gmail.com",
             "password_hash": "$2y$10$VD0cWQrDPszAm99IPJ7o2OMiUak0EkjYMxTFdi7uqjZ6zgHYq0fma",
             "avatar_url": null,
-            "points": 20,
+            "points": 1260,
             "rank": 0,
             "created_at": "2025-11-23 16:15:34",
             "is_admin": 1
@@ -297,7 +414,7 @@
             "email": "duple.duplamcic@gmail.com",
             "password_hash": "$2y$10$8ffhc2xSp5Q7DAG9YgHdYuJa8IzN3HvaKa4CIcSjrh9wLZKI4YsKy",
             "avatar_url": null,
-            "points": 0,
+            "points": 60,
             "rank": 0,
             "created_at": "2025-11-23 16:36:37",
             "is_admin": 1
@@ -344,6 +461,39 @@
             "points": 0,
             "rank": 0,
             "created_at": "2025-12-01 23:17:40",
+            "is_admin": 0
+        },
+        {
+            "id": 7,
+            "username": "blabla",
+            "email": "duje.duplancic@gmail.com",
+            "password_hash": "$2y$10$5RsExP\/3PO5vjvzm5vVLueQ7d2xIiuKzCNtsUFROMpWpAhOLbN0e2",
+            "avatar_url": null,
+            "points": 110,
+            "rank": 0,
+            "created_at": "2026-01-03 00:08:51",
+            "is_admin": 0
+        },
+        {
+            "id": 8,
+            "username": "duje.duplanci@gmail.com",
+            "email": "duje.duplanci@gmail.com",
+            "password_hash": "$2y$10$Ewf54yaF.VBY8rNKewwPZegf\/xxVPfQqCYr564\/xTyfwedjrJ0Kfi",
+            "avatar_url": null,
+            "points": 110,
+            "rank": 0,
+            "created_at": "2026-01-03 00:37:47",
+            "is_admin": 0
+        },
+        {
+            "id": 9,
+            "username": "duje@gmail.com",
+            "email": "duje@gmail.com",
+            "password_hash": "$2y$10$aIboR\/MNKta17\/iOOEVJvutO90Mj.ABzfr8ZD7uIOlCeUjDjmalYC",
+            "avatar_url": null,
+            "points": 110,
+            "rank": 0,
+            "created_at": "2026-01-03 00:45:20",
             "is_admin": 0
         }
     ],

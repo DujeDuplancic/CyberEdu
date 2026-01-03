@@ -2,23 +2,24 @@ import { Header } from "../Components/Header"
 import { Footer } from "../Components/Footer"
 import { Card, CardContent, CardHeader, CardTitle } from "../Components/ui/card"
 import { Button } from "../Components/ui/button"
-import { Users, Flag, BookOpen, MessageSquare, FileText } from "lucide-react"
+import { Users, Flag, BookOpen, FileText, Trophy } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
 // Import komponenti
 import AdminUsers from "./AdminUsers"
 import AdminChallenges from "./AdminChallenges"
-import AdminWiki from "./Components/AdminWiki"  // DODAJ OVO
+import AdminWiki from "./Components/AdminWiki"
 import AdminContent from "./AdminContent"
-import AdminSettings from "./AdminSettings"
+import AdminAchievements from "./AdminAchievements"
 
 export default function AdminPage() {
   const [stats, setStats] = useState([
     { label: "Total Users", value: "0", icon: Users, change: "+0%" },
     { label: "Active Challenges", value: "0", icon: Flag, change: "+0" },
     { label: "Total Lectures", value: "0", icon: BookOpen, change: "+0" },
-    { label: "Wiki Articles", value: "0", icon: FileText, change: "+0" },  // PROMIJENJENO
+    { label: "Wiki Articles", value: "0", icon: FileText, change: "+0" },
+    { label: "Achievements", value: "0", icon: Trophy, change: "+0" },
   ])
   const [users, setUsers] = useState([])
   const [challenges, setChallenges] = useState([])
@@ -86,12 +87,14 @@ export default function AdminPage() {
       if (data.success) {
         // Dodaj Wiki statistiku ako postoji
         const wikiCount = data.stats.wiki_articles || 0;
+        const achievementsCount = data.stats.total_achievements || 0;
         
         setStats([
           { label: "Total Users", value: data.stats.total_users.toString(), icon: Users, change: "+12%" },
           { label: "Active Challenges", value: data.stats.total_challenges.toString(), icon: Flag, change: "+3" },
           { label: "Total Lectures", value: data.stats.total_lectures.toString(), icon: BookOpen, change: "+2" },
           { label: "Wiki Articles", value: wikiCount.toString(), icon: FileText, change: "+5" },
+          { label: "Achievements", value: achievementsCount.toString(), icon: Trophy, change: "+2" },
         ])
       }
     } catch (error) {
@@ -441,7 +444,7 @@ export default function AdminPage() {
         )}
 
         {/* Statistics Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5 mb-8">
           {stats.map((stat) => (
             <Card key={stat.label}>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -461,9 +464,10 @@ export default function AdminPage() {
           {[
             { id: "users", label: "Users" },
             { id: "challenges", label: "Challenges" },
+            { id: "achievements", label: "Achievements" },
             { id: "wiki", label: "Wiki" },
-            { id: "content", label: "Content" },
-            { id: "settings", label: "Settings" }
+            { id: "content", label: "Content" }
+            // Uklonio sam "settings" jer ne postoji komponenta
           ].map((tab) => (
             <button
               key={tab.id}
@@ -501,12 +505,16 @@ export default function AdminPage() {
           />
         )}
 
+        {activeTab === "achievements" && (
+          <AdminAchievements />
+        )}
+
         {activeTab === "wiki" && (
           <AdminWiki />
         )}
 
         {activeTab === "content" && <AdminContent />}
-        {activeTab === "settings" && <AdminSettings />}
+        
       </main>
 
       <Footer />

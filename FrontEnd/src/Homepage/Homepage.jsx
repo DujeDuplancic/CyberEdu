@@ -1,51 +1,63 @@
+import { useState, useEffect } from 'react';
 import { Header } from "../Components/Header"
 import { Footer } from "../Components/Footer"
 import { Button } from "../Components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Components/ui/card"
 import { Badge } from "../Components/ui/badge"
-import { Lock, Code, Key, ImageIcon, Globe, Trophy, Users, BookOpen, ChevronRight } from "lucide-react"
+import { Lock, Code, Key, ImageIcon, Globe, Trophy, Users, BookOpen, ChevronRight, Search, Smartphone } from "lucide-react"
 import { Link } from "react-router-dom"
 import cyberSecHacker from '../public/cybersecurity-hacker-terminal-dark-theme-code.jpg'
 import cyberSecCodeEditor from '../public/cybersecurity-code-editor-terminal-hacking.jpg'
+import { api } from '../lib/api';
+
+// Icon mapping object
+const iconComponents = {
+  Code,
+  Lock,
+  Key,
+  ImageIcon,
+  Globe,
+  Search,
+  Smartphone,
+  Trophy,
+  Users,
+  BookOpen
+};
 
 export default function HomePage() {
-  const categories = [
-    {
-      icon: Code,
-      name: "Reverse Engineering",
-      description: "Disassemble and analyze binary code to understand program behavior and find vulnerabilities.",
-      challenges: 24,
-      color: "text-chart-1",
-    },
-    {
-      icon: Lock,
-      name: "Binary Exploitation",
-      description: "Master buffer overflows, ROP chains, and memory corruption techniques.",
-      challenges: 18,
-      color: "text-chart-2",
-    },
-    {
-      icon: Key,
-      name: "Cryptography",
-      description: "Break encryption schemes, analyze hashing algorithms, and master cryptographic protocols.",
-      challenges: 32,
-      color: "text-chart-3",
-    },
-    {
-      icon: ImageIcon,
-      name: "Steganography",
-      description: "Uncover hidden messages in images, audio files, and other digital media.",
-      challenges: 15,
-      color: "text-chart-4",
-    },
-    {
-      icon: Globe,
-      name: "Web Security",
-      description: "Exploit web vulnerabilities including XSS, SQLi, CSRF, and authentication bypasses.",
-      challenges: 28,
-      color: "text-chart-5",
-    },
-  ]
+  const [stats, setStats] = useState({
+    activeChallenges: 117,
+    activeUsers: 2500,
+    videoLectures: 45,
+    flagsCaptured: 8200
+  });
+  
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchHomepageData();
+  }, []);
+
+  const fetchHomepageData = async () => {
+    try {
+      // Fetch stats
+      const statsResponse = await api.get('/homepage/get_stats.php');
+      if (statsResponse.success) {
+        setStats(statsResponse.stats);
+      }
+      
+      // Fetch categories
+      const categoriesResponse = await api.get('/homepage/get_categories.php');
+      if (categoriesResponse.success) {
+        setCategories(categoriesResponse.categories);
+      }
+    } catch (error) {
+      console.error('Error fetching homepage data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const features = [
     {
@@ -64,6 +76,14 @@ export default function HomePage() {
       description: "Join discussions, share writeups, and collaborate with peers.",
     },
   ]
+
+  // Format large numbers
+  const formatNumber = (num) => {
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1) + 'k+';
+    }
+    return num.toString();
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -111,32 +131,41 @@ export default function HomePage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Challenge Categories</h2>
               <p className="text-lg text-muted-foreground text-balance">
-                Master five core cybersecurity domains through progressive challenges
+                Master core cybersecurity domains through progressive challenges
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {categories.map((category) => (
-                <Card key={category.name} className="group hover:border-primary/50 transition-all duration-300">
-                  <CardHeader>
-                    <category.icon className={`h-12 w-12 mb-4 ${category.color}`} />
-                    <CardTitle className="flex items-center justify-between">
-                      {category.name}
-                      <Badge variant="secondary">{category.challenges}</Badge>
-                    </CardTitle>
-                    <CardDescription className="leading-relaxed">{category.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Link
-                      to={`/ctf/${category.name.toLowerCase().replace(/\s+/g, "-")}`}
-                      className="text-sm font-medium text-primary flex items-center gap-1 group-hover:gap-2 transition-all"
-                    >
-                      View Challenges <ChevronRight className="h-4 w-4" />
-                    </Link>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {categories.map((category) => {
+                  const IconComponent = iconComponents[category.icon] || Code;
+                  return (
+                    <Card key={category.name} className="group hover:border-primary/50 transition-all duration-300">
+                      <CardHeader>
+                        <IconComponent className={`h-12 w-12 mb-4 ${category.color}`} />
+                        <CardTitle className="flex items-center justify-between">
+                          {category.name}
+                          <Badge variant="secondary">{category.challenge_count || 0}</Badge>
+                        </CardTitle>
+                        <CardDescription className="leading-relaxed">{category.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Link
+                          to={`/ctf?category=${encodeURIComponent(category.name)}`}
+                          className="text-sm font-medium text-primary flex items-center gap-1 group-hover:gap-2 transition-all"
+                        >
+                          View Challenges <ChevronRight className="h-4 w-4" />
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
 
@@ -193,19 +222,27 @@ export default function HomePage() {
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div>
-                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">117</div>
+                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
+                  {loading ? '...' : formatNumber(stats.activeChallenges)}
+                </div>
                 <div className="text-sm text-muted-foreground">Active Challenges</div>
               </div>
               <div>
-                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">2.5k+</div>
+                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
+                  {loading ? '...' : formatNumber(stats.activeUsers)}
+                </div>
                 <div className="text-sm text-muted-foreground">Active Users</div>
               </div>
               <div>
-                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">45+</div>
+                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
+                  {loading ? '...' : formatNumber(stats.videoLectures)}
+                </div>
                 <div className="text-sm text-muted-foreground">Video Lectures</div>
               </div>
               <div>
-                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">8.2k+</div>
+                <div className="text-4xl md:text-5xl font-bold text-primary mb-2">
+                  {loading ? '...' : formatNumber(stats.flagsCaptured)}
+                </div>
                 <div className="text-sm text-muted-foreground">Flags Captured</div>
               </div>
             </div>

@@ -4,11 +4,11 @@ export const api = {
   async get(endpoint) {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'GET',
-      credentials: 'include', // OVO JE KLJUČNO!
+      credentials: 'include',
       headers: {
         'Accept': 'application/json',
       },
-      mode: 'cors' // Dodaj ovo
+      mode: 'cors'
     });
     
     if (!response.ok) {
@@ -26,8 +26,47 @@ export const api = {
         'Accept': 'application/json'
       },
       body: JSON.stringify(data),
-      credentials: 'include', // OVO JE KLJUČNO!
-      mode: 'cors' // Dodaj ovo
+      credentials: 'include',
+      mode: 'cors'
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  },
+
+  // DODAJ OVE DVIJE METODE:
+  async put(endpoint, data) {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(data),
+      credentials: 'include',
+      mode: 'cors'
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  },
+
+  async delete(endpoint) {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json'
+      },
+      credentials: 'include',
+      mode: 'cors'
     });
     
     if (!response.ok) {

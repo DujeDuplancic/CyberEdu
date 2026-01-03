@@ -7,7 +7,7 @@ header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
-
+header("Access-Control-Allow-Credentials: true");
 
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
@@ -24,19 +24,16 @@ class Leaderboard {
             $database = new Database();
             $this->db = $database->getConnection();
             
-            // Proveri da li je konekcija uspostavljena
             if ($this->db === false || $this->db === null) {
                 throw new Exception("Database connection failed");
             }
         } catch (Exception $e) {
-            // Postavi db na null umesto da baci izuzetak
             error_log("Leaderboard constructor error: " . $e->getMessage());
             $this->db = null;
         }
     }
 
     public function getLeaderboard($category_id = null) {
-        // Proveri prvo da li postoji konekcija
         if ($this->db === null) {
             return [
                 'success' => false, 
@@ -45,27 +42,54 @@ class Leaderboard {
         }
         
         try {
-            // Query koji uključuje SVE korisnike, čak i one sa 0 bodova
-            $query = "
-                SELECT 
-                    u.id,
-                    u.username,
-                    u.avatar_url as profile_image,
-                    u.points as total_points,
-                    IFNULL(s.solves_count, 0) as total_solves
-                FROM users u
-                LEFT JOIN (
-                    SELECT user_id, COUNT(*) as solves_count 
-                    FROM solves 
-                    GROUP BY user_id
-                ) s ON u.id = s.user_id
-                ORDER BY u.points DESC, s.solves_count DESC, u.username ASC
-            ";
+            // DEBUG: Log the category_id
+            error_log("Category ID received: " . ($category_id ? $category_id : 'null'));
             
-            $stmt = $this->db->prepare($query);
-            $stmt->execute();
+            if ($category_id && $category_id > 0) {
+                // Leaderboard FOR SPECIFIC CATEGORY
+                $query = "
+                    SELECT 
+                        u.id,
+                        u.username,
+                        u.avatar_url as profile_image,
+                        COALESCE(SUM(c.points), 0) as total_points,
+                        COUNT(DISTINCT s.challenge_id) as total_solves
+                    FROM users u
+                    INNER JOIN solves s ON u.id = s.user_id
+                    INNER JOIN challenges c ON s.challenge_id = c.id
+                    WHERE c.category_id = :category_id
+                    GROUP BY u.id
+                    ORDER BY total_points DESC, total_solves DESC, u.username ASC
+                ";
+                
+                $stmt = $this->db->prepare($query);
+                $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
+                $stmt->execute();
+            } else {
+                // Global leaderboard (all categories)
+                $query = "
+                    SELECT 
+                        u.id,
+                        u.username,
+                        u.avatar_url as profile_image,
+                        u.points as total_points,
+                        IFNULL(s.solves_count, 0) as total_solves
+                    FROM users u
+                    LEFT JOIN (
+                        SELECT user_id, COUNT(*) as solves_count 
+                        FROM solves 
+                        GROUP BY user_id
+                    ) s ON u.id = s.user_id
+                    ORDER BY u.points DESC, s.solves_count DESC, u.username ASC
+                ";
+                
+                $stmt = $this->db->prepare($query);
+                $stmt->execute();
+            }
+            
             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
+            // Add rank
             $rank = 1;
             foreach ($users as &$user) {
                 $user['rank'] = $rank++;
@@ -77,24 +101,43 @@ class Leaderboard {
             return [
                 'success' => true, 
                 'leaderboard' => $users,
-                'total_users' => count($users)
+                'total_users' => count($users),
+                'category_id' => $category_id,
+                'filtered' => ($category_id && $category_id > 0) ? true : false
             ];
             
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => $e->getMessage()];
+            error_log("Leaderboard error: " . $e->getMessage());
+            return [
+                'success' => false, 
+                'message' => 'Database error: ' . $e->getMessage()
+            ];
         }
     }
 }
 
 // Handle GET request
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    // FIX: Use $_GET['category_id'] not $_GET['GET']
     $category_id = isset($_GET['category_id']) ? intval($_GET['category_id']) : null;
+    
+    error_log("GET parameter category_id: " . ($category_id ? $category_id : 'null'));
     
     $leaderboard = new Leaderboard();
     $result = $leaderboard->getLeaderboard($category_id);
+    
+    // Add debug info
+    $result['debug'] = [
+        'category_id_received' => $category_id,
+        'timestamp' => date('Y-m-d H:i:s')
+    ];
+    
     echo json_encode($result);
 } else {
     http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Samo GET metoda je dozvoljena']);
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Only GET method is allowed'
+    ]);
 }
 ?>

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Terminal, Menu, X } from "lucide-react"
+import { Terminal, Menu, X, Trophy } from "lucide-react"
 import { Button } from "./ui/button"
 import { useState, useEffect } from "react"
 
@@ -49,6 +49,14 @@ export function Header() {
           <Link to="/community" className="text-sm font-medium transition-colors hover:text-primary">
             Community
           </Link>
+          
+          {/* Achievements link - samo za prijavljene korisnike */}
+          {user && (
+            <Link to="/achievements" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+              <Trophy className="h-4 w-4" />
+              Achievements
+            </Link>
+          )}
           
           {/* Admin link - samo za prijavljene admin korisnike */}
           {user?.is_admin && (
@@ -131,6 +139,18 @@ export function Header() {
               >
                 Community
               </Link>
+              
+              {/* Achievements link - samo za prijavljene korisnike */}
+              {user && (
+                <Link 
+                  to="/achievements" 
+                  className="block text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Trophy className="h-4 w-4" />
+                  Achievements
+                </Link>
+              )}
               
               {/* Admin link - samo za prijavljene admin korisnike */}
               {user?.is_admin && (
