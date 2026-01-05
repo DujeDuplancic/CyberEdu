@@ -112,7 +112,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/wiki/web" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/wiki/web-security" className="text-muted-foreground hover:text-primary transition-colors">
                   Web Security
                 </Link>
               </li>

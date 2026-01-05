@@ -43,7 +43,7 @@ if (isset($data['user_id'])) {
 
 // Ako nema user_id, probaj sa default admin ID 1
 if ($userId === 0) {
-    $userId = 1; // Default admin ID
+    $userId = 3; // Default admin ID
 }
 
 // Dohvati konekciju za bazu
