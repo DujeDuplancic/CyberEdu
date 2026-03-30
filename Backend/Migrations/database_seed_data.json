@@ -88,7 +88,73 @@
             "icon_name": "Globe"
         }
     ],
-    "challenges": [],
+    "challenges": [
+        {
+            "id": 2,
+            "title": "Just a Logo?",
+            "description": "Ana started writing a document about the Hacknite competition, but all she managed to do was insert an image. Since the document is in PDF format, the position of the image remains fixed regardless of which computer the document is opened on.\nFlag format: CTF2022[numbers]",
+            "category_id": 4,
+            "difficulty": "Easy",
+            "points": 40,
+            "flag": "$2y$10$BzTuYB37FxBFcQ5y7ihksu.sf6cgDDngRBiyHWsQDzko.\/GRusmai",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_2_Hacknite_dokument-v1_1774910514.pdf",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-03-31 00:41:35"
+        },
+        {
+            "id": 3,
+            "title": "Screenshot",
+            "description": "Shortly after Ivica got his first job, he bragged on social media by posting a screenshot of his welcome email. Of course, he censored the sensitive data.\nFlag format: CTF2023[numbers]",
+            "category_id": 4,
+            "difficulty": "Medium",
+            "points": 60,
+            "flag": "$2y$10$0nVeZxxFbf0kWfTm7WFxwe5NPIEI6QTDxVF0A12DzcSsMzy.oyLiK",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_3_screenshot_1774910586.jpeg",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-03-31 00:42:43"
+        },
+        {
+            "id": 4,
+            "title": "Photoshop",
+            "description": "Hana wants to edit images in the future. Unfortunately, she is still a beginner and isn't quite sure how to edit images so they aren't completely black.\nFlag format: CTF2022[numbers]",
+            "category_id": 4,
+            "difficulty": "Hard",
+            "points": 100,
+            "flag": "$2y$10$aH7QjSydFWPI9WueHpFTau7w0aygxZeuQKfepsRlfMLAa66AtvsA2",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_4_black_1774910663.jpg",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-03-31 00:43:55"
+        },
+        {
+            "id": 5,
+            "title": "Birds",
+            "description": "Even the birds on the branch—or rather, in this audio recording—know the solution to this task. But are they truly birds, or is it something else entirely?\nFlag format: CTF2021[numbers]",
+            "category_id": 4,
+            "difficulty": "Hard",
+            "points": 200,
+            "flag": "$2y$10$Isr3pF4dcADxMng98CPxruM8cVK9LXjhjjL\/ch6lTykrIT0VcYY7G",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_5_ptice_1774910863.zip",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-03-31 00:47:04"
+        },
+        {
+            "id": 6,
+            "title": "Hidden Meaning",
+            "description": "They say a picture is worth a thousand words. It seems this image might just prove that point. Find the solution hidden inside this image.\nFlag format: CTF2021[numbers]",
+            "category_id": 4,
+            "difficulty": "Easy",
+            "points": 150,
+            "flag": "$2y$10$ErKgyg.0AZv8LlN8yfvIZOYQ4RJuwQPJB7gnipEU4ivMiIO256tJu",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_6_slika_1774911062.jpg",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-03-31 00:50:52"
+        }
+    ],
     "discussions": [
         {
             "id": 4,
@@ -107,8 +173,758 @@
             "author_id": 3,
             "category": "General",
             "is_pinned": 0,
-            "views": 9,
+            "views": 13,
             "created_at": "2026-01-04 23:09:45"
+        },
+        {
+            "id": 6,
+            "title": "OSCP Exam Tips 2026",
+            "content": "I am starting my OSCP journey. Any advice on the new Active Directory sets?",
+            "author_id": 35,
+            "category": "Questions",
+            "is_pinned": 1,
+            "views": 245,
+            "created_at": "2026-03-01 10:00:00"
+        },
+        {
+            "id": 7,
+            "title": "Wireshark filters for CTF",
+            "content": "What are your go-to filters when analyzing a massive pcapng file?",
+            "author_id": 38,
+            "category": "Forensics",
+            "is_pinned": 0,
+            "views": 89,
+            "created_at": "2026-03-02 11:30:00"
+        },
+        {
+            "id": 8,
+            "title": "Ghidra vs IDA Free",
+            "content": "Is it worth learning IDA if Ghidra already does 90% of the work for free?",
+            "author_id": 56,
+            "category": "Reverse Engineering",
+            "is_pinned": 0,
+            "views": 112,
+            "created_at": "2026-03-04 09:15:00"
+        },
+        {
+            "id": 9,
+            "title": "SQLi in GraphQL?",
+            "content": "Has anyone encountered SQL injection in GraphQL endpoints recently?",
+            "author_id": 43,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 67,
+            "created_at": "2026-03-05 14:20:00"
+        },
+        {
+            "id": 10,
+            "title": "Bypassing LSB Steganography",
+            "content": "Simple Python scripts for LSB extraction. Check my GitHub link.",
+            "author_id": 47,
+            "category": "Steganography",
+            "is_pinned": 0,
+            "views": 45,
+            "created_at": "2026-03-07 16:45:00"
+        },
+        {
+            "id": 11,
+            "title": "Buffer Overflow: JMP ESP",
+            "content": "Struggling with finding the right offset for the JMP ESP instruction.",
+            "author_id": 3,
+            "category": "Binary Exploitation",
+            "is_pinned": 0,
+            "views": 136,
+            "created_at": "2026-03-08 20:10:00"
+        },
+        {
+            "id": 12,
+            "title": "Hardware Hacking 101",
+            "content": "What tools do I need for basic UART\/JTAG exploitation?",
+            "author_id": 55,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 56,
+            "created_at": "2026-03-10 12:00:00"
+        },
+        {
+            "id": 13,
+            "title": "Latest Chrome 0-day",
+            "content": "Discussion about the recent sandbox escape vulnerability in V8.",
+            "author_id": 44,
+            "category": "Web Security",
+            "is_pinned": 1,
+            "views": 564,
+            "created_at": "2026-03-12 08:30:00"
+        },
+        {
+            "id": 14,
+            "title": "CTF Team Recruitment",
+            "content": "Our team \"NullByte\" is looking for a crypto specialist for the upcoming DEF CON.",
+            "author_id": 58,
+            "category": "General",
+            "is_pinned": 0,
+            "views": 230,
+            "created_at": "2026-03-14 11:00:00"
+        },
+        {
+            "id": 15,
+            "title": "Burp Suite Macros",
+            "content": "How to automate multi-step login bypass using Burp macros?",
+            "author_id": 53,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 78,
+            "created_at": "2026-03-15 15:55:00"
+        },
+        {
+            "id": 16,
+            "title": "Android APK Reversing",
+            "content": "Tips for bypassing SSL pinning on the latest Android versions.",
+            "author_id": 48,
+            "category": "Reverse Engineering",
+            "is_pinned": 0,
+            "views": 92,
+            "created_at": "2026-03-17 13:10:00"
+        },
+        {
+            "id": 17,
+            "title": "Docker Escape Techniques",
+            "content": "Exploring misconfigured sockets that lead to host access.",
+            "author_id": 37,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 147,
+            "created_at": "2026-03-18 17:40:00"
+        },
+        {
+            "id": 18,
+            "title": "The art of OSINT",
+            "content": "Advanced dorking techniques for finding leaked S3 buckets.",
+            "author_id": 41,
+            "category": "Forensics",
+            "is_pinned": 0,
+            "views": 112,
+            "created_at": "2026-03-20 10:25:00"
+        },
+        {
+            "id": 19,
+            "title": "Crypto: RSA Padding Oracles",
+            "content": "Can someone explain why PKCS#1 v1.5 is still being used?",
+            "author_id": 45,
+            "category": "Cryptography",
+            "is_pinned": 0,
+            "views": 54,
+            "created_at": "2026-03-22 09:05:00"
+        },
+        {
+            "id": 20,
+            "title": "Social Engineering in 2026",
+            "content": "Are AI-generated voice clones the new frontier for vishing?",
+            "author_id": 46,
+            "category": "General",
+            "is_pinned": 0,
+            "views": 310,
+            "created_at": "2026-03-23 18:50:00"
+        },
+        {
+            "id": 21,
+            "title": "CTF Writeup: HackTheBox \"Legacy\"",
+            "content": "Just finished this classic machine. The SMB exploit is still a great learning tool for beginners.",
+            "author_id": 40,
+            "category": "Writeups",
+            "is_pinned": 0,
+            "views": 156,
+            "created_at": "2026-03-25 10:00:00"
+        },
+        {
+            "id": 22,
+            "title": "Best Wi-Fi Hacking Adapters 2026",
+            "content": "Is the Alfa AWUS036ACM still the gold standard for packet injection on Kali?",
+            "author_id": 41,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 89,
+            "created_at": "2026-03-25 11:30:00"
+        },
+        {
+            "id": 23,
+            "title": "Post-Quantum Cryptography",
+            "content": "How worried should we be about Shor’s algorithm affecting our current RSA keys?",
+            "author_id": 45,
+            "category": "Cryptography",
+            "is_pinned": 1,
+            "views": 342,
+            "created_at": "2026-03-26 09:15:00"
+        },
+        {
+            "id": 24,
+            "title": "Nmap Stealth Scanning",
+            "content": "Does using -sT vs -sS actually make a difference against modern Next-Gen Firewalls?",
+            "author_id": 42,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 112,
+            "created_at": "2026-03-26 14:20:00"
+        },
+        {
+            "id": 25,
+            "title": "Bypassing 2FA via Session Hijacking",
+            "content": "Exploring how AitM (Adversary-in-the-Middle) frameworks like Evilginx3 work.",
+            "author_id": 43,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 267,
+            "created_at": "2026-03-27 16:45:00"
+        },
+        {
+            "id": 26,
+            "title": "Malware Analysis: Emotet Variant",
+            "content": "Analyzing a new macro-based downloader found in the wild yesterday.",
+            "author_id": 49,
+            "category": "Forensics",
+            "is_pinned": 0,
+            "views": 134,
+            "created_at": "2026-03-27 20:10:00"
+        },
+        {
+            "id": 27,
+            "title": "Linux Privilege Escalation via SUID",
+            "content": "Always check for custom scripts in \/usr\/local\/bin with the SUID bit set!",
+            "author_id": 37,
+            "category": "Binary Exploitation",
+            "is_pinned": 0,
+            "views": 198,
+            "created_at": "2026-03-28 12:00:00"
+        },
+        {
+            "id": 28,
+            "title": "AI in Cybersecurity",
+            "content": "Will LLMs replace human pentesters or just make our reporting faster?",
+            "author_id": 35,
+            "category": "General",
+            "is_pinned": 0,
+            "views": 450,
+            "created_at": "2026-03-28 15:30:00"
+        },
+        {
+            "id": 29,
+            "title": "Breaking WPA3 with Hashcat",
+            "content": "Has anyone successfully cracked a WPA3-SAE handshake recently?",
+            "author_id": 51,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 88,
+            "created_at": "2026-03-29 11:00:00"
+        },
+        {
+            "id": 30,
+            "title": "Proxmox for Pentest Lab",
+            "content": "Setting up a vulnerable network with PfSense and Kali as a gateway.",
+            "author_id": 50,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 78,
+            "created_at": "2026-03-29 15:55:00"
+        },
+        {
+            "id": 31,
+            "title": "Advanced SQLi: Out-of-Band (OOB)",
+            "content": "Using DNS exfiltration to get data when the page doesnt return any errors.",
+            "author_id": 43,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 142,
+            "created_at": "2026-03-31 08:00:00"
+        },
+        {
+            "id": 32,
+            "title": "Metasploit vs Custom Scripts",
+            "content": "Is Metasploit making us \"script kiddies\"? Discuss.",
+            "author_id": 40,
+            "category": "General",
+            "is_pinned": 0,
+            "views": 89,
+            "created_at": "2026-03-31 08:15:00"
+        },
+        {
+            "id": 33,
+            "title": "Zero Logon (CVE-2020-1472) in 2026",
+            "content": "Why are we still finding unpatched Domain Controllers in internal audits?",
+            "author_id": 37,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 210,
+            "created_at": "2026-03-31 08:30:00"
+        },
+        {
+            "id": 34,
+            "title": "Introduction to Ghidra Scripting",
+            "content": "How to automate function renaming using Python in Ghidra.",
+            "author_id": 56,
+            "category": "Reverse Engineering",
+            "is_pinned": 0,
+            "views": 67,
+            "created_at": "2026-03-31 08:45:00"
+        },
+        {
+            "id": 35,
+            "title": "IoT Botnets: The Mirai Legacy",
+            "content": "Analyzing how modern IoT malware evolved from the original Mirai source code.",
+            "author_id": 55,
+            "category": "Forensics",
+            "is_pinned": 0,
+            "views": 156,
+            "created_at": "2026-03-31 09:00:00"
+        },
+        {
+            "id": 36,
+            "title": "Exploiting Insecure Deserialization",
+            "content": "A deep dive into Java Ysoserial and how to build custom payloads.",
+            "author_id": 43,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 92,
+            "created_at": "2026-03-31 09:15:00"
+        },
+        {
+            "id": 37,
+            "title": "Bypassing Modern EDRs",
+            "content": "Techniques like direct syscalls and stack spoofing to stay undetected.",
+            "author_id": 35,
+            "category": "Binary Exploitation",
+            "is_pinned": 1,
+            "views": 546,
+            "created_at": "2026-03-31 09:30:00"
+        },
+        {
+            "id": 38,
+            "title": "OSINT: Tracking Crypto Transactions",
+            "content": "Tools for tracing stolen funds through mixers and tumblers.",
+            "author_id": 45,
+            "category": "Forensics",
+            "is_pinned": 0,
+            "views": 123,
+            "created_at": "2026-03-31 09:45:00"
+        },
+        {
+            "id": 39,
+            "title": "Buffer Overflow on ARM64",
+            "content": "How the transition from x86 to ARM changes the exploitation landscape.",
+            "author_id": 3,
+            "category": "Binary Exploitation",
+            "is_pinned": 0,
+            "views": 234,
+            "created_at": "2026-03-31 10:00:00"
+        },
+        {
+            "id": 40,
+            "title": "JWT Authentication Bypass",
+            "content": "Common mistakes in JWT implementation: None algorithm and weak secrets.",
+            "author_id": 44,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 88,
+            "created_at": "2026-03-31 10:15:00"
+        },
+        {
+            "id": 41,
+            "title": "Setting up a C2 Server",
+            "content": "Havoc Framework vs Cobalt Strike. Which one is better for Red Teaming?",
+            "author_id": 38,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 176,
+            "created_at": "2026-03-31 10:30:00"
+        },
+        {
+            "id": 42,
+            "title": "Physical Security: RFID Cloning",
+            "content": "Using the Flipper Zero to clone HID cards in office buildings.",
+            "author_id": 51,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 310,
+            "created_at": "2026-03-31 10:45:00"
+        },
+        {
+            "id": 43,
+            "title": "Analyzing Ransomware Payloads",
+            "content": "Static analysis of a LockBit 3.0 sample found in a recent breach.",
+            "author_id": 49,
+            "category": "Reverse Engineering",
+            "is_pinned": 0,
+            "views": 145,
+            "created_at": "2026-03-31 11:00:00"
+        },
+        {
+            "id": 44,
+            "title": "Docker Security Best Practices",
+            "content": "How to harden your containers and avoid the \"root\" pitfall.",
+            "author_id": 50,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 76,
+            "created_at": "2026-03-31 11:15:00"
+        },
+        {
+            "id": 45,
+            "title": "Active Directory: Kerberoasting",
+            "content": "Extracting service tickets and cracking them offline for admin access.",
+            "author_id": 37,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 200,
+            "created_at": "2026-03-31 11:30:00"
+        },
+        {
+            "id": 46,
+            "title": "Bug Bounty: Getting Started",
+            "content": "Which platform is better for beginners: HackerOne or Bugcrowd?",
+            "author_id": 46,
+            "category": "Questions",
+            "is_pinned": 0,
+            "views": 450,
+            "created_at": "2026-03-31 11:45:00"
+        },
+        {
+            "id": 47,
+            "title": "Python for Hackers",
+            "content": "Library showcase: Scapy, Requests, and Pwntools.",
+            "author_id": 41,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 134,
+            "created_at": "2026-03-31 12:00:00"
+        },
+        {
+            "id": 48,
+            "title": "Reverse Shell Cheat Sheet",
+            "content": "My favorite one-liners for Bash, Python, and PowerShell.",
+            "author_id": 42,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 560,
+            "created_at": "2026-03-31 12:15:00"
+        },
+        {
+            "id": 49,
+            "title": "Breaking WPA2 Enterprise",
+            "content": "Evil Twin attacks and RADIUS server impersonation.",
+            "author_id": 54,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 87,
+            "created_at": "2026-03-31 12:30:00"
+        },
+        {
+            "id": 50,
+            "title": "The Future of Fuzzing",
+            "content": "Using AI to generate smarter test cases for American Fuzzy Lop (AFL).",
+            "author_id": 56,
+            "category": "Binary Exploitation",
+            "is_pinned": 0,
+            "views": 112,
+            "created_at": "2026-03-31 12:45:00"
+        },
+        {
+            "id": 51,
+            "title": "Windows Kernel Exploitation",
+            "content": "Understanding Token Stealing payloads in Ring 0.",
+            "author_id": 3,
+            "category": "Binary Exploitation",
+            "is_pinned": 0,
+            "views": 156,
+            "created_at": "2026-03-31 13:00:00"
+        },
+        {
+            "id": 52,
+            "title": "Memory Forensics with Volatility",
+            "content": "Extracting browser history and passwords from a RAM dump.",
+            "author_id": 41,
+            "category": "Forensics",
+            "is_pinned": 0,
+            "views": 98,
+            "created_at": "2026-03-31 13:15:00"
+        },
+        {
+            "id": 53,
+            "title": "Hiding Data in Polyglot Files",
+            "content": "Creating a file that is both a valid JPG and a valid ZIP.",
+            "author_id": 47,
+            "category": "Steganography",
+            "is_pinned": 0,
+            "views": 230,
+            "created_at": "2026-03-31 13:30:00"
+        },
+        {
+            "id": 54,
+            "title": "XSS to RCE",
+            "content": "How a simple script injection can lead to full server compromise.",
+            "author_id": 43,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 187,
+            "created_at": "2026-03-31 13:45:00"
+        },
+        {
+            "id": 55,
+            "title": "Kubernetes Namespace Escapes",
+            "content": "Exploiting misconfigured RBAC roles in a K8s cluster.",
+            "author_id": 50,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 65,
+            "created_at": "2026-03-31 14:00:00"
+        },
+        {
+            "id": 56,
+            "title": "Cryptography: Elliptic Curves",
+            "content": "Why ECC is replacing RSA for mobile and web certificates.",
+            "author_id": 45,
+            "category": "Cryptography",
+            "is_pinned": 0,
+            "views": 43,
+            "created_at": "2026-03-31 14:15:00"
+        },
+        {
+            "id": 57,
+            "title": "Cloud Security: AWS IAM Flaws",
+            "content": "How a single misconfigured S3 policy can leak millions of records.",
+            "author_id": 53,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 210,
+            "created_at": "2026-03-31 14:30:00"
+        },
+        {
+            "id": 58,
+            "title": "Nmap Scripting Engine (NSE)",
+            "content": "Writing custom Lua scripts to detect specific vulnerabilities.",
+            "author_id": 42,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 89,
+            "created_at": "2026-03-31 14:45:00"
+        },
+        {
+            "id": 59,
+            "title": "Hardware: Dumping SPI Flash",
+            "content": "Connecting a SOIC clip to a router to read the firmware.",
+            "author_id": 55,
+            "category": "Reverse Engineering",
+            "is_pinned": 0,
+            "views": 110,
+            "created_at": "2026-03-31 15:00:00"
+        },
+        {
+            "id": 60,
+            "title": "Dark Web Monitoring",
+            "content": "How companies track leaked credentials on Tor hidden services.",
+            "author_id": 46,
+            "category": "General",
+            "is_pinned": 0,
+            "views": 310,
+            "created_at": "2026-03-31 15:15:00"
+        },
+        {
+            "id": 61,
+            "title": "PrivEsc: Abusing LXD Groups",
+            "content": "Using the LXD container group to get root access on Ubuntu.",
+            "author_id": 37,
+            "category": "Binary Exploitation",
+            "is_pinned": 0,
+            "views": 154,
+            "created_at": "2026-03-31 15:30:00"
+        },
+        {
+            "id": 62,
+            "title": "Advanced Burp Suite: Match & Replace",
+            "content": "How to automatically add headers to every request for testing.",
+            "author_id": 44,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 78,
+            "created_at": "2026-03-31 15:45:00"
+        },
+        {
+            "id": 63,
+            "title": "The Psychology of Phishing",
+            "content": "Why urgency and fear are the most effective tools for social engineering.",
+            "author_id": 46,
+            "category": "General",
+            "is_pinned": 0,
+            "views": 220,
+            "created_at": "2026-03-31 16:00:00"
+        },
+        {
+            "id": 64,
+            "title": "Android Sandbox Escapes",
+            "content": "Looking at the security of modern mobile hypervisors.",
+            "author_id": 48,
+            "category": "Binary Exploitation",
+            "is_pinned": 0,
+            "views": 132,
+            "created_at": "2026-03-31 16:15:00"
+        },
+        {
+            "id": 65,
+            "title": "Writing a Keylogger in C++",
+            "content": "A simple educational project for understanding Windows APIs.",
+            "author_id": 49,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 98,
+            "created_at": "2026-03-31 16:30:00"
+        },
+        {
+            "id": 66,
+            "title": "Bypassing CAPTCHAs with AI",
+            "content": "Using YOLO and TensorFlow to solve visual challenges in real-time.",
+            "author_id": 51,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 340,
+            "created_at": "2026-03-31 16:45:00"
+        },
+        {
+            "id": 67,
+            "title": "Incident Response Playbook",
+            "content": "What to do in the first 60 minutes after a breach is detected.",
+            "author_id": 36,
+            "category": "General",
+            "is_pinned": 0,
+            "views": 201,
+            "created_at": "2026-03-31 17:00:00"
+        },
+        {
+            "id": 68,
+            "title": "Cracking Passwords with Hashcat",
+            "content": "The most effective wordlists for 2026 audits.",
+            "author_id": 38,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 456,
+            "created_at": "2026-03-31 17:15:00"
+        },
+        {
+            "id": 69,
+            "title": "Firmware Analysis: Binwalk Tricks",
+            "content": "What to do when binwalk fails to extract filesystem headers.",
+            "author_id": 55,
+            "category": "Forensics",
+            "is_pinned": 0,
+            "views": 88,
+            "created_at": "2026-03-31 17:30:00"
+        },
+        {
+            "id": 70,
+            "title": "Malicious Office Documents",
+            "content": "Beyond macros: Abusing DDE and template injection.",
+            "author_id": 40,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 167,
+            "created_at": "2026-03-31 17:45:00"
+        },
+        {
+            "id": 71,
+            "title": "Defeating Anti-Debug Techniques",
+            "content": "How to bypass IsDebuggerPresent and other checks in x64dbg.",
+            "author_id": 56,
+            "category": "Reverse Engineering",
+            "is_pinned": 0,
+            "views": 112,
+            "created_at": "2026-03-31 18:00:00"
+        },
+        {
+            "id": 72,
+            "title": "SSH Tunneling and Pivoting",
+            "content": "Using ProxyChains to reach internal networks through a compromised host.",
+            "author_id": 42,
+            "category": "Tools",
+            "is_pinned": 0,
+            "views": 290,
+            "created_at": "2026-03-31 18:15:00"
+        },
+        {
+            "id": 73,
+            "title": "The State of BIOS Malware",
+            "content": "Looking at UEFI rootkits found in the wild recently.",
+            "author_id": 35,
+            "category": "Forensics",
+            "is_pinned": 0,
+            "views": 145,
+            "created_at": "2026-03-31 18:30:00"
+        },
+        {
+            "id": 74,
+            "title": "Exploiting Redis Servers",
+            "content": "Getting an RCE on an unauthenticated Redis instance via SSH keys.",
+            "author_id": 37,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 76,
+            "created_at": "2026-03-31 18:45:00"
+        },
+        {
+            "id": 75,
+            "title": "CTF Team Management",
+            "content": "How to coordinate 10+ people during a 48h hacking competition.",
+            "author_id": 58,
+            "category": "General",
+            "is_pinned": 0,
+            "views": 136,
+            "created_at": "2026-03-31 19:00:00"
+        },
+        {
+            "id": 76,
+            "title": "Subdomain Takeovers",
+            "content": "Finding abandoned CNAME records for easy bounties.",
+            "author_id": 44,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 198,
+            "created_at": "2026-03-31 19:15:00"
+        },
+        {
+            "id": 77,
+            "title": "Steganography: Audio Files",
+            "content": "Hiding text inside WAV files using spectral analysis.",
+            "author_id": 47,
+            "category": "Steganography",
+            "is_pinned": 0,
+            "views": 67,
+            "created_at": "2026-03-31 19:30:00"
+        },
+        {
+            "id": 78,
+            "title": "Red Teaming vs Blue Teaming",
+            "content": "Which path offers better career growth in 2026?",
+            "author_id": 35,
+            "category": "Questions",
+            "is_pinned": 0,
+            "views": 520,
+            "created_at": "2026-03-31 19:45:00"
+        },
+        {
+            "id": 79,
+            "title": "The Ethics of Zero-Days",
+            "content": "Should you report it to the vendor or sell it to brokers?",
+            "author_id": 58,
+            "category": "General",
+            "is_pinned": 0,
+            "views": 430,
+            "created_at": "2026-03-31 20:00:00"
+        },
+        {
+            "id": 80,
+            "title": "Hacking Smart Contracts",
+            "content": "Common vulnerabilities in Solidity: Reentrancy and Overflow.",
+            "author_id": 45,
+            "category": "Cryptography",
+            "is_pinned": 0,
+            "views": 114,
+            "created_at": "2026-03-31 20:15:00"
         }
     ],
     "leaderboard_entries": [],
@@ -244,11 +1060,11 @@
             "video_url": "https:\/\/www.youtube.com\/embed\/L_dKHVxerVo",
             "embed_url": "https:\/\/www.youtube.com\/embed\/L_dKHVxerVo",
             "thumbnail_url": "https:\/\/img.youtube.com\/vi\/L_dKHVxerVo\/hqdefault.jpg",
-            "views": 0,
+            "views": 2,
             "is_published": 1,
             "author_id": 3,
             "created_at": "2026-03-17 12:20:37",
-            "updated_at": "2026-03-17 12:30:44"
+            "updated_at": "2026-03-31 00:09:10"
         },
         {
             "id": 9,
@@ -1281,11 +2097,11 @@
             "video_url": "https:\/\/www.youtube.com\/watch?v=h_7Dof_uY_Y",
             "embed_url": "https:\/\/www.youtube.com\/embed\/h_7Dof_uY_Y",
             "thumbnail_url": "https:\/\/img.youtube.com\/vi\/h_7Dof_uY_Y\/hqdefault.jpg",
-            "views": 0,
+            "views": 2,
             "is_published": 1,
             "author_id": 3,
             "created_at": "2026-03-17 12:39:26",
-            "updated_at": "2026-03-17 12:39:26"
+            "updated_at": "2026-03-17 12:50:44"
         },
         {
             "id": 70,
@@ -1434,11 +2250,11 @@
             "video_url": "https:\/\/www.youtube.com\/watch?v=1S0aBV-Waeo",
             "embed_url": "https:\/\/www.youtube.com\/embed\/1S0aBV-Waeo",
             "thumbnail_url": "https:\/\/img.youtube.com\/vi\/1S0aBV-Waeo\/hqdefault.jpg",
-            "views": 0,
+            "views": 2,
             "is_published": 1,
             "author_id": 3,
             "created_at": "2026-03-17 12:40:31",
-            "updated_at": "2026-03-17 12:40:31"
+            "updated_at": "2026-03-17 12:52:08"
         },
         {
             "id": 79,
@@ -1822,6 +2638,923 @@
             "author_id": 3,
             "content": "asFfasfasdafasda",
             "created_at": "2026-03-16 23:24:05"
+        },
+        {
+            "id": 2,
+            "discussion_id": 6,
+            "author_id": 40,
+            "content": "Focus heavily on BloodHound and Impacket tools.",
+            "created_at": "2026-03-01 12:00:00"
+        },
+        {
+            "id": 3,
+            "discussion_id": 6,
+            "author_id": 52,
+            "content": "The 2026 labs are much more realistic, practice pivoting!",
+            "created_at": "2026-03-01 14:30:00"
+        },
+        {
+            "id": 4,
+            "discussion_id": 6,
+            "author_id": 36,
+            "content": "Make sure your reporting is clean, that is where most fail.",
+            "created_at": "2026-03-02 09:00:00"
+        },
+        {
+            "id": 5,
+            "discussion_id": 7,
+            "author_id": 41,
+            "content": "Try \"http.request\" or \"ip.addr == x.x.x.x\" to start.",
+            "created_at": "2026-03-02 12:00:00"
+        },
+        {
+            "id": 6,
+            "discussion_id": 7,
+            "author_id": 57,
+            "content": "tcp.flags.syn == 1 is great for finding port scans.",
+            "created_at": "2026-03-02 15:45:00"
+        },
+        {
+            "id": 7,
+            "discussion_id": 7,
+            "author_id": 49,
+            "content": "I usually export objects first to see if there are hidden files.",
+            "created_at": "2026-03-03 10:10:00"
+        },
+        {
+            "id": 8,
+            "discussion_id": 8,
+            "author_id": 3,
+            "content": "Ghidra is king for scripting, but IDA UI is still smoother.",
+            "created_at": "2026-03-04 11:00:00"
+        },
+        {
+            "id": 9,
+            "discussion_id": 8,
+            "author_id": 56,
+            "content": "Learn both. Some plugins are only available for IDA.",
+            "created_at": "2026-03-04 13:20:00"
+        },
+        {
+            "id": 10,
+            "discussion_id": 8,
+            "author_id": 42,
+            "content": "If you are just doing CTFs, Ghidra is more than enough.",
+            "created_at": "2026-03-05 08:45:00"
+        },
+        {
+            "id": 11,
+            "discussion_id": 9,
+            "author_id": 39,
+            "content": "Yes, especially when the resolvers directly call raw SQL.",
+            "created_at": "2026-03-05 16:00:00"
+        },
+        {
+            "id": 12,
+            "discussion_id": 9,
+            "author_id": 43,
+            "content": "Check out InQL scanner for Burp Suite, it helps a lot.",
+            "created_at": "2026-03-05 18:30:00"
+        },
+        {
+            "id": 13,
+            "discussion_id": 9,
+            "author_id": 50,
+            "content": "Always check the input validation on the backend resolvers.",
+            "created_at": "2026-03-06 09:15:00"
+        },
+        {
+            "id": 14,
+            "discussion_id": 10,
+            "author_id": 47,
+            "content": "Zsteg is a lifesaver for these kinds of challenges.",
+            "created_at": "2026-03-07 18:00:00"
+        },
+        {
+            "id": 15,
+            "discussion_id": 10,
+            "author_id": 58,
+            "content": "Don’t forget to check the strings command first!",
+            "created_at": "2026-03-07 20:15:00"
+        },
+        {
+            "id": 16,
+            "discussion_id": 10,
+            "author_id": 35,
+            "content": "Check the metadata with Exiftool before LSB.",
+            "created_at": "2026-03-08 10:00:00"
+        },
+        {
+            "id": 17,
+            "discussion_id": 11,
+            "author_id": 37,
+            "content": "Use \"pattern_create\" from metasploit to find the offset.",
+            "created_at": "2026-03-08 22:00:00"
+        },
+        {
+            "id": 18,
+            "discussion_id": 11,
+            "author_id": 44,
+            "content": "Check if DEP\/ASLR is disabled on the binary.",
+            "created_at": "2026-03-09 09:30:00"
+        },
+        {
+            "id": 19,
+            "discussion_id": 11,
+            "author_id": 3,
+            "content": "mona.py in Immunity Debugger is your best friend here.",
+            "created_at": "2026-03-09 12:15:00"
+        },
+        {
+            "id": 20,
+            "discussion_id": 12,
+            "author_id": 54,
+            "content": "Get a Bus Pirate or a Shikra for hardware debugging.",
+            "created_at": "2026-03-10 14:00:00"
+        },
+        {
+            "id": 21,
+            "discussion_id": 12,
+            "author_id": 55,
+            "content": "Start with a logic analyzer to see what’s happening.",
+            "created_at": "2026-03-10 16:45:00"
+        },
+        {
+            "id": 22,
+            "discussion_id": 12,
+            "author_id": 40,
+            "content": "Multi-meter is essential before you plug anything in.",
+            "created_at": "2026-03-11 08:00:00"
+        },
+        {
+            "id": 23,
+            "discussion_id": 13,
+            "author_id": 36,
+            "content": "This is a massive one. Update your browsers immediately!",
+            "created_at": "2026-03-12 10:00:00"
+        },
+        {
+            "id": 24,
+            "discussion_id": 13,
+            "author_id": 44,
+            "content": "The exploit uses a JIT optimization bug.",
+            "created_at": "2026-03-12 13:00:00"
+        },
+        {
+            "id": 25,
+            "discussion_id": 13,
+            "author_id": 51,
+            "content": "Already seeing some PoCs on Twitter, stay safe.",
+            "created_at": "2026-03-13 09:20:00"
+        },
+        {
+            "id": 26,
+            "discussion_id": 14,
+            "author_id": 45,
+            "content": "I am interested! I have won several crypto CTFs before.",
+            "created_at": "2026-03-14 13:00:00"
+        },
+        {
+            "id": 27,
+            "discussion_id": 14,
+            "author_id": 58,
+            "content": "Sent you a DM with my Discord handle.",
+            "created_at": "2026-03-14 15:30:00"
+        },
+        {
+            "id": 28,
+            "discussion_id": 14,
+            "author_id": 38,
+            "content": "Good luck guys, hope to see you on the leaderboard.",
+            "created_at": "2026-03-15 10:10:00"
+        },
+        {
+            "id": 29,
+            "discussion_id": 15,
+            "author_id": 53,
+            "content": "Macros are tricky, try using the \"Cookie Jar\" settings.",
+            "created_at": "2026-03-15 17:00:00"
+        },
+        {
+            "id": 30,
+            "discussion_id": 15,
+            "author_id": 49,
+            "content": "Check out the \"PwnFox\" extension for easier sessions.",
+            "created_at": "2026-03-16 09:00:00"
+        },
+        {
+            "id": 31,
+            "discussion_id": 15,
+            "author_id": 42,
+            "content": "Sometimes Python scripts are faster than Burp Macros.",
+            "created_at": "2026-03-16 12:30:00"
+        },
+        {
+            "id": 32,
+            "discussion_id": 16,
+            "author_id": 48,
+            "content": "Frida is the only way to go for modern Android apps.",
+            "created_at": "2026-03-17 15:00:00"
+        },
+        {
+            "id": 33,
+            "discussion_id": 16,
+            "author_id": 50,
+            "content": "Look for Objection, it makes Frida much easier to use.",
+            "created_at": "2026-03-17 18:15:00"
+        },
+        {
+            "id": 34,
+            "discussion_id": 16,
+            "author_id": 35,
+            "content": "Check the network_security_config.xml file first.",
+            "created_at": "2026-03-18 08:45:00"
+        },
+        {
+            "id": 35,
+            "discussion_id": 17,
+            "author_id": 37,
+            "content": "Privileged containers are basically a free root on the host.",
+            "created_at": "2026-03-18 19:00:00"
+        },
+        {
+            "id": 36,
+            "discussion_id": 17,
+            "author_id": 43,
+            "content": "Try mounting the \/var\/run\/docker.sock to escape.",
+            "created_at": "2026-03-19 10:30:00"
+        },
+        {
+            "id": 37,
+            "discussion_id": 17,
+            "author_id": 56,
+            "content": "Use \"deepce\" script for automatic Docker enumeration.",
+            "created_at": "2026-03-19 14:20:00"
+        },
+        {
+            "id": 38,
+            "discussion_id": 18,
+            "author_id": 41,
+            "content": "Shodan dorks are still very effective for this.",
+            "created_at": "2026-03-20 12:00:00"
+        },
+        {
+            "id": 39,
+            "discussion_id": 18,
+            "author_id": 57,
+            "content": "GrayhatWarfare is a great site for searching public buckets.",
+            "created_at": "2026-03-20 15:45:00"
+        },
+        {
+            "id": 40,
+            "discussion_id": 18,
+            "author_id": 46,
+            "content": "Be careful, some of those \"leaks\" are honeypots.",
+            "created_at": "2026-03-21 09:10:00"
+        },
+        {
+            "id": 41,
+            "discussion_id": 19,
+            "author_id": 45,
+            "content": "Legacy systems are the only reason it is still alive.",
+            "created_at": "2026-03-22 11:00:00"
+        },
+        {
+            "id": 42,
+            "discussion_id": 19,
+            "author_id": 52,
+            "content": "Bleichenbacher attacks are still relevant because of this.",
+            "created_at": "2026-03-22 14:30:00"
+        },
+        {
+            "id": 43,
+            "discussion_id": 19,
+            "author_id": 39,
+            "content": "Use OAEP padding if you want to be secure.",
+            "created_at": "2026-03-23 08:15:00"
+        },
+        {
+            "id": 44,
+            "discussion_id": 20,
+            "author_id": 46,
+            "content": "Yes, I received an AI voice call last week. It was scary.",
+            "created_at": "2026-03-23 20:00:00"
+        },
+        {
+            "id": 45,
+            "discussion_id": 20,
+            "author_id": 51,
+            "content": "Security awareness training needs to be updated ASAP.",
+            "created_at": "2026-03-24 10:30:00"
+        },
+        {
+            "id": 46,
+            "discussion_id": 20,
+            "author_id": 54,
+            "content": "Deepfakes are going to destroy trust in digital comms.",
+            "created_at": "2026-03-24 14:20:00"
+        },
+        {
+            "id": 47,
+            "discussion_id": 21,
+            "author_id": 58,
+            "content": "Classic MS08-067. Never gets old!",
+            "created_at": "2026-03-25 10:30:00"
+        },
+        {
+            "id": 48,
+            "discussion_id": 21,
+            "author_id": 3,
+            "content": "Great writeup, very clear steps for the shellcode generation.",
+            "created_at": "2026-03-25 12:15:00"
+        },
+        {
+            "id": 49,
+            "discussion_id": 21,
+            "author_id": 40,
+            "content": "Thanks! I am planning to do Blue next.",
+            "created_at": "2026-03-25 14:00:00"
+        },
+        {
+            "id": 50,
+            "discussion_id": 22,
+            "author_id": 57,
+            "content": "Yes, the MT7612U chipset in that Alfa is rock solid for monitor mode.",
+            "created_at": "2026-03-25 13:00:00"
+        },
+        {
+            "id": 51,
+            "discussion_id": 22,
+            "author_id": 38,
+            "content": "I prefer the Panda Pau09, it is a bit more stealthy.",
+            "created_at": "2026-03-25 15:45:00"
+        },
+        {
+            "id": 52,
+            "discussion_id": 22,
+            "author_id": 41,
+            "content": "Good call, I will check out the Panda as well.",
+            "created_at": "2026-03-25 16:20:00"
+        },
+        {
+            "id": 53,
+            "discussion_id": 23,
+            "author_id": 52,
+            "content": "We are moving to Kyber and Dilithium algorithms, so start learning those.",
+            "created_at": "2026-03-26 10:00:00"
+        },
+        {
+            "id": 54,
+            "discussion_id": 23,
+            "author_id": 45,
+            "content": "The math behind lattice-based crypto is fascinating but brutal.",
+            "created_at": "2026-03-26 11:30:00"
+        },
+        {
+            "id": 55,
+            "discussion_id": 23,
+            "author_id": 39,
+            "content": "RSA-2048 is safe for now, but 4096 is the new minimum for long-term data.",
+            "created_at": "2026-03-26 14:00:00"
+        },
+        {
+            "id": 56,
+            "discussion_id": 23,
+            "author_id": 36,
+            "content": "Quantum computers with enough qubits are still years away.",
+            "created_at": "2026-03-26 18:00:00"
+        },
+        {
+            "id": 57,
+            "discussion_id": 24,
+            "author_id": 37,
+            "content": "Modern IDSs detect -sS very easily. Try changing the data length with --data-length.",
+            "created_at": "2026-03-26 15:00:00"
+        },
+        {
+            "id": 58,
+            "discussion_id": 24,
+            "author_id": 42,
+            "content": "Also, fragmented packets (-f) can sometimes bypass older firewalls.",
+            "created_at": "2026-03-26 17:15:00"
+        },
+        {
+            "id": 59,
+            "discussion_id": 24,
+            "author_id": 55,
+            "content": "Don’t forget -T2 to avoid triggering rate-limiting.",
+            "created_at": "2026-03-27 08:45:00"
+        },
+        {
+            "id": 60,
+            "discussion_id": 25,
+            "author_id": 43,
+            "content": "2FA is not a silver bullet if you can steal the session cookie.",
+            "created_at": "2026-03-27 17:30:00"
+        },
+        {
+            "id": 61,
+            "discussion_id": 25,
+            "author_id": 46,
+            "content": "This is why FIDO2\/WebAuthn is the only real protection.",
+            "created_at": "2026-03-27 18:15:00"
+        },
+        {
+            "id": 62,
+            "discussion_id": 25,
+            "author_id": 54,
+            "content": "Exactly. Push notifications can be phished, hardware keys cannot.",
+            "created_at": "2026-03-27 19:00:00"
+        },
+        {
+            "id": 63,
+            "discussion_id": 25,
+            "author_id": 51,
+            "content": "Evilginx3 setup is a bit tricky with the certificates.",
+            "created_at": "2026-03-27 21:00:00"
+        },
+        {
+            "id": 64,
+            "discussion_id": 26,
+            "author_id": 48,
+            "content": "Did you deobfuscate the VBA script yet?",
+            "created_at": "2026-03-27 22:00:00"
+        },
+        {
+            "id": 65,
+            "discussion_id": 26,
+            "author_id": 49,
+            "content": "Yes, it leads to a Cobalt Strike beacon.",
+            "created_at": "2026-03-28 09:30:00"
+        },
+        {
+            "id": 66,
+            "discussion_id": 26,
+            "author_id": 56,
+            "content": "Can you share the SHA256 hash for Virustotal?",
+            "created_at": "2026-03-28 11:15:00"
+        },
+        {
+            "id": 67,
+            "discussion_id": 27,
+            "author_id": 35,
+            "content": "LinPEAS usually catches those instantly.",
+            "created_at": "2026-03-28 13:00:00"
+        },
+        {
+            "id": 68,
+            "discussion_id": 27,
+            "author_id": 37,
+            "content": "True, but manual enumeration is a must for OSCP.",
+            "created_at": "2026-03-28 14:30:00"
+        },
+        {
+            "id": 69,
+            "discussion_id": 27,
+            "author_id": 44,
+            "content": "I found one recently in a wild crontab entry.",
+            "created_at": "2026-03-28 16:15:00"
+        },
+        {
+            "id": 70,
+            "discussion_id": 28,
+            "author_id": 58,
+            "content": "It will automate the boring stuff, but creative exploits still need humans.",
+            "created_at": "2026-03-28 17:00:00"
+        },
+        {
+            "id": 71,
+            "discussion_id": 28,
+            "author_id": 50,
+            "content": "I use it to write Python scripts for custom exploits, saves so much time.",
+            "created_at": "2026-03-28 19:30:00"
+        },
+        {
+            "id": 72,
+            "discussion_id": 28,
+            "author_id": 40,
+            "content": "Reporting is 50% of the job, AI is a godsend for that.",
+            "created_at": "2026-03-29 08:00:00"
+        },
+        {
+            "id": 73,
+            "discussion_id": 28,
+            "author_id": 47,
+            "content": "Just don’t feed sensitive client data into public LLMs!",
+            "created_at": "2026-03-29 10:15:00"
+        },
+        {
+            "id": 74,
+            "discussion_id": 29,
+            "author_id": 36,
+            "content": "SAE is much harder because you can’t do offline brute-forcing like WPA2.",
+            "created_at": "2026-03-29 12:00:00"
+        },
+        {
+            "id": 75,
+            "discussion_id": 29,
+            "author_id": 51,
+            "content": "You need to be in the middle for the \"Dragonblood\" attack.",
+            "created_at": "2026-03-29 14:45:00"
+        },
+        {
+            "id": 76,
+            "discussion_id": 30,
+            "author_id": 50,
+            "content": "Proxmox is great, but make sure your NIC supports SR-IOV.",
+            "created_at": "2026-03-29 17:00:00"
+        },
+        {
+            "id": 77,
+            "discussion_id": 30,
+            "author_id": 53,
+            "content": "I prefer ESXi, but Broadcom is making it hard for home users now.",
+            "created_at": "2026-03-29 19:30:00"
+        },
+        {
+            "id": 78,
+            "discussion_id": 30,
+            "author_id": 38,
+            "content": "Try adding a Kali LXC container to save resources.",
+            "created_at": "2026-03-30 08:15:00"
+        },
+        {
+            "id": 79,
+            "discussion_id": 31,
+            "author_id": 44,
+            "content": "Interactsh and Burp Collaborator are the best tools for this.",
+            "created_at": "2026-03-31 08:10:00"
+        },
+        {
+            "id": 80,
+            "discussion_id": 31,
+            "author_id": 39,
+            "content": "Check out the dnslog.cn if you want a free alternative.",
+            "created_at": "2026-03-31 08:20:00"
+        },
+        {
+            "id": 81,
+            "discussion_id": 32,
+            "author_id": 35,
+            "content": "Metasploit is just a tool. A real pro knows how to modify the Ruby scripts.",
+            "created_at": "2026-03-31 08:25:00"
+        },
+        {
+            "id": 82,
+            "discussion_id": 32,
+            "author_id": 58,
+            "content": "I prefer writing my own C2, but MSF is great for quick internal pivoting.",
+            "created_at": "2026-03-31 08:40:00"
+        },
+        {
+            "id": 83,
+            "discussion_id": 33,
+            "author_id": 37,
+            "content": "Admins still forget to apply the 2020 patches in isolated lab environments.",
+            "created_at": "2026-03-31 09:00:00"
+        },
+        {
+            "id": 84,
+            "discussion_id": 34,
+            "author_id": 56,
+            "content": "The FlatProgramAPI in Ghidra is actually very well documented.",
+            "created_at": "2026-03-31 09:10:00"
+        },
+        {
+            "id": 85,
+            "discussion_id": 35,
+            "author_id": 55,
+            "content": "Mirai is still alive because of weak Telnet passwords on smart cameras.",
+            "created_at": "2026-03-31 09:20:00"
+        },
+        {
+            "id": 86,
+            "discussion_id": 36,
+            "author_id": 43,
+            "content": "SerialKiller is a good library to prevent these kinds of attacks.",
+            "created_at": "2026-03-31 09:35:00"
+        },
+        {
+            "id": 87,
+            "discussion_id": 37,
+            "author_id": 3,
+            "content": "Hell’s Gate and Halo’s Gate techniques are a must-read for this.",
+            "created_at": "2026-03-31 10:00:00"
+        },
+        {
+            "id": 88,
+            "discussion_id": 37,
+            "author_id": 35,
+            "content": "EDRs are getting smarter with ETW monitoring though.",
+            "created_at": "2026-03-31 10:15:00"
+        },
+        {
+            "id": 89,
+            "discussion_id": 38,
+            "author_id": 45,
+            "content": "Chainalysis is too expensive, try using Maltego with crypto transforms.",
+            "created_at": "2026-03-31 10:20:00"
+        },
+        {
+            "id": 90,
+            "discussion_id": 39,
+            "author_id": 44,
+            "content": "No more NOP sleds on some ARM architectures due to alignment!",
+            "created_at": "2026-03-31 10:40:00"
+        },
+        {
+            "id": 91,
+            "discussion_id": 40,
+            "author_id": 52,
+            "content": "Always verify the \"kid\" header to prevent path traversal in keys.",
+            "created_at": "2026-03-31 11:00:00"
+        },
+        {
+            "id": 92,
+            "discussion_id": 41,
+            "author_id": 38,
+            "content": "Havoc is great because it is open-source and very stealthy.",
+            "created_at": "2026-03-31 11:15:00"
+        },
+        {
+            "id": 93,
+            "discussion_id": 42,
+            "author_id": 51,
+            "content": "Proxmark3 is still more powerful than Flipper for HID Prox cards.",
+            "created_at": "2026-03-31 11:30:00"
+        },
+        {
+            "id": 94,
+            "discussion_id": 43,
+            "author_id": 49,
+            "content": "The anti-analysis tricks in LockBit 3.0 are insane.",
+            "created_at": "2026-03-31 11:45:00"
+        },
+        {
+            "id": 95,
+            "discussion_id": 44,
+            "author_id": 50,
+            "content": "Always use rootless mode if your application allows it.",
+            "created_at": "2026-03-31 12:00:00"
+        },
+        {
+            "id": 96,
+            "discussion_id": 45,
+            "author_id": 37,
+            "content": "Rubeus is the gold standard for this on Windows.",
+            "created_at": "2026-03-31 12:10:00"
+        },
+        {
+            "id": 97,
+            "discussion_id": 46,
+            "author_id": 46,
+            "content": "Start with HackerOne 101 to learn the basics.",
+            "created_at": "2026-03-31 12:20:00"
+        },
+        {
+            "id": 98,
+            "discussion_id": 46,
+            "author_id": 53,
+            "content": "Bugcrowd has better VDPs for beginners.",
+            "created_at": "2026-03-31 12:40:00"
+        },
+        {
+            "id": 99,
+            "discussion_id": 47,
+            "author_id": 41,
+            "content": "Requests-html is also great for scraping targets.",
+            "created_at": "2026-03-31 13:00:00"
+        },
+        {
+            "id": 100,
+            "discussion_id": 48,
+            "author_id": 42,
+            "content": "The mkfifo shell is the most reliable one for Linux.",
+            "created_at": "2026-03-31 13:10:00"
+        },
+        {
+            "id": 101,
+            "discussion_id": 49,
+            "author_id": 54,
+            "content": "Hostapd-mana is perfect for creating these rogue APs.",
+            "created_at": "2026-03-31 13:30:00"
+        },
+        {
+            "id": 102,
+            "discussion_id": 50,
+            "author_id": 56,
+            "content": "LibAFL is starting to implement some cool ML features.",
+            "created_at": "2026-03-31 14:00:00"
+        },
+        {
+            "id": 103,
+            "discussion_id": 51,
+            "author_id": 3,
+            "content": "Stack pivots in kernel mode are much more restricted now.",
+            "created_at": "2026-03-31 14:15:00"
+        },
+        {
+            "id": 104,
+            "discussion_id": 52,
+            "author_id": 41,
+            "content": "Volatility 3 is much faster than the old version.",
+            "created_at": "2026-03-31 14:45:00"
+        },
+        {
+            "id": 105,
+            "discussion_id": 53,
+            "author_id": 47,
+            "content": "Gimp is surprisingly good for creating these headers.",
+            "created_at": "2026-03-31 15:00:00"
+        },
+        {
+            "id": 106,
+            "discussion_id": 54,
+            "author_id": 43,
+            "content": "Electron apps are famous for this vulnerability.",
+            "created_at": "2026-03-31 15:20:00"
+        },
+        {
+            "id": 107,
+            "discussion_id": 55,
+            "author_id": 50,
+            "content": "Check the service account tokens in \/var\/run\/secrets.",
+            "created_at": "2026-03-31 15:40:00"
+        },
+        {
+            "id": 108,
+            "discussion_id": 56,
+            "author_id": 45,
+            "content": "Curve25519 is the best balance between speed and security.",
+            "created_at": "2026-03-31 16:00:00"
+        },
+        {
+            "id": 109,
+            "discussion_id": 57,
+            "author_id": 53,
+            "content": "SkyHigh is a great tool for scanning open buckets.",
+            "created_at": "2026-03-31 16:15:00"
+        },
+        {
+            "id": 110,
+            "discussion_id": 58,
+            "author_id": 42,
+            "content": "I wrote one for detecting Log4j back in the day.",
+            "created_at": "2026-03-31 16:30:00"
+        },
+        {
+            "id": 111,
+            "discussion_id": 59,
+            "author_id": 55,
+            "content": "Flashrom is the tool you need for the actual dumping.",
+            "created_at": "2026-03-31 16:45:00"
+        },
+        {
+            "id": 112,
+            "discussion_id": 60,
+            "author_id": 46,
+            "content": "Intel471 and Flashpoint do a lot of this heavy lifting.",
+            "created_at": "2026-03-31 17:00:00"
+        },
+        {
+            "id": 113,
+            "discussion_id": 61,
+            "author_id": 37,
+            "content": "Its basically a container-based root exploit. Very clean.",
+            "created_at": "2026-03-31 17:15:00"
+        },
+        {
+            "id": 114,
+            "discussion_id": 62,
+            "author_id": 44,
+            "content": "Great for bypassing basic User-Agent filters.",
+            "created_at": "2026-03-31 17:30:00"
+        },
+        {
+            "id": 115,
+            "discussion_id": 63,
+            "author_id": 46,
+            "content": "Social engineering is 80% prep and 20% execution.",
+            "created_at": "2026-03-31 17:45:00"
+        },
+        {
+            "id": 116,
+            "discussion_id": 64,
+            "author_id": 48,
+            "content": "ARM TrustZone is where the real security happens.",
+            "created_at": "2026-03-31 18:00:00"
+        },
+        {
+            "id": 117,
+            "discussion_id": 65,
+            "author_id": 49,
+            "content": "SetWindowsHookEx is the API function you want.",
+            "created_at": "2026-03-31 18:15:00"
+        },
+        {
+            "id": 118,
+            "discussion_id": 66,
+            "author_id": 51,
+            "content": "Puppeteer + AI is a deadly combo for web automation.",
+            "created_at": "2026-03-31 18:30:00"
+        },
+        {
+            "id": 119,
+            "discussion_id": 67,
+            "author_id": 36,
+            "content": "Isolate the infected machine first, then dump the RAM.",
+            "created_at": "2026-03-31 18:45:00"
+        },
+        {
+            "id": 120,
+            "discussion_id": 68,
+            "author_id": 38,
+            "content": "The RockYou2024 list is huge but very effective.",
+            "created_at": "2026-03-31 19:00:00"
+        },
+        {
+            "id": 121,
+            "discussion_id": 69,
+            "author_id": 55,
+            "content": "Try using the -Me flag for recursive extraction.",
+            "created_at": "2026-03-31 19:15:00"
+        },
+        {
+            "id": 122,
+            "discussion_id": 70,
+            "author_id": 40,
+            "content": "Follina (MSDT) was a game changer for Office exploits.",
+            "created_at": "2026-03-31 19:30:00"
+        },
+        {
+            "id": 123,
+            "discussion_id": 71,
+            "author_id": 56,
+            "content": "ScyllaHide plugin handles most of these automatically.",
+            "created_at": "2026-03-31 19:45:00"
+        },
+        {
+            "id": 124,
+            "discussion_id": 72,
+            "author_id": 42,
+            "content": "Chisel is much better than ProxyChains for stable pivots.",
+            "created_at": "2026-03-31 20:00:00"
+        },
+        {
+            "id": 125,
+            "discussion_id": 73,
+            "author_id": 35,
+            "content": "CosmicStrand is a terrifying example of this.",
+            "created_at": "2026-03-31 20:15:00"
+        },
+        {
+            "id": 126,
+            "discussion_id": 74,
+            "author_id": 37,
+            "content": "Classic attack. If it is exposed, it is owned.",
+            "created_at": "2026-03-31 20:30:00"
+        },
+        {
+            "id": 127,
+            "discussion_id": 75,
+            "author_id": 58,
+            "content": "Discord + CTFd is all you need for coordination.",
+            "created_at": "2026-03-31 20:45:00"
+        },
+        {
+            "id": 128,
+            "discussion_id": 76,
+            "author_id": 44,
+            "content": "Subjack can automate the scanning of these records.",
+            "created_at": "2026-03-31 21:00:00"
+        },
+        {
+            "id": 129,
+            "discussion_id": 77,
+            "author_id": 47,
+            "content": "DeepSound is the classic tool for this.",
+            "created_at": "2026-03-31 21:15:00"
+        },
+        {
+            "id": 130,
+            "discussion_id": 78,
+            "author_id": 35,
+            "content": "Purple Teaming is actually where the most money is.",
+            "created_at": "2026-03-31 21:30:00"
+        },
+        {
+            "id": 131,
+            "discussion_id": 79,
+            "author_id": 58,
+            "content": "Bug bounties are safer, but brokers pay 10x more.",
+            "created_at": "2026-03-31 21:45:00"
+        },
+        {
+            "id": 132,
+            "discussion_id": 80,
+            "author_id": 45,
+            "content": "Reentrancy is still the #1 cause of lost funds in DeFi.",
+            "created_at": "2026-03-31 22:00:00"
         }
     ],
     "solves": [],
@@ -1846,7 +3579,7 @@
             "email": "admin@cyberedu.com",
             "password_hash": "$2y$10$EPka4dOjJQYSExkUCxTbPOR68a2xSTqAKR6tNgStBwfyRQ8Jv3jDm",
             "avatar_url": null,
-            "points": 1200,
+            "points": 0,
             "rank": 0,
             "created_at": "2025-11-23 17:05:10",
             "is_admin": 1
@@ -1857,8 +3590,8 @@
             "email": "ghost@cyber.edu",
             "password_hash": "$2y$10$FMjxZJ5bttc7yIUtRxB2iO.hgJEWTIFypK2zgpELuVE.DH0yUFtdu",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 667,
+            "rank": 28,
             "created_at": "2026-03-17 12:01:55",
             "is_admin": 0
         },
@@ -1868,8 +3601,8 @@
             "email": "null@cyber.edu",
             "password_hash": "$2y$10$yTwb03Bj5XiJZspQGUzKF.hKTHHC6KpYpRCiJrsH.K.i8II2clsCK",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 2662,
+            "rank": 17,
             "created_at": "2026-03-17 12:02:48",
             "is_admin": 0
         },
@@ -1879,8 +3612,8 @@
             "email": "root_acc@cyber.edu",
             "password_hash": "$2y$10$sjHO17thVdm9H72BOxApG.EksJv5.V74P56WixqvIh4J4G33TL0gi",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 1319,
+            "rank": 24,
             "created_at": "2026-03-17 12:03:10",
             "is_admin": 0
         },
@@ -1890,8 +3623,8 @@
             "email": "buf@cyber.edu",
             "password_hash": "$2y$10$F.z\/rzaTJdX6qv50y3EtGu5fGbWninc8PCny1LsFnNTUtjXdj2jTy",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 3592,
+            "rank": 8,
             "created_at": "2026-03-17 12:03:25",
             "is_admin": 0
         },
@@ -1901,8 +3634,8 @@
             "email": "bit@cyber.edu",
             "password_hash": "$2y$10$4uXXoDdGxz3TC1tvMXyTgeTVCf0WJiY7Yfw1GoRa6EpRr0gD3\/0Gm",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 4010,
+            "rank": 6,
             "created_at": "2026-03-17 12:03:39",
             "is_admin": 0
         },
@@ -1912,8 +3645,8 @@
             "email": "kid@cyber.edu",
             "password_hash": "$2y$10$NwgAkJVCKzCQrTK47aqVdeDco2cFPWFsJ0X6Fj.nWzn2CQj67vMb6",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 4277,
+            "rank": 5,
             "created_at": "2026-03-17 12:04:00",
             "is_admin": 0
         },
@@ -1923,8 +3656,8 @@
             "email": "snif@cyber.edu",
             "password_hash": "$2y$10$pNGJFNnbiHlgqxuK9S6AJeKaRiTgRmO.T9tll90JmSl6XCM2MAavC",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 4356,
+            "rank": 4,
             "created_at": "2026-03-17 12:04:26",
             "is_admin": 0
         },
@@ -1934,8 +3667,8 @@
             "email": "stealth@cyber.edu",
             "password_hash": "$2y$10$jll7RXEUDPqytxI\/0Dcgre2F5k0dPMG6B\/7aLuYkRE6cgz2WIsSAO",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 3949,
+            "rank": 7,
             "created_at": "2026-03-17 12:04:41",
             "is_admin": 0
         },
@@ -1945,8 +3678,8 @@
             "email": "sql@cyber.edu",
             "password_hash": "$2y$10$mHkpWHHKKR4cqSlM1qopv.4Y9lby.F.nCDHMkKU3i.KZM6tHmGN4O",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 1677,
+            "rank": 21,
             "created_at": "2026-03-17 12:04:59",
             "is_admin": 0
         },
@@ -1956,8 +3689,8 @@
             "email": "panic@cyber.edu",
             "password_hash": "$2y$10$9LZei302DXH5ZR5rmE8e8OPGsF5gSmBTM.geUpG9j\/XbfSvdrfjSm",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 1520,
+            "rank": 22,
             "created_at": "2026-03-17 12:05:15",
             "is_admin": 0
         },
@@ -1967,8 +3700,8 @@
             "email": "crypto@cyber.edu",
             "password_hash": "$2y$10$f7e2wFXsD5QDkd3uxsj4ZOh2c2XZveLVTR2fjETwT0P0bQd3Xlk5m",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 2558,
+            "rank": 18,
             "created_at": "2026-03-17 12:05:29",
             "is_admin": 0
         },
@@ -1978,8 +3711,8 @@
             "email": "fw@cyber.edu",
             "password_hash": "$2y$10$XAmJ0quIuKzOre0ivrdDaeDTibJF9gRzF7r3U7g8iqwDZCm0Vvznq",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 3233,
+            "rank": 14,
             "created_at": "2026-03-17 12:05:44",
             "is_admin": 0
         },
@@ -1989,8 +3722,8 @@
             "email": "bin@cyber.edu",
             "password_hash": "$2y$10$L98suPgu54S6vDjJo9Rkie.NsfUAoSjQEYUl3lEWvZ1gbuATko8cK",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 3489,
+            "rank": 10,
             "created_at": "2026-03-17 12:05:58",
             "is_admin": 0
         },
@@ -2000,8 +3733,8 @@
             "email": "shadow@cyber.edu",
             "password_hash": "$2y$10$22mau.7oQ6pr1nhnCc6jBuuXeEFSby4d\/hSY37Dc1.4xYCQ2y\/eyy",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 2748,
+            "rank": 16,
             "created_at": "2026-03-17 12:06:11",
             "is_admin": 0
         },
@@ -2011,8 +3744,8 @@
             "email": "logic@cyber.edu",
             "password_hash": "$2y$10$tYONBNf.9TQZAmG4CyC80.WCsKvjFIivSC.SDdL3WggQDEhNncVQW",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 3262,
+            "rank": 13,
             "created_at": "2026-03-17 12:06:24",
             "is_admin": 0
         },
@@ -2022,8 +3755,8 @@
             "email": "proxy@cyber.edu",
             "password_hash": "$2y$10$xi7ZX4\/I\/wXe8LgESfI48O7qYmt3ZHmeEs01lgF2zl6j5rwn15JBW",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 3068,
+            "rank": 15,
             "created_at": "2026-03-17 12:06:37",
             "is_admin": 0
         },
@@ -2033,8 +3766,8 @@
             "email": "zero@cyber.edu",
             "password_hash": "$2y$10$JgNofhI5k.gR4RfyoP8OGO6u7qdHF0zbnY2L2oAhLL2yI8KuH\/\/qW",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 554,
+            "rank": 29,
             "created_at": "2026-03-17 12:06:55",
             "is_admin": 0
         },
@@ -2044,8 +3777,8 @@
             "email": "shell@cyber.edu",
             "password_hash": "$2y$10$LQ5iY4qu.E0qsJEB6W7zv.g6tb5WILIYb0W5cWTBpNVaOupXarpDe",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 3538,
+            "rank": 9,
             "created_at": "2026-03-17 12:07:06",
             "is_admin": 0
         },
@@ -2055,8 +3788,8 @@
             "email": "data@cyber.edu",
             "password_hash": "$2y$10$OmlgxQV0lDuN6I8fvRn5OeWL1anrr5UxBEuC6GLyc5acxxBQAODxm",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 1047,
+            "rank": 27,
             "created_at": "2026-03-17 12:07:19",
             "is_admin": 0
         },
@@ -2066,8 +3799,8 @@
             "email": "cloud@cyber.edu",
             "password_hash": "$2y$10$40BrenH8QVTQs0i4cHJrueNtTt8W8p5hdXz.e5NkxOwYvokU9nOR2",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 4591,
+            "rank": 2,
             "created_at": "2026-03-17 12:07:41",
             "is_admin": 0
         },
@@ -2077,8 +3810,8 @@
             "email": "iron@cyber.edu",
             "password_hash": "$2y$10$C7cQJxIIyzit4GNtuuKR4u0OmIBCKO2\/6Hh0RbA\/AvvfLfqNsQkRy",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 4836,
+            "rank": 1,
             "created_at": "2026-03-17 12:07:56",
             "is_admin": 0
         },
@@ -2088,8 +3821,8 @@
             "email": "glitch@cyber.edu",
             "password_hash": "$2y$10$oBHHhFX\/ub0AfLuIR2FgwOde\/CoimV\/yrOIxVnbD8yqQEgVWGnkt.",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 416,
+            "rank": 30,
             "created_at": "2026-03-17 12:08:11",
             "is_admin": 0
         },
@@ -2099,8 +3832,8 @@
             "email": "pixel@cyber.edu",
             "password_hash": "$2y$10$wkHmYvGPgL1dROygMJ3jVukHqoudXQiM7ROk1ne7MHmsD8WdVKyk.",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 2533,
+            "rank": 19,
             "created_at": "2026-03-17 12:08:31",
             "is_admin": 0
         },
@@ -2110,8 +3843,8 @@
             "email": "monk@cyber.edu",
             "password_hash": "$2y$10$7ZcnnM\/9qjXl.tAmO6Q6We7D4OqQrmqW5K0tHV0MO9CkGNakuQ8yu",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 1430,
+            "rank": 23,
             "created_at": "2026-03-17 12:08:48",
             "is_admin": 0
         },
@@ -2121,8 +3854,8 @@
             "email": "vector@cyber.edu",
             "password_hash": "$2y$10$J1Z4t26ql2Zv97kl2ab0y.BoPL.zigVE8IQcaEREjiP8EZO741xpi",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 4528,
+            "rank": 3,
             "created_at": "2026-03-17 12:09:07",
             "is_admin": 0
         },
@@ -2132,8 +3865,8 @@
             "email": "alpha@cyber.edu",
             "password_hash": "$2y$10$HKo6F4SzMgEnm.hF1XNV\/uH0LxBPs73kdoB8\/dtCK6kbmO89RC79a",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 3371,
+            "rank": 11,
             "created_at": "2026-03-17 12:09:22",
             "is_admin": 0
         },
@@ -2143,8 +3876,8 @@
             "email": "omega@cyber.edu",
             "password_hash": "$2y$10$tnh7hUznpsZr7ly58ja8PeSQCtV9BsmQYELC2G4Ems8nNICvXd3MO",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 3263,
+            "rank": 12,
             "created_at": "2026-03-17 12:09:35",
             "is_admin": 0
         },
@@ -2154,8 +3887,8 @@
             "email": "hex@cyber.edu",
             "password_hash": "$2y$10$5o3N2AeYvokRMQGdg4pv2ef8SJQil1uMDtZ7bZvfa0.mpJmex9CB6",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 1201,
+            "rank": 25,
             "created_at": "2026-03-17 12:09:52",
             "is_admin": 0
         },
@@ -2165,8 +3898,8 @@
             "email": "vault@cyber.edu",
             "password_hash": "$2y$10$QQO9dPHEeeVMAqc.4Hrvn.Mj0OVKMgfbCto45ceCJ9O0pkyYKpc4e",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 1196,
+            "rank": 26,
             "created_at": "2026-03-17 12:10:07",
             "is_admin": 0
         },
@@ -2176,8 +3909,8 @@
             "email": "blue@cyber.edu",
             "password_hash": "$2y$10$Y7nt.hb6RD0XXSL9\/2QrKuJIMm733VbgEm2oIkb4\/MdeQwrM99jIy",
             "avatar_url": null,
-            "points": 0,
-            "rank": 0,
+            "points": 2368,
+            "rank": 20,
             "created_at": "2026-03-17 12:10:19",
             "is_admin": 0
         }
@@ -2207,11 +3940,11 @@
             "author_id": 3,
             "slug": "static-vs-dynamic-analysis",
             "reading_time": 10,
-            "views": 0,
+            "views": 2,
             "difficulty_level": "intermediate",
             "is_published": 1,
             "created_at": "2026-01-05 02:06:13",
-            "updated_at": "2026-01-05 02:06:13"
+            "updated_at": "2026-03-31 00:06:50"
         },
         {
             "id": 4,
