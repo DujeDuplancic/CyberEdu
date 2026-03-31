@@ -153,6 +153,32 @@
             "created_by": 3,
             "is_active": 1,
             "created_at": "2026-03-31 00:50:52"
+        },
+        {
+            "id": 7,
+            "title": "The Carriage",
+            "description": "The Carriage has returned. Connect using the Linux command nc chal.platforma.hacknite.hr 14011 or the Windows command telnet chal.platforma.hacknite.hr 14011.",
+            "category_id": 2,
+            "difficulty": "Hard",
+            "points": 200,
+            "flag": "$2y$10$0SkMHw5LJVthkaTGygSoauTU\/u8FloABn\/AYkDOmu.gX7s0lIC.QW",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_7_pwn4_handout_1774995570.zip",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-04-01 00:19:22"
+        },
+        {
+            "id": 8,
+            "title": "Secret Message",
+            "description": "T30fhy88 i 19t8c xbde wfa5:\n\n7NDNK3Z[LQY5VY2YSR2U]\n\nZbh fz7n: T30fhy88 + C3u4p = G2h87vle h 8ls12n e50oc3h.",
+            "category_id": 3,
+            "difficulty": "Easy",
+            "points": 20,
+            "flag": "$2y$10$1j9pGQidducMWFjJH4xx7ODGX..bY.9xI2TbIDz1n7KYzYUZpNume",
+            "file_url": null,
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-04-01 00:24:52"
         }
     ],
     "discussions": [
@@ -1655,11 +1681,11 @@
             "video_url": "https:\/\/www.youtube.com\/embed\/3m6K_1f5S3E",
             "embed_url": "https:\/\/www.youtube.com\/embed\/3m6K_1f5S3E",
             "thumbnail_url": "https:\/\/img.youtube.com\/vi\/3m6K_1f5S3E\/hqdefault.jpg",
-            "views": 0,
+            "views": 2,
             "is_published": 1,
             "author_id": 3,
             "created_at": "2026-03-17 12:35:12",
-            "updated_at": "2026-03-17 12:35:12"
+            "updated_at": "2026-03-31 23:53:32"
         },
         {
             "id": 44,
@@ -3557,7 +3583,14 @@
             "created_at": "2026-03-31 22:00:00"
         }
     ],
-    "solves": [],
+    "solves": [
+        {
+            "id": 3,
+            "user_id": 3,
+            "challenge_id": 3,
+            "solved_at": "2026-03-31 23:52:10"
+        }
+    ],
     "user_achievements": [
         {
             "id": 1,
@@ -3579,7 +3612,7 @@
             "email": "admin@cyberedu.com",
             "password_hash": "$2y$10$EPka4dOjJQYSExkUCxTbPOR68a2xSTqAKR6tNgStBwfyRQ8Jv3jDm",
             "avatar_url": null,
-            "points": 0,
+            "points": 60,
             "rank": 0,
             "created_at": "2025-11-23 17:05:10",
             "is_admin": 1
@@ -3970,11 +4003,11 @@
             "author_id": 3,
             "slug": "debugging-with-x64dbg",
             "reading_time": 9,
-            "views": 2,
+            "views": 4,
             "difficulty_level": "intermediate",
             "is_published": 1,
             "created_at": "2026-01-05 02:06:13",
-            "updated_at": "2026-01-05 02:06:56"
+            "updated_at": "2026-03-31 23:53:50"
         },
         {
             "id": 6,
