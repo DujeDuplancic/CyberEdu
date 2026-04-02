@@ -93,7 +93,7 @@ export default function LeaderboardPage() {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 container mx-auto py-12 flex items-center justify-center">
+        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex items-center justify-center">
           <div className="text-center">
             <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary mb-4" />
             <p className="text-lg text-muted-foreground">Loading leaderboard...</p>
@@ -108,7 +108,7 @@ export default function LeaderboardPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 container mx-auto py-12">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4">Leaderboard</h1>
           <p className="text-lg text-muted-foreground">
@@ -255,35 +255,35 @@ export default function LeaderboardPage() {
                               <AvatarFallback>
                                 {user.username ? user.username[0].toUpperCase() : "U"}
                               </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-semibold">{user.username || "Unknown"}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {user.total_solves} challenge{user.total_solves !== 1 ? 's' : ''} solved
-                          </p>
+                            </Avatar>
+                            <div>
+                              <p className="font-semibold">{user.username || "Unknown"}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {user.total_solves} challenge{user.total_solves !== 1 ? 's' : ''} solved
+                              </p>
+                            </div>
+                          </div>
+                          <Badge variant="secondary" className="font-mono">
+                            {user.total_points} pts
+                          </Badge>
                         </div>
+                      ))
+                    ) : topUsers.length > 0 ? (
+                      <div className="text-center py-8">
+                        <p className="text-muted-foreground">
+                          No other users in this category
+                        </p>
                       </div>
-                      <Badge variant="secondary" className="font-mono">
-                        {user.total_points} pts
-                      </Badge>
-                    </div>
-                  ))
-                ) : topUsers.length > 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground">
-                      No other users in this category
-                    </p>
+                    ) : null}
                   </div>
-                ) : null}
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            )}
+          </>
         )}
-      </>
-    )}
-  </main>
+      </main>
 
-  <Footer />
-</div>
-)
+      <Footer />
+    </div>
+  )
 }

@@ -59,8 +59,11 @@ export default function LecturesPage() {
         return (
             <div className="min-h-screen flex flex-col">
                 <Header />
-                <main className="flex-1 container mx-auto py-12">
-                    <div className="text-center">Loading lectures...</div>
+                <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex items-center justify-center">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                        <p className="text-muted-foreground">Loading lectures...</p>
+                    </div>
                 </main>
                 <Footer />
             </div>
@@ -71,7 +74,7 @@ export default function LecturesPage() {
         return (
             <div className="min-h-screen flex flex-col">
                 <Header />
-                <main className="flex-1 container mx-auto py-12">
+                <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="text-center text-red-500">
                         <AlertCircle className="h-12 w-12 mx-auto mb-4" />
                         <p>{error}</p>
@@ -89,7 +92,7 @@ export default function LecturesPage() {
         <div className="min-h-screen flex flex-col">
             <Header />
 
-            <main className="flex-1 container mx-auto py-12">
+            <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="mb-8">
                     <h1 className="text-4xl font-bold mb-4">Video Lectures</h1>
                     <p className="text-lg text-muted-foreground">
@@ -155,12 +158,12 @@ export default function LecturesPage() {
                                                 {lecture.views || 0} views
                                             </span>
                                         </div>
-<Link to={`/lectures/${lecture.id}`} className="block">
-    <Button className="w-full bg-red-600 hover:bg-red-700">
-        <Play className="h-4 w-4 mr-2" />
-        Watch Lecture
-    </Button>
-</Link>
+                                        <Link to={`/lectures/${lecture.id}`} className="block">
+                                            <Button className="w-full bg-red-600 hover:bg-red-700">
+                                                <Play className="h-4 w-4 mr-2" />
+                                                Watch Lecture
+                                            </Button>
+                                        </Link>
                                     </div>
                                 </CardContent>
                             </Card>

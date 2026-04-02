@@ -105,7 +105,7 @@ export default function CTFPage() {
       if (data.success) {
         setMessage(`✅ ${data.message} +${data.points} points!`)
         setFlagInput("")
-        loadChallenges() // Reload to update solved status
+        loadChallenges()
       } else {
         setMessage(`❌ ${data.message}`)
       }
@@ -145,7 +145,7 @@ export default function CTFPage() {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 container mx-auto py-12 flex items-center justify-center">
+        <main className="flex-1 container mx-auto px-4 md:px-6 lg:px-8 py-12 flex items-center justify-center">
           <div className="text-center">Učitavanje challengea...</div>
         </main>
         <Footer />
@@ -157,7 +157,7 @@ export default function CTFPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-1 container mx-auto py-12">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4">CTF Challenges</h1>
           <p className="text-lg text-muted-foreground">
