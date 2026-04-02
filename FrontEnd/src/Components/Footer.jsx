@@ -4,14 +4,15 @@ import { Terminal, Github, Twitter, Mail } from "lucide-react"
 export function Footer() {
   return (
     <footer className="border-t border-border bg-muted/50">
-      <div className="container mx-auto py-12 md:py-16">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Left side - About section */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Terminal className="h-6 w-6 text-primary" />
               <span className="font-mono text-lg font-bold">CyberEdu</span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               Master cybersecurity through hands-on CTF challenges and comprehensive educational resources.
             </p>
             <div className="flex gap-4">
@@ -30,8 +31,9 @@ export function Footer() {
             </div>
           </div>
 
+          {/* Platform section */}
           <div>
-            <h3 className="font-semibold mb-4">Platform</h3>
+            <h3 className="font-semibold mb-4 text-foreground">Platform</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link to="/ctf" className="text-muted-foreground hover:text-primary transition-colors">
@@ -56,8 +58,9 @@ export function Footer() {
             </ul>
           </div>
 
+          {/* Community section */}
           <div>
-            <h3 className="font-semibold mb-4">Community</h3>
+            <h3 className="font-semibold mb-4 text-foreground">Community</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link to="/community" className="text-muted-foreground hover:text-primary transition-colors">
@@ -82,8 +85,9 @@ export function Footer() {
             </ul>
           </div>
 
+          {/* Resources section */}
           <div>
-            <h3 className="font-semibold mb-4">Resources</h3>
+            <h3 className="font-semibold mb-4 text-foreground">Resources</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
@@ -120,6 +124,7 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Bottom bar - Copyright */}
         <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} CyberEdu. All rights reserved.</p>
         </div>

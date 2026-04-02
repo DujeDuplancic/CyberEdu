@@ -7,6 +7,7 @@ import { Button } from "../Components/ui/button"
 import { Trophy, Target, Clock, Award, Calendar, TrendingUp, User } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { EditProfileModal } from "../Profile/EditProfileModal"
 
 export default function ProfilePage() {
   const [userStats, setUserStats] = useState(null)
@@ -14,6 +15,7 @@ export default function ProfilePage() {
   const [categoryProgress, setCategoryProgress] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -22,7 +24,6 @@ export default function ProfilePage() {
 
   const fetchProfileData = async () => {
     try {
-      // Dobavi user podatke iz localStorage
       const userData = localStorage.getItem('user')
       if (!userData) {
         navigate('/login')
@@ -35,12 +36,9 @@ export default function ProfilePage() {
       const data = await response.json()
 
       if (data.success) {
-        // Formatiraj datume
         const formattedStats = {
           ...data.profile,
-          // Ako je last_active timestamp, formatiraj ga
           lastActive: formatLastActive(data.profile.last_active),
-          // Ako je created_at, formatiraj kao datum pridruživanja
           joinedDate: formatDate(data.profile.created_at || data.profile.joined_date)
         }
         
@@ -58,7 +56,11 @@ export default function ProfilePage() {
     }
   }
 
-  // Funkcija za formatiranje "last active" vremena
+  const handleProfileUpdate = (updatedUser) => {
+    // Refresh profile data after update
+    fetchProfileData()
+  }
+
   const formatLastActive = (timestamp) => {
     if (!timestamp) return "Recently";
     
@@ -78,7 +80,6 @@ export default function ProfilePage() {
     }
   }
 
-  // Funkcija za formatiranje datuma
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     
@@ -93,7 +94,6 @@ export default function ProfilePage() {
     }
   }
 
-  // Formatiraj vrijeme za recent solves
   const formatSolveTime = (timestamp) => {
     if (!timestamp) return "";
     
@@ -200,11 +200,14 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </div>
-                <Button variant="outline">Edit Profile</Button>
+                <Button variant="outline" onClick={() => setIsEditModalOpen(true)}>
+                  Edit Profile
+                </Button>
               </div>
             </CardContent>
           </Card>
 
+          {/* Rest of your profile content remains the same */}
           {/* Stats Cards */}
           <div className="grid gap-6 md:grid-cols-4">
             <Card>
@@ -327,6 +330,14 @@ export default function ProfilePage() {
       </main>
 
       <Footer />
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        userData={userStats}
+        onUpdate={handleProfileUpdate}
+      />
     </div>
   )
 }
