@@ -168,10 +168,15 @@ export default function ProfilePage() {
             <CardContent className="pt-6">
               <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src={userStats.avatar_url || "/placeholder.svg?height=96&width=96"} />
-                  <AvatarFallback className="text-2xl">
-                    {userStats.username?.substring(0, 2).toUpperCase() || "U"}
-                  </AvatarFallback>
+                <AvatarImage 
+                  src={userStats.avatar_url 
+                    ? `http://localhost/CyberEdu/Backend/${userStats.avatar_url}`
+                    : "/placeholder.svg?height=96&width=96"
+                  } 
+                />
+                <AvatarFallback className="text-2xl">
+                  {userStats.username?.substring(0, 2).toUpperCase() || "U"}
+                </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
@@ -339,5 +344,6 @@ export default function ProfilePage() {
         onUpdate={handleProfileUpdate}
       />
     </div>
+    
   )
 }
