@@ -153,6 +153,19 @@
             "created_by": 3,
             "is_active": 1,
             "created_at": "2026-03-31 00:50:52"
+        },
+        {
+            "id": 7,
+            "title": "Digital Vault v1.0",
+            "description": "Our lead developer claims this vault is unhackable, but we found he used the deprecated gets() function for user input. Your task is to perform a Buffer Overflow to gain access.\n\nConnection: nc 192.168.1.16 14011",
+            "category_id": 2,
+            "difficulty": "Hard",
+            "points": 200,
+            "flag": "$2y$10$gBuALBXpQJKL50U7ebqiOOA67xgec4P0EQjz7YLqnETOqajyjUecy",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_7_pwn_vault_handout_1775841894.zip",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-04-10 19:24:36"
         }
     ],
     "discussions": [
@@ -493,7 +506,7 @@
             "author_id": 35,
             "category": "Binary Exploitation",
             "is_pinned": 1,
-            "views": 546,
+            "views": 550,
             "created_at": "2026-03-31 09:30:00"
         },
         {
@@ -2250,11 +2263,11 @@
             "video_url": "https:\/\/www.youtube.com\/watch?v=1S0aBV-Waeo",
             "embed_url": "https:\/\/www.youtube.com\/embed\/1S0aBV-Waeo",
             "thumbnail_url": "https:\/\/img.youtube.com\/vi\/1S0aBV-Waeo\/hqdefault.jpg",
-            "views": 2,
+            "views": 4,
             "is_published": 1,
             "author_id": 3,
             "created_at": "2026-03-17 12:40:31",
-            "updated_at": "2026-03-17 12:52:08"
+            "updated_at": "2026-04-04 21:15:52"
         },
         {
             "id": 79,
@@ -3557,7 +3570,14 @@
             "created_at": "2026-03-31 22:00:00"
         }
     ],
-    "solves": [],
+    "solves": [
+        {
+            "id": 1,
+            "user_id": 3,
+            "challenge_id": 7,
+            "solved_at": "2026-04-10 19:26:26"
+        }
+    ],
     "user_achievements": [
         {
             "id": 1,
@@ -3575,11 +3595,11 @@
     "users": [
         {
             "id": 3,
-            "username": "admin",
+            "username": "Admin",
             "email": "admin@cyberedu.com",
             "password_hash": "$2y$10$EPka4dOjJQYSExkUCxTbPOR68a2xSTqAKR6tNgStBwfyRQ8Jv3jDm",
-            "avatar_url": null,
-            "points": 0,
+            "avatar_url": "uploads\/avatars\/69d2b22d8f337_1775415853.jpg",
+            "points": 200,
             "rank": 0,
             "created_at": "2025-11-23 17:05:10",
             "is_admin": 1
@@ -3936,11 +3956,11 @@
             "author_id": 3,
             "slug": "introduction-to-reverse-engineering",
             "reading_time": 8,
-            "views": 8,
+            "views": 10,
             "difficulty_level": "beginner",
             "is_published": 1,
             "created_at": "2026-01-05 02:06:13",
-            "updated_at": "2026-03-16 23:23:39"
+            "updated_at": "2026-04-04 21:16:35"
         },
         {
             "id": 3,
