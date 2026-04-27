@@ -166,6 +166,19 @@
             "created_by": 3,
             "is_active": 1,
             "created_at": "2026-04-10 19:24:36"
+        },
+        {
+            "id": 8,
+            "title": "Vault Breaker",
+            "description": "A binary asks for a Master Key. Analysis shows each input character is obfuscated using XOR and bit rotation before comparison with a hidden 17-byte array. Reverse the process to recover the correct key.\nFlag format: CTF{...}",
+            "category_id": 1,
+            "difficulty": "Medium",
+            "points": 100,
+            "flag": "$2y$10$lzvgvwCZm2AaEy.zU7RFV.zdyQ8wy0tdO9PAUZUi83.XGuaPiCJ2i",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_8_vault_1777325999.zip",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-04-27 23:39:16"
         }
     ],
     "discussions": [
@@ -3576,6 +3589,12 @@
             "user_id": 3,
             "challenge_id": 7,
             "solved_at": "2026-04-10 19:26:26"
+        },
+        {
+            "id": 2,
+            "user_id": 3,
+            "challenge_id": 8,
+            "solved_at": "2026-04-27 23:40:35"
         }
     ],
     "user_achievements": [
@@ -3599,7 +3618,7 @@
             "email": "admin@cyberedu.com",
             "password_hash": "$2y$10$EPka4dOjJQYSExkUCxTbPOR68a2xSTqAKR6tNgStBwfyRQ8Jv3jDm",
             "avatar_url": "uploads\/avatars\/69d2b22d8f337_1775415853.jpg",
-            "points": 200,
+            "points": 300,
             "rank": 0,
             "created_at": "2025-11-23 17:05:10",
             "is_admin": 1
@@ -3971,11 +3990,11 @@
             "author_id": 3,
             "slug": "static-vs-dynamic-analysis",
             "reading_time": 10,
-            "views": 2,
+            "views": 4,
             "difficulty_level": "intermediate",
             "is_published": 1,
             "created_at": "2026-01-05 02:06:13",
-            "updated_at": "2026-03-31 00:06:50"
+            "updated_at": "2026-04-27 22:21:15"
         },
         {
             "id": 4,
