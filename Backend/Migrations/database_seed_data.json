@@ -179,6 +179,71 @@
             "created_by": 3,
             "is_active": 1,
             "created_at": "2026-04-27 23:39:16"
+        },
+        {
+            "id": 9,
+            "title": "Caesar's Secret",
+            "description": "We intercepted an encrypted message believed to contain critical intelligence. The encryption method dates back to ancient Rome — simple, yet effective for its time.\n\nJAM{016254938716}\n\nHints:\n\nThe flag format is CTF{...} — but don't expect to see those exact letters in the file.\nThe same rule applies to every character — letters and digits alike.\nJulius Caesar used a shift of 3. Ours might be a little different.\nTry tools like CyberChef or write a quick Python script.",
+            "category_id": 3,
+            "difficulty": "Easy",
+            "points": 50,
+            "flag": "$2y$10$y4LD74XRNYyBI09FYiJw2..c7dHn8FYRMGgva6iwlvHjEju0.D6dW",
+            "file_url": null,
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-04-28 23:13:14"
+        },
+        {
+            "id": 10,
+            "title": "Base Jumping",
+            "description": "A suspicious string was found left on a public server with no context. No keys, no passwords — just a sequence of characters that looks slightly... off. Can you figure out what encoding was used and reveal the hidden flag?\n\nQ1RGezc0ODI5NTYxMDM4N30=\n\nHints:\n\nLook closely at the last character of the string. Does it ring a bell?\nThis isn't encryption — it's just encoding. No keys needed.\nAlmost every programmer has seen this format before.\nA simple one-liner in Python or bash is enough to solve this.",
+            "category_id": 3,
+            "difficulty": "Easy",
+            "points": 75,
+            "flag": "$2y$10$mKusZRE4vASQkLVv2F8.1.y6uDm0VKySPK6gZyWoRVKvW3ZhFz0ze",
+            "file_url": null,
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-04-28 23:16:37"
+        },
+        {
+            "id": 12,
+            "title": "XOR Files",
+            "description": "Two binary files were recovered from a suspect's machine. Neither one reveals anything useful on its own — but combine them the right way, and the flag appears.\nHint: Sometimes two secrets cancel each other out.",
+            "category_id": 3,
+            "difficulty": "Medium",
+            "points": 150,
+            "flag": "$2y$10$H.VRRJQzDjF232InaQU32.NNjLKg\/xS29GzHG4CUWfv9L0qvWUF4q",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_12_handouts_1777411426.zip",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-04-28 23:23:00"
+        },
+        {
+            "id": 13,
+            "title": "Weak RSA",
+            "description": "A developer thought cutting corners on key size would save computation time. It did — and now so will you. You have the public key and the ciphertext. Break it.\nHint: If you can factor n, you can break RSA entirely.",
+            "category_id": 3,
+            "difficulty": "Hard",
+            "points": 300,
+            "flag": "$2y$10$akqdnL3Xc5AgMpr9TZP4wukrDku0fPJZNo9d9nK8l1bFru8AC.oXy",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_13_rsa_challenge_1777412266.txt",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-04-28 23:35:25"
+        },
+        {
+            "id": 14,
+            "title": " Vigenere Key Reuse",
+            "description": "Description:\nTwo messages. Same key. One mistake. You know what one of the messages says — now figure out the key and read the other one.\nHint: If you have the plaintext and the ciphertext, the key is just subtraction.",
+            "category_id": 3,
+            "difficulty": "Hard",
+            "points": 350,
+            "flag": "$2y$10$9JBfqCDa9r0czpZHs8ibNuJa.A5HNoQcJNs.KovTNdpn\/oFwPPk2K",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_14_vigenere_kpa_1777412660.txt",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-04-28 23:41:42"
         }
     ],
     "discussions": [

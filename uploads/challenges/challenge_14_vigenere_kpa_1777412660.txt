@@ -1,0 +1,3 @@
+plaintext1  = ATTACKATDAWN
+ciphertext1 = LXFOPVEFRNHR
+ciphertext2 = ELQTYLKUGPEJ836204719582
