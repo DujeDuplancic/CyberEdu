@@ -7,209 +7,131 @@ import { Card, CardContent, CardHeader, CardTitle } from "../Components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "../Components/ui/avatar";
 import { Badge } from "../Components/ui/badge";
 import { Textarea } from "../Components/ui/textarea";
-import { MessageSquare, Clock, Eye, ArrowLeft, Pin } from "lucide-react";
+import { MessageSquare, Clock, Eye, ArrowLeft, Pin, Send } from "lucide-react";
 import { api } from '../lib/api';
 
 export default function DiscussionDetail() {
   const { id } = useParams();
-  const [discussion, setDiscussion] = useState(null);
-  const [replies, setReplies] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [state, setState] = useState({ discussion: null, replies: [], loading: true });
   const [replyContent, setReplyContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchDiscussion();
-    fetchReplies();
-  }, [id]);
-
-  const fetchDiscussion = async () => {
+  // Unified fetcher for data
+  const loadData = async () => {
     try {
-      const response = await api.get(`/discussions/get_discussion_details.php?id=${id}`);
-      if (response.success) {
-        setDiscussion(response.discussion);
-      }
-    } catch (error) {
-      console.error('Error fetching discussion:', error);
-    }
+      const [discRes, replRes] = await Promise.all([
+        api.get(`/discussions/get_discussion_details.php?id=${id}`),
+        api.get(`/discussions/get_replies.php?discussion_id=${id}`)
+      ]);
+      setState({
+        discussion: discRes.success ? discRes.discussion : null,
+        replies: replRes.success ? replRes.replies : [],
+        loading: false
+      });
+    } catch (e) { console.error(e); setState(s => ({ ...s, loading: false })); }
   };
 
-  const fetchReplies = async () => {
-    try {
-      const response = await api.get(`/discussions/get_replies.php?discussion_id=${id}`);
-      if (response.success) {
-        setReplies(response.replies);
-      }
-    } catch (error) {
-      console.error('Error fetching replies:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => { loadData(); }, [id]);
 
-  const handleSubmitReply = async () => {
-  if (!replyContent.trim()) return;
-  
-  setSubmitting(true);
-  try {
-    // Dohvati korisnika iz localStorage
+  const handleReply = async () => {
+    if (!replyContent.trim()) return;
+    setSubmitting(true);
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     
-    const response = await api.post('/discussions/create_reply.php', {
+    const res = await api.post('/discussions/create_reply.php', {
       discussion_id: parseInt(id),
       content: replyContent,
-      user_email: user.email, // Dodaj email
-      user_id: user.id // Ili ID
+      user_id: user.id
     });
-    
-    if (response.success) {
-      setReplies([...replies, response.reply]);
-      setReplyContent('');
-      // Update discussion last activity
-      fetchDiscussion();
-    }
-  } catch (error) {
-    console.error('Error posting reply:', error);
-  } finally {
-    setSubmitting(false);
-  }
-};
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 container mx-auto py-12">
-          <div className="max-w-4xl mx-auto">Loading...</div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+    if (res.success) {
+      setReplyContent('');
+      loadData(); // Refresh both views and replies
+    }
+    setSubmitting(false);
+  };
+
+  if (state.loading) return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" />;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
       <Header />
       
-      <main className="flex-1 container mx-auto py-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-6">
-            <Link to="/community">
-              <Button variant="ghost" className="mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Discussions
-              </Button>
-            </Link>
-          </div>
+      <main className="flex-1 container max-w-4xl mx-auto py-10 px-4">
+        <Link to="/community" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary mb-6 transition-colors">
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to feed
+        </Link>
 
-          {discussion && (
-            <Card className="mb-6">
-              <CardHeader>
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      {discussion.is_pinned && (
-                        <Badge variant="secondary">
-                          <Pin className="h-3 w-3 mr-1" />
-                          Pinned
-                        </Badge>
-                      )}
-                      <Badge variant="outline">{discussion.category}</Badge>
-                    </div>
-                    <CardTitle className="text-2xl mb-2">{discussion.title}</CardTitle>
-                  </div>
+        {state.discussion && (
+          <div className="space-y-8">
+            {/* Main Discussion Thread */}
+            <Card className="border-none shadow-sm overflow-hidden">
+              <div className="h-1 bg-primary/60" />
+              <CardHeader className="pb-4">
+                <div className="flex gap-2 mb-3">
+                  {state.discussion.is_pinned && <Badge className="bg-amber-500/10 text-amber-600 border-none"><Pin className="h-3 w-3 mr-1" /> Pinned</Badge>}
+                  <Badge variant="outline" className="uppercase text-[10px] tracking-widest">{state.discussion.category}</Badge>
                 </div>
+                <CardTitle className="text-3xl font-extrabold">{state.discussion.title}</CardTitle>
                 
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-6 pt-4 text-xs text-muted-foreground border-t mt-4">
                   <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="/placeholder.svg" />
-                      <AvatarFallback>{discussion.author_name?.[0]?.toUpperCase()}</AvatarFallback>
-                    </Avatar>
-                    <span>{discussion.author_name}</span>
+                    <Avatar className="h-6 w-6 border"><AvatarFallback>{state.discussion.author_name?.[0]}</AvatarFallback></Avatar>
+                    <span className="font-bold text-slate-900 dark:text-slate-100">{state.discussion.author_name}</span>
                   </div>
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    {new Date(discussion.created_at).toLocaleDateString()}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Eye className="h-3 w-3" />
-                    {discussion.views} views
-                  </span>
+                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(state.discussion.created_at).toLocaleDateString()}</span>
+                  <span className="flex items-center gap-1"><Eye className="h-3 w-3" /> {state.discussion.views} views</span>
                 </div>
               </CardHeader>
+              <CardContent className="prose dark:prose-invert max-w-none pb-8 text-slate-700 dark:text-slate-300">
+                <p className="whitespace-pre-wrap leading-relaxed">{state.discussion.content}</p>
+              </CardContent>
+            </Card>
+
+            {/* Replies Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold flex items-center gap-2 px-1">
+                <MessageSquare className="h-5 w-5 text-primary" /> 
+                Responses <span className="text-muted-foreground font-normal">({state.replies.length})</span>
+              </h3>
               
-              <CardContent>
-                <div className="prose max-w-none mb-8">
-                  <p className="whitespace-pre-wrap">{discussion.content}</p>
+              <div className="grid gap-4">
+                {state.replies.map((reply) => (
+                  <Card key={reply.id} className="border-none shadow-sm bg-white/50 dark:bg-slate-900/50">
+                    <CardContent className="p-5">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Avatar className="h-8 w-8"><AvatarFallback>{reply.author_name?.[0]}</AvatarFallback></Avatar>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold">{reply.author_name}</span>
+                          <span className="text-[10px] text-muted-foreground">{new Date(reply.created_at).toLocaleString()}</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap pl-11">{reply.content}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* Reply Editor */}
+            <Card className="border-2 border-dashed border-slate-200 dark:border-slate-800 bg-transparent">
+              <CardContent className="p-6">
+                <Textarea
+                  placeholder="Share your thoughts or solutions..."
+                  className="min-h-[120px] bg-white dark:bg-slate-900 border-none resize-none focus-visible:ring-1 focus-visible:ring-primary mb-4"
+                  value={replyContent}
+                  onChange={(e) => setReplyContent(e.target.value)}
+                />
+                <div className="flex justify-end">
+                  <Button onClick={handleReply} disabled={submitting || !replyContent.trim()} className="px-6 gap-2">
+                    {submitting ? 'Sending...' : <><Send className="h-4 w-4" /> Post Reply</>}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
-          )}
-
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5" />
-                Replies ({replies.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {replies.length === 0 ? (
-                <p className="text-muted-foreground text-center py-8">
-                  No replies yet. Be the first to reply!
-                </p>
-              ) : (
-                <div className="space-y-6">
-                  {replies.map((reply) => (
-                    <div key={reply.id} className="border-b pb-6 last:border-0">
-                      <div className="flex items-start gap-4">
-                        <Avatar>
-                          <AvatarImage src="/placeholder.svg" />
-                          <AvatarFallback>{reply.author_name?.[0]?.toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
-                            <div>
-                              <span className="font-medium">{reply.author_name}</span>
-                              <span className="text-sm text-muted-foreground ml-2">
-                                {new Date(reply.created_at).toLocaleString()}
-                              </span>
-                            </div>
-                          </div>
-                          <p className="whitespace-pre-wrap">{reply.content}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Post a Reply</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Textarea
-                  placeholder="Type your reply here..."
-                  value={replyContent}
-                  onChange={(e) => setReplyContent(e.target.value)}
-                  rows={4}
-                />
-                <div className="flex justify-end">
-                  <Button onClick={handleSubmitReply} disabled={submitting || !replyContent.trim()}>
-                    {submitting ? 'Posting...' : 'Post Reply'}
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+          </div>
+        )}
       </main>
-
       <Footer />
     </div>
   );

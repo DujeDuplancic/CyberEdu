@@ -1,201 +1,221 @@
+"use client"
+
+import { useState, useEffect, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
 import { Header } from "../Components/Header"
 import { Footer } from "../Components/Footer"
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
 
-// Import komponenti
-import SearchBar from "./components/SearchBar"
+// UI & Icons
+import { Input } from "../Components/ui/input"
+import { Badge } from "../Components/ui/badge"
+import { Button } from "../Components/ui/button"
+import { 
+    Search, Flag, Target, ShieldCheck, 
+    XCircle, Trophy, Layers, Loader2 
+} from "lucide-react"
+
+// Custom Components
 import CategoryFilter from "./CategoryFilter"
 import ChallengeList from "./ChallengeList"
 import ChallengeModal from "./ChallengeModal"
 
 export default function CTFPage() {
-  const [challenges, setChallenges] = useState([])
-  const [categories, setCategories] = useState([])
-  const [activeCategory, setActiveCategory] = useState("all")
-  const [loading, setLoading] = useState(true)
-  const [selectedChallenge, setSelectedChallenge] = useState(null)
-  const [flagInput, setFlagInput] = useState("")
-  const [submitting, setSubmitting] = useState(false)
-  const [message, setMessage] = useState("")
-  const navigate = useNavigate()
+    const [challenges, setChallenges] = useState([])
+    const [categories, setCategories] = useState([])
+    const [activeCategory, setActiveCategory] = useState("all")
+    const [searchQuery, setSearchQuery] = useState("")
+    const [loading, setLoading] = useState(true)
+    const [selectedChallenge, setSelectedChallenge] = useState(null)
+    
+    const navigate = useNavigate()
 
-  useEffect(() => {
-    window.scrollTo(0, 0)
-    loadCategories()
-    loadChallenges()
-  }, [])
+    // --- INITIALIZATION ---
+    useEffect(() => {
+        window.scrollTo(0, 0)
+        const initializeData = async () => {
+            setLoading(true)
+            await Promise.all([loadCategories(), loadChallenges()])
+            setLoading(false)
+        }
+        initializeData()
+    }, [])
 
-  const loadCategories = async () => {
-    try {
-      const response = await fetch('http://localhost/CyberEdu/Backend/challenges/get_categories.php')
-      const data = await response.json()
-      
-      if (data.success) {
-        setCategories(data.categories)
-      }
-    } catch (error) {
-      console.error('Error loading categories:', error)
-    }
-  }
-
-  const loadChallenges = async () => {
-    try {
-      const userData = localStorage.getItem('user')
-      const user = userData ? JSON.parse(userData) : null
-      
-      const url = user 
-        ? `http://localhost/CyberEdu/Backend/challenges/get_challenges.php?user_id=${user.id}`
-        : 'http://localhost/CyberEdu/Backend/challenges/get_challenges.php'
-      
-      const response = await fetch(url)
-      const data = await response.json()
-      
-      if (data.success) {
-        setChallenges(data.challenges)
-      }
-    } catch (error) {
-      console.error('Error loading challenges:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty) {
-      case "Easy": return "bg-green-500/10 text-green-500 border-green-500/20"
-      case "Medium": return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-      case "Hard": return "bg-red-500/10 text-red-500 border-red-500/20"
-      default: return "bg-muted text-muted-foreground"
-    }
-  }
-
-  const handleSubmitFlag = async () => {
-    if (!flagInput.trim()) {
-      setMessage("Unesite flag!")
-      return
+    const loadCategories = async () => {
+        try {
+            const response = await fetch('http://localhost/CyberEdu/Backend/challenges/get_categories.php')
+            const data = await response.json()
+            if (data.success) setCategories(data.categories)
+        } catch (error) {
+            console.error('Error loading categories:', error)
+        }
     }
 
-    const userData = localStorage.getItem('user')
-    if (!userData) {
-      setMessage("Morate biti prijavljeni!")
-      navigate('/login')
-      return
+    const loadChallenges = async () => {
+        try {
+            const userData = localStorage.getItem('user')
+            const user = userData ? JSON.parse(userData) : null
+            const url = user 
+                ? `http://localhost/CyberEdu/Backend/challenges/get_challenges.php?user_id=${user.id}`
+                : 'http://localhost/CyberEdu/Backend/challenges/get_challenges.php'
+            
+            const response = await fetch(url)
+            const data = await response.json()
+            if (data.success) setChallenges(data.challenges)
+        } catch (error) {
+            console.error('Error loading challenges:', error)
+        }
     }
 
-    const user = JSON.parse(userData)
-    setSubmitting(true)
-    setMessage("")
-
-    try {
-      const response = await fetch('http://localhost/CyberEdu/Backend/challenges/submit_flag.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: user.id,
-          challenge_id: selectedChallenge.id,
-          flag: flagInput
+    // --- FILTERING ---
+    const filteredChallenges = useMemo(() => {
+        return challenges.filter(challenge => {
+            const matchesCategory = activeCategory === "all" || challenge.category_id.toString() === activeCategory
+            const matchesSearch = challenge.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                 challenge.description?.toLowerCase().includes(searchQuery.toLowerCase())
+            return matchesCategory && matchesSearch
         })
-      })
+    }, [challenges, activeCategory, searchQuery])
 
-      const data = await response.json()
+    // --- HANDLERS ---
+    const handleAttemptChallenge = (challenge) => setSelectedChallenge(challenge)
+    const handleCloseModal = () => setSelectedChallenge(null)
 
-      if (data.success) {
-        setMessage(`✅ ${data.message} +${data.points} points!`)
-        setFlagInput("")
+    // Pomjeranje "Solve" logike u modal, ovdje samo refreshamo listu nakon uspjeha
+    const onChallengeSolved = () => {
         loadChallenges()
-      } else {
-        setMessage(`❌ ${data.message}`)
-      }
-    } catch (error) {
-      console.error('Error submitting flag:', error)
-      setMessage("❌ Greška pri slanju flag-a")
-    } finally {
-      setSubmitting(false)
     }
-  }
 
-  const handleAttemptChallenge = (challenge) => {
-    setSelectedChallenge(challenge)
-    setFlagInput("")
-    setMessage("")
-  }
+    if (loading) {
+        return (
+            <div className="min-h-screen flex flex-col bg-[#f8fafc]">
+                <Header />
+                <main className="flex-1 flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                        <Loader2 className="h-10 w-10 text-indigo-500 animate-spin" />
+                        <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px]">Synchronizing_Vault...</p>
+                    </div>
+                </main>
+                <Footer />
+            </div>
+        )
+    }
 
-  const handleCloseModal = () => {
-    setSelectedChallenge(null)
-    setFlagInput("")
-    setMessage("")
-  }
-
-  const handleFlagChange = (e) => {
-    setFlagInput(e.target.value)
-  }
-
-  const handleCategoryChange = (categoryId) => {
-    setActiveCategory(categoryId)
-  }
-
-  const filteredChallenges = challenges.filter(challenge => 
-    activeCategory === "all" || challenge.category_id.toString() === activeCategory
-  )
-
-  if (loading) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 container mx-auto px-4 md:px-6 lg:px-8 py-12 flex items-center justify-center">
-          <div className="text-center">Učitavanje challengea...</div>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
+        <div className="min-h-screen flex flex-col bg-[#f8fafc]">
+            <Header />
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
+            <main className="flex-1 w-full max-w-[1600px] mx-auto px-6 md:px-10 py-10">
+                
+                {/* --- HERO SECTION (Muted Contrast) --- */}
+                <div className="mb-10 bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+                    <div className="h-32 bg-gradient-to-r from-indigo-500 to-blue-500 relative">
+                        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                    </div>
+                    
+                    <div className="p-8 md:p-10 -mt-16 flex flex-col md:flex-row justify-between items-end gap-6 relative z-10">
+                        <div className="flex flex-col md:flex-row gap-6 items-end w-full">
+                            {/* Avatar/Icon Container */}
+                            <div className="h-32 w-32 rounded-3xl bg-white p-2 shadow-xl shadow-slate-200/40 flex-shrink-0">
+                                <div className="w-full h-full rounded-2xl bg-indigo-50/50 flex items-center justify-center border border-indigo-100">
+                                    <Target className="h-12 w-12 text-indigo-500" />
+                                </div>
+                            </div>
+                            
+                            {/* Title & Info */}
+                            <div className="flex-1 pb-2">
+                                <div className="flex items-center gap-3 mb-1">
+                                    <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">CTF Challenges</h1>
+                                    <Badge className="bg-indigo-50 text-indigo-600 border-indigo-100 uppercase text-[10px] px-2 py-0.5 font-bold tracking-wider">Live Vault</Badge>
+                                </div>
+                                <p className="text-slate-500 font-medium max-w-lg">
+                                    Infiltrate systems, decrypt secrets, and climb the leaderboard.
+                                </p>
+                            </div>
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4">CTF Challenges</h1>
-          <p className="text-lg text-muted-foreground">
-            Solve challenges, capture flags, and earn points to climb the leaderboard.
-          </p>
+                            {/* Integrated Search */}
+                            <div className="w-full md:w-[380px] relative group">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                                <Input 
+                                    placeholder="Search target intelligence..." 
+                                    className="bg-slate-50/50 border-slate-200 h-12 pl-11 rounded-xl shadow-sm focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 transition-all"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                                {searchQuery && (
+                                    <button onClick={() => setSearchQuery("")} className="absolute right-4 top-1/2 -translate-y-1/2">
+                                        <XCircle className="h-4 w-4 text-slate-300 hover:text-slate-500 transition-colors" />
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid lg:grid-cols-[280px_1fr] gap-8">
+                    {/* --- SIDEBAR --- */}
+                    <aside className="space-y-6">
+                        <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm">
+                            <div className="flex items-center gap-2 mb-5 text-slate-400 font-black uppercase text-[10px] tracking-[0.15em]">
+                                <Layers className="h-3.5 w-3.5 text-indigo-500" />
+                                Domains
+                            </div>
+                            <CategoryFilter
+                                categories={categories}
+                                activeCategory={activeCategory}
+                                onCategoryChange={setActiveCategory}
+                            />
+                        </div>
+
+                        {/* Muted CTA Card */}
+                        <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 rounded-2xl shadow-lg shadow-indigo-100 text-white relative overflow-hidden group">
+                             <Trophy className="absolute -right-2 -bottom-2 h-20 w-20 opacity-10 group-hover:scale-110 transition-transform duration-500" />
+                            <h4 className="font-bold text-lg relative z-10">Daily Goal</h4>
+                            <p className="text-indigo-100 text-sm mt-1 relative z-10 font-medium">Solve 2 more today!</p>
+                            <div className="mt-4 h-1.5 w-full bg-white/20 rounded-full overflow-hidden relative z-10">
+                                <div className="h-full bg-white w-1/3 rounded-full shadow-[0_0_8px_white]"></div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    {/* --- CHALLENGE GRID --- */}
+                    <section>
+                        {filteredChallenges.length === 0 ? (
+                            <div className="bg-white rounded-2xl border border-slate-200/60 p-20 text-center shadow-sm">
+                                <div className="h-20 w-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <ShieldCheck className="h-10 w-10 text-slate-200" />
+                                </div>
+                                <h3 className="text-xl font-bold text-slate-800">No Challenges Found</h3>
+                                <p className="text-slate-400 mt-2 font-mono text-xs uppercase tracking-widest">Query mismatch: {searchQuery}</p>
+                                <Button 
+                                    variant="outline" 
+                                    className="mt-8 border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl px-8"
+                                    onClick={() => {setSearchQuery(""); setActiveCategory("all")}}
+                                >
+                                    Clear Filters
+                                </Button>
+                            </div>
+                        ) : (
+                            <ChallengeList
+                                challenges={challenges}
+                                filteredChallenges={filteredChallenges}
+                                activeCategory={activeCategory}
+                                onAttemptChallenge={handleAttemptChallenge}
+                            />
+                        )}
+                    </section>
+                </div>
+
+                {/* --- MODAL --- */}
+                {selectedChallenge && (
+                    <ChallengeModal
+                        challenge={selectedChallenge}
+                        isSolved={selectedChallenge.solved} // Pretpostavka da backend vraća solved boolean
+                        onClose={handleCloseModal}
+                        onSolve={onChallengeSolved}
+                    />
+                )}
+            </main>
+            <Footer />
         </div>
-
-        <SearchBar />
-
-        <CategoryFilter
-          categories={categories}
-          activeCategory={activeCategory}
-          onCategoryChange={handleCategoryChange}
-        />
-
-        <ChallengeList
-          challenges={challenges}
-          filteredChallenges={filteredChallenges}
-          activeCategory={activeCategory}
-          onAttemptChallenge={handleAttemptChallenge}
-          getDifficultyColor={getDifficultyColor}
-        />
-
-        {/* Challenge Modal */}
-        {selectedChallenge && (
-          <ChallengeModal
-            challenge={selectedChallenge}
-            onClose={handleCloseModal}
-            flagInput={flagInput}
-            onFlagChange={handleFlagChange}
-            onSubmitFlag={handleSubmitFlag}
-            submitting={submitting}
-            message={message}
-          />
-        )}
-      </main>
-
-      <Footer />
-    </div>
-  )
+    )
 }

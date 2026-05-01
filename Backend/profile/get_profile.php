@@ -26,54 +26,52 @@ class Profile {
 
     public function getUserProfile($userId) {
         try {
-            $query = "SELECT id, username, email, avatar_url, points, rank, created_at, is_admin 
-                     FROM " . $this->userTable . " WHERE id = :id";
+            // 1. Osnovni podaci o korisniku
+            $query = "SELECT id, username, email, avatar_url, points, created_at, is_admin 
+                      FROM " . $this->userTable . " WHERE id = :id";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':id', $userId);
             $stmt->execute();
-
-            if ($stmt->rowCount() == 0) {
-                return ['success' => false, 'message' => 'Korisnik nije pronađen'];
-            }
-
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $query = "SELECT COUNT(*) as total_solves FROM " . $this->solvesTable . " WHERE user_id = :user_id";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':user_id', $userId);
-            $stmt->execute();
-            $solvesData = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$user) return ['success' => false, 'message' => 'Korisnik nije pronađen'];
 
-            $query = "SELECT solved_at FROM " . $this->solvesTable . " 
-                     WHERE user_id = :user_id ORDER BY solved_at DESC LIMIT 1";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':user_id', $userId);
-            $stmt->execute();
-            $lastActivity = $stmt->fetch(PDO::FETCH_ASSOC);
+            // 2. Dinamički rank (pozicija na ljestvici prema bodovima)
+            $rankQuery = "SELECT COUNT(*) + 1 as current_rank FROM " . $this->userTable . " WHERE points > :user_points";
+            $rankStmt = $this->db->prepare($rankQuery);
+            $rankStmt->bindParam(':user_points', $user['points']);
+            $rankStmt->execute();
+            $rankData = $rankStmt->fetch(PDO::FETCH_ASSOC);
+            $calculatedRank = $rankData['current_rank'];
 
-            $query = "SELECT c.title as challenge, cat.name as category, c.points, s.solved_at 
-                     FROM " . $this->solvesTable . " s
-                     JOIN " . $this->challengesTable . " c ON s.challenge_id = c.id
-                     JOIN " . $this->categoriesTable . " cat ON c.category_id = cat.id
-                     WHERE s.user_id = :user_id 
-                     ORDER BY s.solved_at DESC LIMIT 3";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':user_id', $userId);
-            $stmt->execute();
-            $recentSolves = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            // 3. Ukupno rješenja korisnika
+            $solveCountQuery = "SELECT COUNT(*) as total FROM " . $this->solvesTable . " WHERE user_id = :uid";
+            $solveStmt = $this->db->prepare($solveCountQuery);
+            $solveStmt->bindParam(':uid', $userId);
+            $solveStmt->execute();
+            $solveCount = $solveStmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-            $query = "SELECT cat.name, 
-                             COUNT(s.id) as solved,
-                             (SELECT COUNT(*) FROM challenges WHERE category_id = cat.id) as total
-                     FROM categories cat
-                     LEFT JOIN challenges c ON cat.id = c.category_id
-                     LEFT JOIN solves s ON c.id = s.challenge_id AND s.user_id = :user_id
-                     GROUP BY cat.id, cat.name";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':user_id', $userId);
-            $stmt->execute();
-            $categoryProgress = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            // 4. Zadnja aktivnost (vrijeme zadnjeg solve-a)
+            $lastActQuery = "SELECT solved_at FROM " . $this->solvesTable . " 
+                             WHERE user_id = :uid ORDER BY solved_at DESC LIMIT 1";
+            $lastStmt = $this->db->prepare($lastActQuery);
+            $lastStmt->bindParam(':uid', $userId);
+            $lastStmt->execute();
+            $lastActivity = $lastStmt->fetch(PDO::FETCH_ASSOC);
 
+            // 5. Tri nedavna rješenja za tablicu
+            $recentQuery = "SELECT c.title as challenge, cat.name as category, c.points, s.solved_at 
+                            FROM " . $this->solvesTable . " s
+                            JOIN " . $this->challengesTable . " c ON s.challenge_id = c.id
+                            JOIN " . $this->categoriesTable . " cat ON c.category_id = cat.id
+                            WHERE s.user_id = :uid 
+                            ORDER BY s.solved_at DESC LIMIT 3";
+            $recentStmt = $this->db->prepare($recentQuery);
+            $recentStmt->bindParam(':uid', $userId);
+            $recentStmt->execute();
+            $recentSolves = $recentStmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Formatiranje liste rješenja za frontend
             $formattedSolves = [];
             foreach ($recentSolves as $solve) {
                 $formattedSolves[] = [
@@ -84,40 +82,48 @@ class Profile {
                 ];
             }
 
-            $formattedCategories = [];
-            foreach ($categoryProgress as $category) {
-                $percentage = $category['total'] > 0 ? round(($category['solved'] / $category['total']) * 100) : 0;
-                $formattedCategories[] = [
-                    'name' => $category['name'],
-                    'solved' => (int)$category['solved'],
-                    'total' => (int)$category['total'],
-                    'percentage' => $percentage
-                ];
-            }
-
             return [
                 'success' => true,
                 'profile' => [
-                    'id' => $user['id'],
                     'username' => $user['username'],
-                    'email' => $user['email'],
-                    'avatar_url' => $user['avatar_url'],
-                    'points' => $user['points'],
-                    'rank' => $user['rank'],
-                    'solves' => (int)$solvesData['total_solves'],
+                    'points' => (int)$user['points'],
+                    'rank' => (int)$calculatedRank,
+                    'solves' => (int)$solveCount,
                     'joinedDate' => date('F Y', strtotime($user['created_at'])),
-                    'lastActive' => $lastActivity ? $this->timeAgo($lastActivity['solved_at']) : 'Never',
+                    'lastActive' => $lastActivity ? $this->timeAgo($lastActivity['solved_at']) : 'No activity yet',
+                    'avatar_url' => $user['avatar_url'],
                     'is_admin' => (bool)$user['is_admin']
                 ],
                 'recentSolves' => $formattedSolves,
-                'categoryProgress' => $formattedCategories
+                'categoryProgress' => $this->getCategoryProgress($userId)
             ];
 
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Database error: ' . $e->getMessage()];
+            return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 
+    // Računanje progresa (rješeno/ukupno) po kategorijama
+    private function getCategoryProgress($userId) {
+        $query = "SELECT cat.name, 
+                         COUNT(s.id) as solved,
+                         (SELECT COUNT(*) FROM challenges WHERE category_id = cat.id) as total
+                  FROM categories cat
+                  LEFT JOIN challenges c ON cat.id = c.category_id
+                  LEFT JOIN solves s ON c.id = s.challenge_id AND s.user_id = :uid
+                  GROUP BY cat.id, cat.name";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':uid', $userId);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        foreach ($rows as &$row) {
+            $row['percentage'] = $row['total'] > 0 ? round(($row['solved'] / $row['total']) * 100) : 0;
+        }
+        return $rows;
+    }
+
+    // Pretvaranje timestampa u "time ago" format
     private function timeAgo($datetime) {
         $time = strtotime($datetime);
         $diff = time() - $time;
@@ -130,6 +136,7 @@ class Profile {
     }
 }
 
+// Izvršavanje skripte
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $userId = $_GET['user_id'] ?? '';
     
@@ -145,9 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
 
     $profile = new Profile();
-    $result = $profile->getUserProfile($userId);
-    
-    echo json_encode($result);
+    echo json_encode($profile->getUserProfile($userId));
 } else {
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Method not allowed']);

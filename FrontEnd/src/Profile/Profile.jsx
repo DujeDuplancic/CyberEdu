@@ -1,12 +1,16 @@
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { Header } from "../Components/Header"
 import { Footer } from "../Components/Footer"
 import { Card, CardContent, CardHeader, CardTitle } from "../Components/ui/card"
 import { Badge } from "../Components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "../Components/ui/avatar"
 import { Button } from "../Components/ui/button"
-import { Trophy, Target, Clock, Award, Calendar, TrendingUp, User } from "lucide-react"
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { 
+  Trophy, Target, Award, Calendar, 
+  TrendingUp, Edit3, CheckCircle2, 
+  Search, ShieldAlert 
+} from "lucide-react"
 import { EditProfileModal } from "../Profile/EditProfileModal"
 
 export default function ProfilePage() {
@@ -31,18 +35,11 @@ export default function ProfilePage() {
       }
 
       const user = JSON.parse(userData)
-      
       const response = await fetch(`http://localhost/CyberEdu/Backend/profile/get_profile.php?user_id=${user.id}`)
       const data = await response.json()
 
       if (data.success) {
-        const formattedStats = {
-          ...data.profile,
-          lastActive: formatLastActive(data.profile.last_active),
-          joinedDate: formatDate(data.profile.created_at || data.profile.joined_date)
-        }
-        
-        setUserStats(formattedStats)
+        setUserStats(data.profile)
         setRecentSolves(data.recentSolves)
         setCategoryProgress(data.categoryProgress)
       } else {
@@ -50,300 +47,185 @@ export default function ProfilePage() {
       }
     } catch (error) {
       console.error('Error fetching profile:', error)
-      setError("Greška pri učitavanju profila")
+      setError("Server error while fetching data.")
     } finally {
       setLoading(false)
     }
   }
 
-  const handleProfileUpdate = (updatedUser) => {
-    // Refresh profile data after update
-    fetchProfileData()
-  }
-
-  const formatLastActive = (timestamp) => {
-    if (!timestamp) return "Recently";
-    
-    try {
-      const now = new Date();
-      const lastActive = new Date(timestamp);
-      const diffInSeconds = Math.floor((now - lastActive) / 1000);
-      
-      if (diffInSeconds < 60) return "Just now";
-      if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-      if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-      if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
-      
-      return lastActive.toLocaleDateString();
-    } catch (e) {
-      return "Recently";
-    }
-  }
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', { 
-        month: 'long', 
-        year: 'numeric' 
-      });
-    } catch (e) {
-      return dateString;
-    }
-  }
-
-  const formatSolveTime = (timestamp) => {
-    if (!timestamp) return "";
-    
-    try {
-      const date = new Date(timestamp);
-      const now = new Date();
-      const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
-      
-      if (diffInHours < 24) {
-        if (diffInHours < 1) return "Just now";
-        return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-      }
-      
-      return date.toLocaleDateString();
-    } catch (e) {
-      return timestamp;
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 container mx-auto py-12 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p>Učitavanje profila...</p>
-          </div>
-        </main>
-        <Footer />
+  // Loading state with a skeleton feel
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">
+      <div className="animate-pulse flex flex-col items-center gap-4">
+        <div className="h-12 w-12 bg-primary/20 rounded-full animate-bounce" />
+        <p className="font-mono tracking-widest uppercase">Loading Profile...</p>
       </div>
-    )
-  }
+    </div>
+  )
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 container mx-auto py-12 flex items-center justify-center">
-          <div className="text-center text-red-500">{error}</div>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
-
-  if (!userStats) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 container mx-auto py-12 flex items-center justify-center">
-          <div className="text-center">
-            <p>Nema podataka o korisniku</p>
-            <Button onClick={() => navigate('/login')} className="mt-4">
-              Prijavi se
-            </Button>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
+  if (error) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Card className="border-destructive/50 max-w-md">
+        <CardContent className="pt-6 text-center space-y-4">
+          <ShieldAlert className="h-12 w-12 text-destructive mx-auto" />
+          <p className="text-lg font-semibold">{error}</p>
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
+        </CardContent>
+      </Card>
+    </div>
+  )
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#020817]">
       <Header />
-
-      <main className="flex-1 container mx-auto py-12">
+      
+      <main className="flex-1 container mx-auto py-8 px-4 md:py-12">
         <div className="max-w-6xl mx-auto space-y-8">
-          {/* Profile Header */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-                <Avatar className="h-24 w-24">
-                <AvatarImage 
-                  src={userStats.avatar_url 
-                    ? `http://localhost/CyberEdu/Backend/${userStats.avatar_url}`
-                    : "/placeholder.svg?height=96&width=96"
-                  } 
-                />
-                <AvatarFallback className="text-2xl">
-                  {userStats.username?.substring(0, 2).toUpperCase() || "U"}
-                </AvatarFallback>
+          
+          {/* 1. HEADER CARD: Identity and Key Info */}
+          <Card className="overflow-hidden border-none shadow-lg bg-white dark:bg-card">
+            <div className="h-24 bg-gradient-to-r from-primary/80 to-blue-600" />
+            <CardContent className="relative pt-0 pb-6 px-6">
+              <div className="flex flex-col md:flex-row gap-6 items-start md:items-end -mt-10">
+                <Avatar className="h-32 w-32 border-4 border-background shadow-xl ring-2 ring-primary/10">
+                  <AvatarImage src={userStats.avatar_url ? `http://localhost/CyberEdu/Backend/${userStats.avatar_url}` : ""} />
+                  <AvatarFallback className="bg-primary text-primary-foreground text-3xl font-bold">
+                    {userStats.username?.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h1 className="text-3xl font-bold">{userStats.username || "User"}</h1>
-                    <Badge variant="secondary">Rank #{userStats.rank || "N/A"}</Badge>
-                    {userStats.is_admin && <Badge variant="destructive">Admin</Badge>}
+                
+                <div className="flex-1 space-y-2">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h1 className="text-4xl font-extrabold tracking-tight">{userStats.username}</h1>
+                    <Badge variant="outline" className="px-3 py-1 text-sm border-primary/30 bg-primary/5 text-primary">
+                      Rank #{userStats.rank}
+                    </Badge>
+                    {userStats.is_admin && (
+                      <Badge variant="destructive" className="animate-pulse">ADMIN</Badge>
+                    )}
                   </div>
-                  <p className="text-muted-foreground mb-4 flex items-center gap-4">
-                    <span className="flex items-center gap-1">
-                      <User className="h-4 w-4" />
-                      Member since {userStats.joinedDate || "N/A"}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      Last active {userStats.lastActive || "Recently"}
-                    </span>
-                  </p>
-                  <div className="flex gap-6">
-                    <div>
-                      <div className="text-2xl font-bold text-primary">{userStats.points || 0}</div>
-                      <div className="text-sm text-muted-foreground">Total Points</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-primary">{userStats.solves || 0}</div>
-                      <div className="text-sm text-muted-foreground">Challenges Solved</div>
-                    </div>
+                  
+                  <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground font-medium">
+                    <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> Member since {userStats.joinedDate}</span>
+                    <span className="flex items-center gap-1.5"><TrendingUp className="h-4 w-4" /> Last active: {userStats.lastActive}</span>
                   </div>
                 </div>
-                <Button variant="outline" onClick={() => setIsEditModalOpen(true)}>
-                  Edit Profile
+
+                <Button onClick={() => setIsEditModalOpen(true)} className="gap-2 shadow-sm">
+                  <Edit3 className="h-4 w-4" /> Edit Profile
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Rest of your profile content remains the same */}
-          {/* Stats Cards */}
-          <div className="grid gap-6 md:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Rank</CardTitle>
-                <Trophy className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">#{userStats.rank || "N/A"}</div>
-                <p className="text-xs text-muted-foreground mt-1">Global ranking</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Points</CardTitle>
-                <Target className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{userStats.points || 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">Total earned</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Solves</CardTitle>
-                <Award className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{userStats.solves || 0}</div>
-                <p className="text-xs text-muted-foreground mt-1">Challenges completed</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Activity</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{userStats.lastActive || "Recently"}</div>
-                <p className="text-xs text-muted-foreground mt-1">Last active</p>
-              </CardContent>
-            </Card>
+          {/* 2. STATS GRID: Quick Look */}
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
+            {[
+              { label: "Global Rank", val: `#${userStats.rank}`, icon: Trophy, color: "text-yellow-500" },
+              { label: "Total Points", val: userStats.points, icon: Target, color: "text-blue-500" },
+              { label: "Solved Challenges", val: userStats.solves, icon: CheckCircle2, color: "text-green-500" },
+              { label: "Last Activity", val: userStats.lastActive, icon: Calendar, color: "text-purple-500" },
+            ].map((stat, i) => (
+              <Card key={i} className="hover:shadow-md transition-shadow cursor-default group">
+                <CardContent className="p-6 flex items-center gap-4">
+                  <div className={`p-3 rounded-xl bg-slate-100 dark:bg-slate-800 group-hover:scale-110 transition-transform`}>
+                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                    <p className="text-xl font-bold tracking-tight">{stat.val}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
 
-          {/* Category Progress - samo ako postoji */}
-          {categoryProgress && categoryProgress.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Category Progress</CardTitle>
+          <div className="grid gap-8 md:grid-cols-3">
+            {/* 3. CATEGORY PROGRESS (Left - 2/3 width) */}
+            <Card className="md:col-span-2 shadow-sm">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div className="space-y-1">
+                  <CardTitle>Category Progress</CardTitle>
+                  <p className="text-sm text-muted-foreground">Skill overview across different domains</p>
+                </div>
+                <Award className="h-5 w-5 text-muted-foreground" />
               </CardHeader>
-              <CardContent className="space-y-6">
-                {categoryProgress.map((category, index) => (
-                  <div key={category.name || index}>
-                    <div className="flex justify-between mb-2">
-                      <span className="font-medium">{category.name || "Category"}</span>
-                      <span className="text-sm text-muted-foreground">
-                        {category.solved || 0} / {category.total || 0}
+              <CardContent className="space-y-7">
+                {categoryProgress.map((cat, i) => (
+                  <div key={i} className="space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="font-bold tracking-wide uppercase text-xs text-slate-600 dark:text-slate-400">
+                        {cat.name}
+                      </span>
+                      <span className="font-mono text-primary bg-primary/5 px-2 py-0.5 rounded border border-primary/10">
+                        {cat.solved} / {cat.total}
                       </span>
                     </div>
-                    <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                    {/* Progress Bar */}
+                    <div className="relative h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-primary transition-all" 
-                        style={{ 
-                          width: `${category.percentage || 0}%` 
-                        }} 
+                        className="absolute top-0 left-0 h-full bg-primary transition-all duration-1000 ease-out rounded-full shadow-[0_0_10px_rgba(var(--primary),0.3)]"
+                        style={{ width: `${cat.percentage}%` }}
                       />
                     </div>
                   </div>
                 ))}
               </CardContent>
             </Card>
-          )}
 
-          {/* Recent Solves */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Solves</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentSolves && recentSolves.length > 0 ? (
-                  recentSolves.map((solve, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors"
-                    >
-                      <div>
-                        <p className="font-semibold">{solve.challenge || "Challenge"}</p>
-                        <p className="text-sm text-muted-foreground">{solve.category || "Category"}</p>
+            {/* 4. RECENT SOLVES (Right - 1/3 width) */}
+            <Card className="shadow-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Search className="h-5 w-5" /> Recent Victories
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentSolves.length > 0 ? (
+                    recentSolves.map((solve, i) => (
+                      <div key={i} className="flex flex-col p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:border-primary/20 transition-colors">
+                        <div className="flex justify-between items-start mb-1">
+                          <p className="font-bold text-sm leading-tight">{solve.challenge}</p>
+                          <Badge className="text-[10px] h-5" variant="secondary">+{solve.points}</Badge>
+                        </div>
+                        <div className="flex justify-between items-center mt-2">
+                          <span className="text-[11px] font-semibold text-primary/70 uppercase tracking-tighter">
+                            {solve.category}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                            <Calendar className="h-3 w-3" /> {solve.time}
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <Badge variant="secondary" className="font-mono">
-                          {solve.points || 0} pts
-                        </Badge>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {formatSolveTime(solve.time || solve.solved_at)}
-                        </p>
+                    ))
+                  ) : (
+                    <div className="text-center py-12 border-2 border-dashed rounded-xl">
+                      <div className="bg-slate-100 dark:bg-slate-800 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Target className="h-6 w-6 text-muted-foreground/50" />
                       </div>
+                      <p className="text-sm font-medium text-muted-foreground">No challenges solved yet.</p>
+                      <Button variant="link" size="sm" onClick={() => navigate('/challenges')}>
+                        Get started →
+                      </Button>
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center py-12">
-                    <Award className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium mb-2">No challenges solved yet</h3>
-                    <p className="text-muted-foreground mb-6">
-                      Start your CTF journey by solving some challenges!
-                    </p>
-                    <Button onClick={() => navigate('/ctf')}>
-                      Browse Challenges
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
 
       <Footer />
-
-      {/* Edit Profile Modal */}
-      <EditProfileModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        userData={userStats}
-        onUpdate={handleProfileUpdate}
+      
+      {/* Edit Modal with onUpdate callback for refresh without page reload */}
+      <EditProfileModal 
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)} 
+        userData={userStats} 
+        onUpdate={fetchProfileData} 
       />
     </div>
-    
   )
 }

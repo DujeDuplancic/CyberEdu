@@ -257,29 +257,61 @@
             "created_by": 3,
             "is_active": 1,
             "created_at": "2026-05-01 15:17:39"
+        },
+        {
+            "id": 17,
+            "title": "Cookie Monster",
+            "description": "A simple admin panel is protected by a login form. The developer claims \"only admins can see the flag.\" Can you convince the server you're an admin without knowing the password? The login page is available at https:\/\/cookie-monster-alpha.vercel.app\/ and the dashboard at \/dashboard.",
+            "category_id": 5,
+            "difficulty": "Easy",
+            "points": 100,
+            "flag": "$2y$10$AN0ehJ0tzoVXe9ITevXHS.jgtWJs3VNxepZsLemhNymixjQUuXR.q",
+            "file_url": null,
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-01 19:06:59"
+        },
+        {
+            "id": 18,
+            "title": "Reflected secrets",
+            "description": "A search engine reflects your query directly into the page without sanitization. The site has an internal \/admin endpoint accessible only from localhost that returns the flag. Use XSS to steal the admin cookie — or find a smarter way. The search is at \/?q=.\nURL: https:\/\/reflected-secrets.vercel.app\/",
+            "category_id": 5,
+            "difficulty": "Easy",
+            "points": 150,
+            "flag": "$2y$10$0.qQAxnyNmR4zP6IqsVkE.Eusha5puSHHum8Gj.qDBTyqFdNkEeEW",
+            "file_url": null,
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-01 20:11:59"
+        },
+        {
+            "id": 19,
+            "title": "UserVault",
+            "description": "A user profile API exposes personal data at \/api\/user?id=. After registering and logging in, you can view your own profile at \/api\/user?id=42. User #1 is the admin and supposedly has the flag stored in their profile. The API uses JWT tokens for authentication — but does it validate them properly?\n\nURL:https:\/\/user-vault-puce.vercel.app\/",
+            "category_id": 5,
+            "difficulty": "Medium",
+            "points": 250,
+            "flag": "$2y$10$vAUnf9kBB5GTBLTLpJP7dOJ7Hvzz4v2yoUbhv1SBAVciQSpQvgvL2",
+            "file_url": null,
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-01 20:50:32"
+        },
+        {
+            "id": 20,
+            "title": "FetchMe if you can",
+            "description": "A web utility lets you fetch and preview any URL you provide at \/fetch?url=. The flag lives at http:\/\/localhost:8080\/secret and is accessible only from the server itself. No direct access from outside is permitted. The application has a basic blocklist — can you bypass it?\n\nURL:https:\/\/fetch-me-if-you-can.vercel.app\/",
+            "category_id": 5,
+            "difficulty": "Hard",
+            "points": 300,
+            "flag": "$2y$10$Clxk\/NQ14QaWlWPADUlwu.gkV5FjKz6EHoILE9TPTEcZeKpEywjvq",
+            "file_url": null,
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-01 21:39:12"
         }
     ],
     "discussions": [
-        {
-            "id": 4,
-            "title": "miwfi0ri0wjr",
-            "content": "3qnojq39htq3t",
-            "author_id": 3,
-            "category": "Questions",
-            "is_pinned": 0,
-            "views": 6,
-            "created_at": "2026-01-04 22:58:05"
-        },
-        {
-            "id": 5,
-            "title": "fwfaw",
-            "content": "fawfwafawf",
-            "author_id": 3,
-            "category": "General",
-            "is_pinned": 0,
-            "views": 13,
-            "created_at": "2026-01-04 23:09:45"
-        },
         {
             "id": 6,
             "title": "OSCP Exam Tips 2026",
@@ -597,7 +629,7 @@
             "author_id": 35,
             "category": "Binary Exploitation",
             "is_pinned": 1,
-            "views": 550,
+            "views": 560,
             "created_at": "2026-03-31 09:30:00"
         },
         {
@@ -2310,40 +2342,6 @@
             "updated_at": "2026-03-17 12:40:17"
         },
         {
-            "id": 76,
-            "title": "Buffer Overflows for Dummies",
-            "description": "A simple and clear explanation of buffer overflows.",
-            "category_id": 1,
-            "instructor": "Loi Liang Yang",
-            "duration_minutes": 20,
-            "level": "Beginner",
-            "video_url": "https:\/\/www.youtube.com\/watch?v=SnoH_Xp_O68",
-            "embed_url": "https:\/\/www.youtube.com\/embed\/SnoH_Xp_O68",
-            "thumbnail_url": "https:\/\/img.youtube.com\/vi\/SnoH_Xp_O68\/hqdefault.jpg",
-            "views": 0,
-            "is_published": 1,
-            "author_id": 3,
-            "created_at": "2026-03-17 12:40:31",
-            "updated_at": "2026-03-17 12:40:31"
-        },
-        {
-            "id": 77,
-            "title": "Linux Privilege Escalation",
-            "description": "How to go from user to root on Linux systems.",
-            "category_id": 1,
-            "instructor": "HackerSploit",
-            "duration_minutes": 45,
-            "level": "Intermediate",
-            "video_url": "https:\/\/www.youtube.com\/watch?v=d_pXWAbV1Xo",
-            "embed_url": "https:\/\/www.youtube.com\/embed\/d_pXWAbV1Xo",
-            "thumbnail_url": "https:\/\/img.youtube.com\/vi\/d_pXWAbV1Xo\/hqdefault.jpg",
-            "views": 0,
-            "is_published": 1,
-            "author_id": 3,
-            "created_at": "2026-03-17 12:40:31",
-            "updated_at": "2026-03-17 12:40:31"
-        },
-        {
             "id": 78,
             "title": "Modern Stack Smashing",
             "description": "Modern techniques for exploiting the stack.",
@@ -2354,28 +2352,11 @@
             "video_url": "https:\/\/www.youtube.com\/watch?v=1S0aBV-Waeo",
             "embed_url": "https:\/\/www.youtube.com\/embed\/1S0aBV-Waeo",
             "thumbnail_url": "https:\/\/img.youtube.com\/vi\/1S0aBV-Waeo\/hqdefault.jpg",
-            "views": 4,
+            "views": 6,
             "is_published": 1,
             "author_id": 3,
             "created_at": "2026-03-17 12:40:31",
-            "updated_at": "2026-04-04 21:15:52"
-        },
-        {
-            "id": 79,
-            "title": "Intro to x86 Assembly",
-            "description": "Learn to read assembly code for pwn challenges.",
-            "category_id": 1,
-            "instructor": "Davy Wybiral",
-            "duration_minutes": 30,
-            "level": "Beginner",
-            "video_url": "https:\/\/www.youtube.com\/watch?v=75gBFiErAb8",
-            "embed_url": "https:\/\/www.youtube.com\/embed\/75gBFiErAb8",
-            "thumbnail_url": "https:\/\/img.youtube.com\/vi\/75gBFiErAb8\/hqdefault.jpg",
-            "views": 0,
-            "is_published": 1,
-            "author_id": 3,
-            "created_at": "2026-03-17 12:40:31",
-            "updated_at": "2026-03-17 12:40:31"
+            "updated_at": "2026-05-01 23:25:54"
         },
         {
             "id": 80,
@@ -2405,11 +2386,11 @@
             "video_url": "https:\/\/www.youtube.com\/watch?v=O4xNJsjtN6E",
             "embed_url": "https:\/\/www.youtube.com\/embed\/O4xNJsjtN6E",
             "thumbnail_url": "https:\/\/img.youtube.com\/vi\/O4xNJsjtN6E\/hqdefault.jpg",
-            "views": 0,
+            "views": 2,
             "is_published": 1,
             "author_id": 3,
             "created_at": "2026-03-17 12:40:31",
-            "updated_at": "2026-03-17 12:40:31"
+            "updated_at": "2026-05-02 00:16:42"
         },
         {
             "id": 82,
@@ -2473,11 +2454,11 @@
             "video_url": "https:\/\/www.youtube.com\/watch?v=S9JGmA5_unY",
             "embed_url": "https:\/\/www.youtube.com\/embed\/S9JGmA5_unY",
             "thumbnail_url": "https:\/\/img.youtube.com\/vi\/S9JGmA5_unY\/hqdefault.jpg",
-            "views": 0,
+            "views": 2,
             "is_published": 1,
             "author_id": 3,
             "created_at": "2026-03-17 12:40:31",
-            "updated_at": "2026-03-17 12:40:31"
+            "updated_at": "2026-05-01 23:31:17"
         },
         {
             "id": 86,
@@ -2736,13 +2717,6 @@
         }
     ],
     "replies": [
-        {
-            "id": 1,
-            "discussion_id": 5,
-            "author_id": 3,
-            "content": "asFfasfasdafasda",
-            "created_at": "2026-03-16 23:24:05"
-        },
         {
             "id": 2,
             "discussion_id": 6,
@@ -3659,6 +3633,20 @@
             "author_id": 45,
             "content": "Reentrancy is still the #1 cause of lost funds in DeFi.",
             "created_at": "2026-03-31 22:00:00"
+        },
+        {
+            "id": 133,
+            "discussion_id": 37,
+            "author_id": 3,
+            "content": "Nice",
+            "created_at": "2026-05-01 23:16:02"
+        },
+        {
+            "id": 134,
+            "discussion_id": 37,
+            "author_id": 3,
+            "content": "kool",
+            "created_at": "2026-05-02 00:16:58"
         }
     ],
     "solves": [
@@ -3679,6 +3667,18 @@
             "user_id": 3,
             "challenge_id": 16,
             "solved_at": "2026-05-01 15:18:56"
+        },
+        {
+            "id": 4,
+            "user_id": 3,
+            "challenge_id": 17,
+            "solved_at": "2026-05-01 23:47:49"
+        },
+        {
+            "id": 5,
+            "user_id": 3,
+            "challenge_id": 18,
+            "solved_at": "2026-05-01 23:50:06"
         }
     ],
     "user_achievements": [
@@ -3702,7 +3702,7 @@
             "email": "admin@cyberedu.com",
             "password_hash": "$2y$10$EPka4dOjJQYSExkUCxTbPOR68a2xSTqAKR6tNgStBwfyRQ8Jv3jDm",
             "avatar_url": "uploads\/avatars\/69d2b22d8f337_1775415853.jpg",
-            "points": 440,
+            "points": 690,
             "rank": 0,
             "created_at": "2025-11-23 17:05:10",
             "is_admin": 1
@@ -4058,6 +4058,17 @@
             "rank": 0,
             "created_at": "2026-05-01 14:13:21",
             "is_admin": 0
+        },
+        {
+            "id": 67,
+            "username": "duje",
+            "email": "duje.duplancic03@gmail.com",
+            "password_hash": "$2y$10$XTXw3Rcw89WvEpSo13sZdump0O4eSCO9WQqQWmxmg2X3z6b.ufDHW",
+            "avatar_url": null,
+            "points": 0,
+            "rank": 0,
+            "created_at": "2026-05-01 22:13:55",
+            "is_admin": 0
         }
     ],
     "wiki_articles": [
@@ -4070,11 +4081,11 @@
             "author_id": 3,
             "slug": "introduction-to-reverse-engineering",
             "reading_time": 8,
-            "views": 10,
+            "views": 14,
             "difficulty_level": "beginner",
             "is_published": 1,
             "created_at": "2026-01-05 02:06:13",
-            "updated_at": "2026-04-04 21:16:35"
+            "updated_at": "2026-05-02 00:00:21"
         },
         {
             "id": 3,
@@ -4145,11 +4156,11 @@
             "author_id": 3,
             "slug": "buffer-overflow-for-beginners",
             "reading_time": 7,
-            "views": 0,
+            "views": 2,
             "difficulty_level": "beginner",
             "is_published": 1,
             "created_at": "2026-01-05 02:06:13",
-            "updated_at": "2026-01-05 02:06:13"
+            "updated_at": "2026-05-02 00:16:39"
         },
         {
             "id": 8,
@@ -4175,11 +4186,11 @@
             "author_id": 3,
             "slug": "heap-exploitation-techniques",
             "reading_time": 14,
-            "views": 0,
+            "views": 2,
             "difficulty_level": "advanced",
             "is_published": 1,
             "created_at": "2026-01-05 02:06:13",
-            "updated_at": "2026-01-05 02:06:13"
+            "updated_at": "2026-05-01 23:59:41"
         },
         {
             "id": 10,
@@ -4190,11 +4201,11 @@
             "author_id": 3,
             "slug": "format-string-vulnerabilities",
             "reading_time": 9,
-            "views": 0,
+            "views": 2,
             "difficulty_level": "intermediate",
             "is_published": 1,
             "created_at": "2026-01-05 02:06:13",
-            "updated_at": "2026-01-05 02:06:13"
+            "updated_at": "2026-05-01 23:55:28"
         },
         {
             "id": 11,
@@ -4220,11 +4231,11 @@
             "author_id": 3,
             "slug": "basic-cryptographic-concepts",
             "reading_time": 8,
-            "views": 0,
+            "views": 2,
             "difficulty_level": "beginner",
             "is_published": 1,
             "created_at": "2026-01-05 02:06:13",
-            "updated_at": "2026-01-05 02:06:13"
+            "updated_at": "2026-05-01 23:55:21"
         },
         {
             "id": 13,
@@ -4265,11 +4276,11 @@
             "author_id": 3,
             "slug": "hash-functions-and-their-vulnerabilities",
             "reading_time": 9,
-            "views": 0,
+            "views": 2,
             "difficulty_level": "advanced",
             "is_published": 1,
             "created_at": "2026-01-05 02:06:13",
-            "updated_at": "2026-01-05 02:06:13"
+            "updated_at": "2026-05-01 23:55:24"
         },
         {
             "id": 16,

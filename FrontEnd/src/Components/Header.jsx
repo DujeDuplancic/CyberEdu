@@ -8,7 +8,6 @@ export function Header() {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    // Provjeri da li je korisnik prijavljen
     const userData = localStorage.getItem('user')
     if (userData) {
       setUser(JSON.parse(userData))
@@ -19,8 +18,6 @@ export function Header() {
     localStorage.removeItem('user')
     setUser(null)
     setIsMenuOpen(false)
-    // Možeš dodati redirect na homepage ako želiš
-    // window.location.href = '/'
   }
 
   return (
@@ -50,7 +47,6 @@ export function Header() {
             Community
           </Link>
           
-          {/* Achievements link - samo za prijavljene korisnike */}
           {user && (
             <Link to="/achievements" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
               <Trophy className="h-4 w-4" />
@@ -58,8 +54,8 @@ export function Header() {
             </Link>
           )}
           
-          {/* Admin link - samo za prijavljene admin korisnike */}
-          {user?.is_admin && (
+          {/* POPRAVAK: Dodan !! ispred user?.is_admin da se izbjegne ispis nule */}
+          {!!user?.is_admin && (
             <Link to="/admin" className="text-sm font-medium transition-colors hover:text-primary text-red-500 font-bold">
               Admin
             </Link>
@@ -102,7 +98,6 @@ export function Header() {
       {isMenuOpen && (
         <div className="md:hidden border-t border-border bg-background">
           <div className="container mx-auto py-4 px-4 space-y-4">
-            {/* Mobile Navigation Links */}
             <nav className="space-y-3">
               <Link 
                 to="/ctf" 
@@ -140,7 +135,6 @@ export function Header() {
                 Community
               </Link>
               
-              {/* Achievements link - samo za prijavljene korisnike */}
               {user && (
                 <Link 
                   to="/achievements" 
@@ -152,8 +146,8 @@ export function Header() {
                 </Link>
               )}
               
-              {/* Admin link - samo za prijavljene admin korisnike */}
-              {user?.is_admin && (
+              {/* POPRAVAK: Isto i ovdje za mobilni meni */}
+              {!!user?.is_admin && (
                 <Link 
                   to="/admin" 
                   className="block text-sm font-medium transition-colors hover:text-primary py-2 text-red-500 font-bold"
@@ -164,7 +158,6 @@ export function Header() {
               )}
             </nav>
 
-            {/* Mobile User Actions */}
             <div className="pt-4 border-t border-border space-y-3">
               {user ? (
                 <>

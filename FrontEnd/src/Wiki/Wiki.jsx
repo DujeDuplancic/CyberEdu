@@ -1,16 +1,33 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Lock, Code, Key, ImageIcon, Globe, Search, BookOpen } from "lucide-react"
-import { useEffect, useState } from "react"
+import { Badge } from "@/components/ui/badge"
+import { 
+    Lock, Code, Key, ImageIcon, Globe, 
+    BookOpen, Loader2, ChevronRight, MonitorPlay, Search 
+} from "lucide-react"
+
+// --- KONFIGURACIJA IKONA ---
+const ICON_MAP = {
+    'Code': Code, 
+    'Lock': Lock, 
+    'Key': Key, 
+    'ImageIcon': ImageIcon, 
+    'Globe': Globe,
+    'Reverse Engineering': Code, 
+    'Binary Exploitation': Lock, 
+    'Cryptography': Key, 
+    'Steganography': ImageIcon, 
+    'Web Security': Globe
+};
 
 export default function WikiPage() {
-    const [categories, setCategories] = useState([]);
-    const [popularArticles, setPopularArticles] = useState([]);
+    const [data, setData] = useState({ categories: [], articles: [] });
     const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -19,262 +36,166 @@ export default function WikiPage() {
 
     const fetchWikiData = async () => {
         try {
-            setLoading(true);
-            
-            // 1. FETCH CATEGORIES FROM API
-            const categoriesRes = await fetch('http://localhost/CyberEdu/BackEnd/wiki/get_wiki_categories.php');
-            
-            // Provjeri da li je response OK
-            if (!categoriesRes.ok) {
-                throw new Error(`HTTP error! status: ${categoriesRes.status}`);
-            }
-            
-            const categoriesData = await categoriesRes.json();
-            
-            if (categoriesData.success) {
-                setCategories(categoriesData.categories);
-                console.log("✅ Fetched categories:", categoriesData.categories);
-            } else {
-                console.error("❌ Failed to fetch categories:", categoriesData.message);
-                // Fallback na mock podatke ako API ne radi
-                setCategories(getMockCategories());
-            }
+            const [catRes, artRes] = await Promise.all([
+                fetch('http://localhost/CyberEdu/BackEnd/wiki/get_wiki_categories.php'),
+                fetch('http://localhost/CyberEdu/BackEnd/wiki/get_wiki_articles.php?limit=5')
+            ]);
 
-            // 2. FETCH POPULAR ARTICLES
-            const articlesRes = await fetch('http://localhost/CyberEdu/BackEnd/wiki/get_wiki_articles.php?limit=5');
-            
-            if (!articlesRes.ok) {
-                throw new Error(`HTTP error! status: ${articlesRes.status}`);
-            }
-            
-            const articlesData = await articlesRes.json();
-            
-            if (articlesData.success) {
-                setPopularArticles(articlesData.articles);
-                console.log("✅ Fetched popular articles:", articlesData.articles);
-            } else {
-                console.error("❌ Failed to fetch articles:", articlesData.message);
-                // Fallback na mock podatke
-                setPopularArticles(getMockPopularArticles());
-            }
+            const [catData, artData] = await Promise.all([catRes.json(), artRes.json()]);
+
+            setData({
+                categories: catData.success ? catData.categories : [],
+                articles: artData.success ? artData.articles : []
+            });
         } catch (error) {
-            console.error('❌ Error fetching wiki data:', error);
-            // Ako API ne radi, koristi mock podatke
-            setCategories(getMockCategories());
-            setPopularArticles(getMockPopularArticles());
+            console.error('❌ Wiki API Error:', error);
+            setData({ categories: [], articles: [] });
         } finally {
             setLoading(false);
         }
     };
 
-    // Fallback mock podaci ako API ne radi
-    const getMockCategories = () => {
-        return [
-            {
-                id: 1,
-                name: "Reverse Engineering",
-                slug: "reverse-engineering",
-                icon: "Code",
-                description: "Learn disassembly, debugging, and binary analysis techniques.",
-                article_count: 0
-            },
-            {
-                id: 2,
-                name: "Binary Exploitation",
-                slug: "binary-exploitation",
-                icon: "Lock",
-                description: "Master buffer overflows, ROP chains, and memory corruption.",
-                article_count: 0
-            },
-            {
-                id: 3,
-                name: "Cryptography",
-                slug: "cryptography",
-                icon: "Key",
-                description: "Understand encryption algorithms, hashing, and cryptanalysis.",
-                article_count: 0
-            },
-            {
-                id: 4,
-                name: "Steganography",
-                slug: "steganography",
-                icon: "Image",
-                description: "Discover hidden messages in digital media and files.",
-                article_count: 0
-            },
-            {
-                id: 5,
-                name: "Web Security",
-                slug: "web-security",
-                icon: "Globe",
-                description: "Explore web vulnerabilities and exploitation techniques.",
-                article_count: 0
-            }
-        ];
+    const getCategoryIcon = (category) => {
+        const Icon = ICON_MAP[category.icon] || ICON_MAP[category.name] || BookOpen;
+        return <Icon className="h-8 w-8 text-indigo-500 mb-3 group-hover:scale-110 transition-transform duration-300" />;
     };
 
-    const getMockPopularArticles = () => {
-        return [
-            { 
-                id: 1, 
-                title: "Getting Started with Reverse Engineering", 
-                category_name: "Reverse Engineering",
-                category_slug: "reverse-engineering",
-                slug: "getting-started",
-                views: 1234,
-                reading_time: 10,
-                excerpt: "Learn the basics of reverse engineering"
-            }
-        ];
-    };
-
-    // Map icons based on category name or icon from database
-    const getIcon = (category) => {
-        // Prvo probaj koristiti icon iz baze
-        const iconMap = {
-            'Code': Code,
-            'Lock': Lock,
-            'Key': Key,
-            'Image': ImageIcon,
-            'ImageIcon': ImageIcon,
-            'Globe': Globe
-        };
-        
-        if (category.icon && iconMap[category.icon]) {
-            return iconMap[category.icon];
-        }
-        
-        // Fallback na category name mapping
-        const categoryIconMap = {
-            'Reverse Engineering': Code,
-            'Binary Exploitation': Lock,
-            'Cryptography': Key,
-            'Steganography': ImageIcon,
-            'Web Security': Globe
-        };
-        
-        return categoryIconMap[category.name] || BookOpen;
-    };
-
-    if (loading) {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <Header />
-                <main className="flex-1 container py-12">
-                    <div className="max-w-6xl mx-auto text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                        <p className="text-lg">Loading Wiki Knowledge Base...</p>
-                    </div>
-                </main>
-                <Footer />
-            </div>
-        );
-    }
+    if (loading) return <LoadingScreen />;
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-[#f8fafc]">
             <Header />
 
-            <main className="flex-1 container py-12">
-                <div className="max-w-6xl mx-auto">
-                    <div className="mb-8">
-                        <h1 className="text-4xl font-bold mb-4">Knowledge Base</h1>
-                        <p className="text-lg text-muted-foreground mb-6">
-                            Comprehensive guides, tutorials, and documentation for learning cybersecurity concepts.
-                        </p>
+            <main className="flex-1 w-full max-w-[1600px] mx-auto px-6 md:px-10 py-10">
+                
+                {/* --- HERO BANNER (S MARGINAMA) --- */}
+                <div className="mb-12 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    {/* Plavi dio bannera */}
+                    <div className="h-32 bg-[#4461f2] relative overflow-hidden">
+                         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+                    </div>
+                    
+                    {/* Donji dio sa sadržajem i profilnom ikonom */}
+                    <div className="p-8 md:p-10 -mt-16 flex flex-col md:flex-row justify-between items-end gap-6 relative z-10">
+                        <div className="flex flex-col md:flex-row gap-6 items-end w-full">
+                            {/* Circle Icon - "Avatar" sekcije */}
+                            <div className="h-32 w-32 rounded-2xl bg-white p-2 shadow-md flex-shrink-0 border border-slate-100">
+                                <div className="w-full h-full rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
+                                    <BookOpen className="h-12 w-12 text-[#4461f2]" />
+                                </div>
+                            </div>
+                            
+                            <div className="flex-1 pb-2">
+                                <div className="flex items-center gap-3 mb-1">
+                                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Cyber Library</h1>
+                                    <Badge className="bg-indigo-100 text-indigo-700 border-none hover:bg-indigo-100 uppercase text-[10px] px-2.5 py-1 font-bold">
+                                        Knowledge Base
+                                    </Badge>
+                                </div>
+                                <p className="text-slate-500 font-medium max-w-xl">
+                                    Master the arts of exploitation and defense through curated technical documentation and intel reports.
+                                </p>
+                            </div>
 
-                        <div className="relative max-w-2xl">
-                            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                            <Input 
-                                placeholder="Search articles..." 
-                                className="pl-9"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
+                            {/* Search bar integriran desno */}
+                            <div className="w-full md:w-[400px] relative">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                <input 
+                                    type="text"
+                                    placeholder="Search library intelligence..." 
+                                    className="w-full bg-slate-50 border border-slate-200 h-12 pl-11 pr-4 rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#4461f2]/20 transition-all font-medium text-slate-600"
+                                />
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-12">
-                        {categories.length > 0 ? (
-                            categories.map((category) => {
-                                const IconComponent = getIcon(category);
-                                return (
-                                    <Link key={category.slug} to={`/wiki/${category.slug}`}>
-                                        <Card className="h-full hover:border-primary/50 transition-all duration-300 group hover:shadow-md">
-                                            <CardHeader>
-                                                <IconComponent className="h-10 w-10 text-primary mb-3 group-hover:scale-110 transition-transform" />
-                                                <CardTitle className="flex items-center justify-between">
-                                                    {category.name}
-                                                    <span className="text-sm font-normal text-muted-foreground">
-                                                        {category.article_count || 0} articles
-                                                    </span>
-                                                </CardTitle>
-                                                <CardDescription className="leading-relaxed">
-                                                    {category.description}
-                                                </CardDescription>
-                                            </CardHeader>
-                                        </Card>
-                                    </Link>
-                                );
-                            })
-                        ) : (
-                            <div className="col-span-3 text-center py-8">
-                                <p className="text-muted-foreground">No categories found. Please check your API connection.</p>
-                            </div>
-                        )}
+                {/* --- KATEGORIJE GRID --- */}
+                <div className="flex items-center gap-3 mb-6 px-2">
+                    <div className="h-1 w-8 bg-indigo-600 rounded-full" />
+                    <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">Intel Domains</h2>
+                </div>
+
+                {data.categories.length > 0 ? (
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-16">
+                        {data.categories.map((cat) => (
+                            <CategoryCard key={cat.slug} cat={cat} iconRender={getCategoryIcon} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="mb-16 p-20 text-center border-2 border-dashed rounded-3xl border-slate-200 text-slate-400 bg-white">
+                        No categories found in the database.
+                    </div>
+                )}
+
+                {/* --- POPULAR ARTICLES SECTION --- */}
+                <section className="mt-8">
+                    <div className="flex items-center gap-3 mb-6 px-2">
+                        <div className="h-1 w-8 bg-indigo-600 rounded-full" />
+                        <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">Featured Intel</h2>
                     </div>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <BookOpen className="h-5 w-5" />
-                                Popular Articles
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {popularArticles.length > 0 ? (
-                                <div className="space-y-4">
-                                    {popularArticles.map((article) => (
-                                        <Link
-                                            key={article.id}
-                                            to={`/wiki/${article.category_slug}/${article.slug}`}
-                                            className="flex items-start justify-between p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors group hover:shadow-sm"
-                                        >
-                                            <div className="flex-1">
-                                                <p className="font-semibold group-hover:text-primary transition-colors">
-                                                    {article.title}
-                                                </p>
-                                                <p className="text-sm text-muted-foreground mt-1">
-                                                    {article.category_name}
-                                                </p>
-                                                {article.excerpt && (
-                                                    <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                                                        {article.excerpt}
-                                                    </p>
-                                                )}
+                    <Card className="border-slate-200 rounded-2xl shadow-sm overflow-hidden bg-white">
+                        <CardContent className="p-0 divide-y divide-slate-100">
+                            {data.articles.length > 0 ? (
+                                data.articles.map((art) => (
+                                    <Link 
+                                        key={art.id} 
+                                        to={`/wiki/${art.category_slug}/${art.slug}`}
+                                        className="flex items-center justify-between p-6 hover:bg-slate-50 transition-colors group"
+                                    >
+                                        <div className="flex-1 pr-4">
+                                            <p className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors mb-1">{art.title}</p>
+                                            <div className="flex items-center gap-3 text-xs font-medium text-slate-400">
+                                                <span className="text-indigo-500 font-bold uppercase tracking-wider">{art.category_name}</span>
+                                                <span className="h-1 w-1 bg-slate-300 rounded-full" />
+                                                <span className="italic">{art.reading_time || 5} min read</span>
                                             </div>
-                                            <div className="text-right ml-4">
-                                                <span className="text-sm text-muted-foreground block">
-                                                    {article.views || 0} views
-                                                </span>
-                                                <span className="text-xs text-muted-foreground">
-                                                    {article.reading_time || 5} min read
-                                                </span>
-                                            </div>
-                                        </Link>
-                                    ))}
-                                </div>
+                                        </div>
+                                        <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-slate-50 group-hover:bg-indigo-50 transition-colors">
+                                            <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all" />
+                                        </div>
+                                    </Link>
+                                ))
                             ) : (
-                                <div className="text-center py-8">
-                                    <p className="text-muted-foreground">No articles found yet. Be the first to write one!</p>
+                                <div className="p-16 text-center text-slate-400 font-medium italic">
+                                    No intelligence gathered yet.
                                 </div>
                             )}
                         </CardContent>
                     </Card>
-                </div>
+                </section>
             </main>
 
             <Footer />
         </div>
     );
 }
+
+// --- SUB-KOMPONENTE ---
+
+const CategoryCard = ({ cat, iconRender }) => (
+    <Link to={`/wiki/${cat.slug}`} className="group">
+        <Card className="h-full border-slate-200 hover:border-indigo-200 transition-all duration-300 rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-indigo-500/5 bg-white">
+            <CardHeader className="p-7">
+                <div className="flex justify-between items-start mb-2">
+                    {iconRender(cat)}
+                    <span className="bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-colors">
+                        {cat.article_count || 0} Docs
+                    </span>
+                </div>
+                <CardTitle className="text-xl font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">{cat.name}</CardTitle>
+                <CardDescription className="text-slate-500 leading-snug mt-2 line-clamp-2 font-medium">
+                    {cat.description}
+                </CardDescription>
+            </CardHeader>
+        </Card>
+    </Link>
+);
+
+const LoadingScreen = () => (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
+        <Loader2 className="h-10 w-10 animate-spin text-indigo-600 mb-4" />
+        <p className="text-slate-500 font-bold tracking-widest uppercase text-xs animate-pulse">Syncing_Library_Data...</p>
+    </div>
+);

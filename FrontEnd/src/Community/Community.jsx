@@ -1,382 +1,277 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+"use client"
+
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Header } from "../Components/Header"
 import { Footer } from "../Components/Footer"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "../Components/ui/card"
 import { Button } from "../Components/ui/button"
-import { Badge } from "../Components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "../Components/ui/avatar"
-import { MessageSquare, TrendingUp, Clock, User, Plus, Search, Users, Activity } from "lucide-react"
+import { 
+  MessageSquare, TrendingUp, Plus, Search, 
+  Users, Activity, RotateCcw, ChevronLeft, ChevronRight 
+} from "lucide-react"
 import { Input } from "../Components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../Components/ui/select"
 import DiscussionCard from './DiscussionCard';
 import { api } from '../lib/api';
+import { Badge } from "../Components/ui/badge"
 
-const CATEGORIES = [
-  'All',
-  'General',
-  'Reverse Engineering',
-  'Cryptography',
-  'Binary Exploitation',
-  'Web Security',
-  'Forensics',
-  'Steganography',
-  'Writeups',
-  'Questions',
-  'Tools'
-];
+const CATEGORIES = ['All', 'General', 'Reverse Engineering', 'Cryptography', 'Binary Exploitation', 'Web Security', 'Forensics', 'Steganography', 'Writeups', 'Questions', 'Tools'];
 
 export default function CommunityPage() {
   const navigate = useNavigate();
   const [discussions, setDiscussions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    totalTopics: 0,
-    activeMembers: 0,
-    totalPosts: 0,
-  });
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    pages: 1
-  });
-  const [filters, setFilters] = useState({
-    category: 'All',
-    search: ''
-  });
+  const [stats, setStats] = useState({ totalTopics: 0, activeMembers: 0, totalPosts: 0, thisWeekTopics: 0 });
+  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, pages: 1 });
+  const [filters, setFilters] = useState({ category: 'All', search: '' });
+
+  const fetchDiscussions = useCallback(async () => {
+    setLoading(true);
+    try {
+      let query = `?page=${pagination.page}&limit=${pagination.limit}`;
+      if (filters.category !== 'All') query += `&category=${encodeURIComponent(filters.category)}`;
+      if (filters.search) query += `&search=${encodeURIComponent(filters.search)}`;
+      
+      const res = await api.get(`/discussions/get_discussions.php${query}`);
+      if (res.success) {
+        setDiscussions(res.discussions);
+        setPagination(res.pagination);
+      }
+    } catch (err) {
+      console.error('Fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [pagination.page, pagination.limit, filters]);
+
+  const fetchStats = async () => {
+    try {
+      const [topicsRes, repliesRes] = await Promise.all([
+        api.get('/discussions/get_discussions.php?limit=1000'),
+        api.get('/discussions/get_replies.php?limit=1')
+      ]);
+
+      if (topicsRes.success) {
+        const totalTopics = topicsRes.pagination?.total || 0;
+        const totalReplies = repliesRes.pagination?.total || 0;
+        const uniqueAuthors = new Set(topicsRes.discussions?.map(d => d.author_id)).size;
+        
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const thisWeek = topicsRes.discussions?.filter(d => new Date(d.created_at) > oneWeekAgo).length || 0;
+
+        setStats({
+          totalTopics,
+          totalPosts: totalTopics + totalReplies,
+          activeMembers: Math.max(1, uniqueAuthors),
+          thisWeekTopics: thisWeek
+        });
+      }
+    } catch (err) {
+      console.error('Stats error:', err);
+    }
+  };
 
   useEffect(() => {
     fetchDiscussions();
     fetchStats();
-  }, [filters.category, filters.search, pagination.page]);
+  }, [fetchDiscussions]);
 
-  const fetchDiscussions = async () => {
-    setLoading(true);
-    try {
-      let url = `/discussions/get_discussions.php?page=${pagination.page}&limit=${pagination.limit}`;
-      
-      if (filters.category && filters.category !== 'All') {
-        url += `&category=${encodeURIComponent(filters.category)}`;
-      }
-      
-      if (filters.search) {
-        url += `&search=${encodeURIComponent(filters.search)}`;
-      }
-      
-      const response = await api.get(url);
-      
-      if (response.success) {
-        setDiscussions(response.discussions);
-        setPagination(response.pagination);
-      }
-    } catch (error) {
-      console.error('Error fetching discussions:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchStats = async () => {
-    try {
-      // Fetch total topics
-      const topicsResponse = await api.get('/discussions/get_discussions.php?limit=1');
-      
-      if (topicsResponse.success) {
-        const totalTopics = topicsResponse.pagination?.total || 0;
-        
-        // Fetch total replies
-        let totalReplies = 0;
-        try {
-          const repliesResponse = await api.get('/discussions/get_replies.php?limit=1');
-          if (repliesResponse.success) {
-            totalReplies = repliesResponse.pagination?.total || 0;
-          }
-        } catch (error) {
-          console.error('Error fetching replies count:', error);
-        }
-        
-        const totalPosts = totalTopics + totalReplies;
-        
-        
-        // Calculate active members (unique users who created discussions or replies)
-        let activeMembers = 0;
-        try {
-          // Get unique authors from discussions
-          const discussionsResponse = await api.get('/discussions/get_discussions.php?limit=1000');
-          if (discussionsResponse.success && discussionsResponse.discussions) {
-            const uniqueAuthors = new Set();
-            discussionsResponse.discussions.forEach(d => {
-              if (d.author_id) uniqueAuthors.add(d.author_id);
-            });
-            activeMembers = uniqueAuthors.size;
-          }
-        } catch (error) {
-          console.error('Error calculating active members:', error);
-          // Fallback: 10% of total topics as active members
-          activeMembers = Math.max(1, Math.round(totalTopics * 0.1));
-        }
-        
-        // Calculate this week's topics
-        const thisWeekTopics = discussions.filter(d => {
-          const oneWeekAgo = new Date();
-          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-          return new Date(d.created_at) > oneWeekAgo;
-        }).length;
-        
-        setStats({
-          totalTopics,
-          activeMembers: Math.max(1, activeMembers), // Minimum 1
-          totalPosts,
-          thisWeekTopics
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-      // Default values if API fails
-      setStats({
-        totalTopics: discussions.length,
-        activeMembers: Math.max(1, Math.round(discussions.length * 0.3)),
-        totalPosts: discussions.length * 1.5, // Estimate
-        thisWeekTopics: Math.round(discussions.length * 0.3)
-      });
-    }
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    fetchDiscussions();
-  };
-
-  const handlePageChange = (newPage) => {
-    setPagination(prev => ({ ...prev, page: newPage }));
-  };
-
-  const refreshDiscussions = () => {
-    fetchDiscussions();
-    fetchStats();
-  };
+  const refresh = () => { fetchDiscussions(); fetchStats(); };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#f8fafc]">
       <Header />
 
-      <main className="flex-1 container mx-auto py-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 gap-4">
-            <div>
-              <h1 className="text-4xl font-bold mb-4">Community Forum</h1>
-              <p className="text-lg text-muted-foreground">
-                Connect with fellow hackers, share writeups, and discuss cybersecurity topics.
-              </p>
-            </div>
-            <Button 
-              size="lg" 
-              onClick={() => navigate('/community/new')}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              New Discussion
-            </Button>
+      <main className="flex-1 w-full max-w-[1600px] mx-auto px-6 md:px-10 py-10">
+        
+        {/* --- HERO BANNER (UOKVIRENI STIL) --- */}
+        <div className="mb-10 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+          {/* Plavi vrh s uzorkom */}
+          <div className="h-32 bg-[#4461f2] relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10" style={{ 
+              backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', 
+              backgroundSize: '24px 24px' 
+            }}></div>
           </div>
-
-          <div className="grid gap-6 md:grid-cols-3 mb-8">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Total Topics</CardTitle>
-                <MessageSquare className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalTopics}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {stats.thisWeekTopics || 0} this week
+          
+          {/* Sadržaj bannera */}
+          <div className="p-8 md:p-10 -mt-16 flex flex-col md:flex-row justify-between items-end gap-6 relative z-10">
+            <div className="flex flex-col md:flex-row gap-6 items-end w-full">
+              {/* Ikona foruma */}
+              <div className="h-32 w-32 rounded-2xl bg-white p-2 shadow-md flex-shrink-0 border border-slate-100">
+                <div className="w-full h-full rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100">
+                  <MessageSquare className="h-12 w-12 text-[#4461f2]" />
+                </div>
+              </div>
+              
+              <div className="flex-1 pb-2">
+                <div className="flex items-center gap-3 mb-1">
+                  <h1 className="text-3xl font-black text-slate-900 tracking-tight">Community Forum</h1>
+                  <Badge className="bg-blue-100 text-blue-700 border-none hover:bg-blue-100 uppercase text-[10px] px-2.5 py-1 font-bold">
+                    Intel Exchange
+                  </Badge>
+                </div>
+                <p className="text-slate-500 font-medium max-w-xl">
+                  The hub for knowledge sharing, writeups, and strategic cybersecurity discussions.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Active Members</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.activeMembers}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  <Activity className="inline h-3 w-3 mr-1" />
-                  {Math.round(stats.activeMembers * 0.3)} online now
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Total Posts</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalPosts} Posts</div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Ostali kod ostaje isti */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Filter Discussions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search discussions..."
-                      className="pl-10"
-                      value={filters.search}
-                      onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                    />
+              {/* Akcijski gumbi i Stats */}
+              <div className="flex flex-col sm:flex-row items-center gap-4 pb-2">
+                 {/* Mini Stats unutar Hero dijela */}
+                <div className="hidden lg:flex items-center gap-6 mr-6">
+                  <div className="text-center">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Topics</p>
+                    <p className="text-xl font-black text-slate-800">{stats.totalTopics}</p>
+                  </div>
+                  <div className="h-8 w-[1px] bg-slate-200"></div>
+                  <div className="text-center">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Members</p>
+                    <p className="text-xl font-black text-slate-800">{stats.activeMembers}</p>
                   </div>
                 </div>
-                
-                <div className="w-full md:w-64">
-                  <Select 
-                    value={filters.category} 
-                    onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CATEGORIES.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <Button type="submit" className="flex items-center gap-2">
-                  <Search className="h-4 w-4" />
-                  Search
-                </Button>
-                
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => {
-                    setFilters({ category: 'All', search: '' });
-                    refreshDiscussions();
-                  }}
-                >
-                  Clear
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Recent Discussions</CardTitle>
-                  <CardDescription>Join the conversation and share your knowledge</CardDescription>
-                </div>
                 <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={refreshDiscussions}
-                  disabled={loading}
+                  onClick={() => navigate('/community/new')} 
+                  className="bg-[#4461f2] hover:bg-[#3651d4] text-white font-bold rounded-xl px-6 py-6 shadow-lg shadow-blue-200 gap-2 transition-all transform hover:-translate-y-1"
                 >
-                  {loading ? 'Refreshing...' : 'Refresh'}
+                  <Plus className="h-5 w-5" /> New Discussion
                 </Button>
               </div>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="flex justify-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                </div>
-              ) : discussions.length === 0 ? (
-                <div className="text-center py-12">
-                  <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No discussions found</h3>
-                  <p className="text-muted-foreground mb-6">
-                    {filters.search || filters.category !== 'All' 
-                      ? 'Try changing your search filters' 
-                      : 'Be the first to start a discussion!'}
-                  </p>
-                  {(!filters.search && filters.category === 'All') && (
-                    <Button onClick={() => navigate('/community/new')}>
-                      Start a Discussion
-                    </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* --- STATS CARDS (GRID) --- */}
+        <div className="grid gap-6 sm:grid-cols-3 mb-10">
+          {[
+            { label: "Total Topics", val: stats.totalTopics, sub: `${stats.thisWeekTopics} new this week`, icon: MessageSquare },
+            { label: "Active Members", val: stats.activeMembers, sub: "Verified operators", icon: Users, isOnline: true },
+            { label: "Total Posts", val: stats.totalPosts, sub: "Collective intel", icon: TrendingUp }
+          ].map((s, i) => (
+            <Card key={i} className="border-none shadow-sm bg-white rounded-2xl group hover:shadow-md transition-all">
+              <CardContent className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-blue-50 transition-colors">
+                    <s.icon className="h-5 w-5 text-[#4461f2]" />
+                  </div>
+                  {s.isOnline && (
+                    <div className="flex items-center gap-1.5 bg-emerald-50 px-2 py-1 rounded-md">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-tight">Live</span>
+                    </div>
                   )}
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {discussions.map((discussion) => (
-                    <DiscussionCard 
-                      key={discussion.id} 
-                      discussion={discussion}
-                      onUpdate={refreshDiscussions}
-                    />
-                  ))}
-                </div>
-              )}
+                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">{s.label}</h3>
+                <p className="text-3xl font-black text-slate-800 mb-1">{s.val}</p>
+                <p className="text-xs font-medium text-slate-500">{s.sub}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-              {pagination.pages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-8">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(pagination.page - 1)}
-                    disabled={pagination.page === 1}
-                  >
-                    Previous
-                  </Button>
-                  
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
-                      let pageNum;
-                      if (pagination.pages <= 5) {
-                        pageNum = i + 1;
-                      } else if (pagination.page <= 3) {
-                        pageNum = i + 1;
-                      } else if (pagination.page >= pagination.pages - 2) {
-                        pageNum = pagination.pages - 4 + i;
-                      } else {
-                        pageNum = pagination.page - 2 + i;
-                      }
-                      
-                      return (
-                        <Button
-                          key={pageNum}
-                          variant={pagination.page === pageNum ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => handlePageChange(pageNum)}
-                        >
-                          {pageNum}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(pagination.page + 1)}
-                    disabled={pagination.page === pagination.pages}
-                  >
-                    Next
-                  </Button>
+        {/* --- FILTERS --- */}
+        <Card className="border-none shadow-sm bg-white rounded-2xl mb-8 overflow-hidden">
+          <CardContent className="p-4">
+            <div className="flex flex-col md:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Input 
+                  placeholder="Search intelligence..." 
+                  className="pl-11 py-6 bg-slate-50 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-[#4461f2] font-medium"
+                  value={filters.search}
+                  onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
+                />
+              </div>
+              <Select value={filters.category} onValueChange={v => setFilters(f => ({ ...f, category: v }))}>
+                <SelectTrigger className="w-full md:w-64 py-6 bg-slate-50 border-none rounded-xl font-bold text-slate-700">
+                  <SelectValue placeholder="All Sectors" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-slate-100 shadow-xl">
+                  {CATEGORIES.map(c => <SelectItem key={c} value={c} className="font-medium">{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Button 
+                variant="ghost" 
+                onClick={() => setFilters({ category: 'All', search: '' })} 
+                className="rounded-xl hover:bg-slate-100 h-12 w-12 p-0 text-slate-400"
+              >
+                <RotateCcw className="h-5 w-5" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* --- FEED --- */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between px-2">
+            <div className="flex items-center gap-3">
+              <div className="h-1 w-8 bg-[#4461f2] rounded-full"></div>
+              <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                Recent Feed
+              </h2>
+            </div>
+            <Badge variant="outline" className="border-slate-200 text-slate-400 font-mono font-bold">
+              REC_COUNT: {pagination.total}
+            </Badge>
+          </div>
+
+          {loading ? (
+            <div className="h-64 flex flex-col items-center justify-center gap-4">
+              <div className="h-10 w-10 border-4 border-[#4461f2] border-t-transparent rounded-full animate-spin" />
+              <p className="text-xs font-black text-slate-400 uppercase tracking-widest animate-pulse">Syncing_Data_Streams...</p>
+            </div>
+          ) : discussions.length === 0 ? (
+            <Card className="border-dashed border-2 border-slate-200 bg-transparent rounded-3xl">
+              <CardContent className="flex flex-col items-center justify-center py-20 text-center">
+                <div className="h-20 w-20 bg-white shadow-sm border border-slate-100 rounded-2xl flex items-center justify-center mb-6">
+                  <Search className="h-10 w-10 text-slate-300" />
                 </div>
-              )}
-            </CardContent>
-          </Card>
+                <h3 className="text-xl font-black text-slate-800 mb-2">No intelligence found</h3>
+                <p className="text-slate-500 font-medium max-w-xs mx-auto mb-8">Try adjusting your filters or start a brand new tactical discussion.</p>
+                <Button 
+                  onClick={() => navigate('/community/new')}
+                  className="bg-white border border-slate-200 text-slate-900 font-bold hover:bg-slate-50 rounded-xl px-8"
+                >
+                  Start a Discussion
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4">
+              {discussions.map(d => <DiscussionCard key={d.id} discussion={d} onUpdate={refresh} />)}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {pagination.pages > 1 && (
+            <div className="flex items-center justify-center gap-4 pt-10">
+              <Button 
+                variant="outline" 
+                disabled={pagination.page === 1} 
+                onClick={() => setPagination(p => ({ ...p, page: p.page - 1 }))}
+                className="rounded-xl border-slate-200 font-bold text-xs uppercase tracking-widest px-6 h-11"
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" /> Back
+              </Button>
+              <div className="bg-white border border-slate-200 px-6 py-2.5 rounded-xl text-sm font-black text-slate-700 shadow-sm">
+                {pagination.page} <span className="text-slate-300 mx-1">/</span> {pagination.pages}
+              </div>
+              <Button 
+                variant="outline" 
+                disabled={pagination.page === pagination.pages} 
+                onClick={() => setPagination(p => ({ ...p, page: p.page + 1 }))}
+                className="rounded-xl border-slate-200 font-bold text-xs uppercase tracking-widest px-6 h-11"
+              >
+                Next <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            </div>
+          )}
         </div>
       </main>
-
       <Footer />
     </div>
-  )
+  );
 }

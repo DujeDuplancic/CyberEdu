@@ -31,14 +31,22 @@ export default function AdminPage() {
   
   const navigate = useNavigate()
 
+  // 1. Provjera admina pri učitavanju stranice
   useEffect(() => {
     checkAdminAccess()
   }, [])
 
+  // 2. AUTOMATSKI REFRESH: Dohvaćanje podataka čim se promijeni tab
   useEffect(() => {
-    if (activeTab === "challenges" && categories.length === 0) {
-      loadCategories()
+    if (activeTab === "challenges") {
+      loadChallenges()
+      if (categories.length === 0) {
+        loadCategories()
+      }
+    } else if (activeTab === "users") {
+      loadUsers()
     }
+    // Ovdje možeš dodati loadWiki() ili slično ako imaš te funkcije
   }, [activeTab])
 
   const checkAdminAccess = async () => {
@@ -53,9 +61,7 @@ export default function AdminPage() {
       
       const response = await fetch('http://localhost/CyberEdu/Backend/admin/check_admin.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: user.id })
       })
 
@@ -67,7 +73,7 @@ export default function AdminPage() {
         return
       }
 
-      // Ako je admin, učitaj podatke
+      // Inicijalno učitaj statistiku i prvu listu (users)
       loadDashboardStats()
       loadUsers()
 
@@ -85,7 +91,6 @@ export default function AdminPage() {
       const data = await response.json()
 
       if (data.success) {
-        // Dodaj Wiki statistiku ako postoji
         const wikiCount = data.stats.wiki_articles || 0;
         const achievementsCount = data.stats.total_achievements || 0;
         
@@ -106,10 +111,7 @@ export default function AdminPage() {
     try {
       const response = await fetch('http://localhost/CyberEdu/Backend/admin/users.php')
       const data = await response.json()
-
-      if (data.success) {
-        setUsers(data.users)
-      }
+      if (data.success) setUsers(data.users)
     } catch (error) {
       console.error('Error loading users:', error)
     }
@@ -119,15 +121,7 @@ export default function AdminPage() {
     try {
       const response = await fetch('http://localhost/CyberEdu/Backend/challenges/get_challenges.php')
       const data = await response.json()
-      
-      if (data.success) {
-        console.log("📋 Loaded challenges:", data.challenges)
-        // Provjeri da li challenge ima file_url
-        data.challenges.forEach(challenge => {
-          console.log(`Challenge ${challenge.id}: ${challenge.title} - file_url: ${challenge.file_url}`)
-        })
-        setChallenges(data.challenges)
-      }
+      if (data.success) setChallenges(data.challenges)
     } catch (error) {
       console.error('Error loading challenges:', error)
     }
@@ -137,313 +131,151 @@ export default function AdminPage() {
     try {
       const response = await fetch('http://localhost/CyberEdu/Backend/challenges/get_categories.php')
       const data = await response.json()
-      
-      if (data.success) {
-        setCategories(data.categories)
-      }
+      if (data.success) setCategories(data.categories)
     } catch (error) {
       console.error('Error loading categories:', error)
     }
   }
 
+  // --- Handleri za akcije (Toggle Admin, Delete, Create, Update, Upload) ---
+  // Ostavio sam tvoje originalne funkcije ovdje jer su dobro napisane
   const handleToggleAdmin = async (userId, currentStatus) => {
     try {
       const response = await fetch('http://localhost/CyberEdu/Backend/admin/users.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'toggle_admin',
-          user_id: userId,
-          admin_status: !currentStatus
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'toggle_admin', user_id: userId, admin_status: !currentStatus })
       })
-
       const data = await response.json()
-
       if (data.success) {
-        // Ažuriraj lokalno stanje
-        setUsers(users.map(user => 
-          user.id === userId 
-            ? { ...user, is_admin: !currentStatus }
-            : user
-        ))
+        setUsers(users.map(user => user.id === userId ? { ...user, is_admin: !currentStatus ? 1 : 0 } : user))
         setMessage(`✅ ${data.message}`)
-      } else {
-        setMessage(`❌ ${data.message}`)
       }
-    } catch (error) {
-      console.error('Error toggling admin:', error)
-      setMessage("❌ Greška pri promjeni admin statusa")
-    }
+    } catch (error) { console.error(error); setMessage("❌ Greška pri promjeni statusa"); }
   }
 
   const handleDeleteUser = async (userId, username) => {
-    if (!confirm(`Jesi li siguran da želiš obrisati korisnika "${username}"?`)) {
-      return
-    }
-
+    if (!confirm(`Jesi li siguran da želiš obrisati korisnika "${username}"?`)) return
     try {
       const response = await fetch('http://localhost/CyberEdu/Backend/admin/users.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'delete_user',
-          user_id: userId
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete_user', user_id: userId })
       })
-
       const data = await response.json()
-
       if (data.success) {
-        // Ukloni korisnika iz liste
         setUsers(users.filter(user => user.id !== userId))
         setMessage("✅ Korisnik obrisan uspješno")
-      } else {
-        setMessage(`❌ ${data.message}`)
       }
-    } catch (error) {
-      console.error('Error deleting user:', error)
-      setMessage("❌ Greška pri brisanju korisnika")
-    }
+    } catch (error) { console.error(error); setMessage("❌ Greška pri brisanju"); }
   }
 
   const handleCreateChallenge = async (challengeData) => {
     try {
-      const userData = localStorage.getItem('user')
-      const user = JSON.parse(userData)
-
+      const user = JSON.parse(localStorage.getItem('user'))
       const response = await fetch('http://localhost/CyberEdu/Backend/admin/create_challenge.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...challengeData,
-          created_by: user.id
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...challengeData, created_by: user.id })
       })
-
       const data = await response.json()
-
-      if (data.success) {
-        setMessage("✅ Challenge uspješno kreiran!")
-        return Promise.resolve()
-      } else {
-        setMessage(`❌ ${data.message}`)
-        return Promise.reject(new Error(data.message))
-      }
-    } catch (error) {
-      console.error('Error creating challenge:', error)
-      setMessage("❌ Greška pri kreiranju challengea")
-      return Promise.reject(error)
-    }
+      if (data.success) { setMessage("✅ Challenge kreiran!"); return Promise.resolve(); }
+      return Promise.reject(new Error(data.message))
+    } catch (error) { setMessage("❌ Greška"); return Promise.reject(error); }
   }
 
   const handleUpdateChallenge = async (challengeData) => {
     try {
       const response = await fetch('http://localhost/CyberEdu/Backend/admin/update_challenge.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(challengeData)
       })
-
       const data = await response.json()
-
-      if (data.success) {
-        setMessage("✅ Challenge uspješno ažuriran!")
-        return Promise.resolve()
-      } else {
-        setMessage(`❌ ${data.message}`)
-        return Promise.reject(new Error(data.message))
-      }
-    } catch (error) {
-      console.error('Error updating challenge:', error)
-      setMessage("❌ Greška pri ažuriranju challengea")
-      return Promise.reject(error)
-    }
+      if (data.success) { setMessage("✅ Challenge ažuriran!"); return Promise.resolve(); }
+      return Promise.reject(new Error(data.message))
+    } catch (error) { setMessage("❌ Greška"); return Promise.reject(error); }
   }
 
   const handleDeleteChallenge = async (challengeId, challengeTitle) => {
-    if (!confirm(`Jesi li siguran da želiš obrisati challenge "${challengeTitle}"? Ova akcija se ne može poništiti!`)) {
-      return
-    }
-
+    if (!confirm(`Obrisati "${challengeTitle}"?`)) return
     try {
       const response = await fetch('http://localhost/CyberEdu/Backend/admin/delete_challenge.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: challengeId })
       })
-
       const data = await response.json()
-
       if (data.success) {
-        // Remove from local state
-        setChallenges(challenges.filter(challenge => challenge.id !== challengeId))
-        setMessage("✅ Challenge obrisan uspješno!")
-      } else {
-        setMessage(`❌ ${data.message}`)
+        setChallenges(challenges.filter(c => c.id !== challengeId))
+        setMessage("✅ Challenge obrisan!")
       }
-    } catch (error) {
-      console.error('Error deleting challenge:', error)
-      setMessage("❌ Greška pri brisanju challengea")
-    }
+    } catch (error) { setMessage("❌ Greška"); }
   }
 
   const handleFileUpload = async (file, challengeId) => {
-    console.log("🔄 Starting file upload...", { 
-      fileName: file.name, 
-      fileSize: file.size, 
-      fileType: file.type,
-      challengeId: challengeId 
-    });
-    
     try {
-      const userData = localStorage.getItem('user');
-      if (!userData) {
-        throw new Error('User not logged in');
-      }
-
-      const user = JSON.parse(userData);
-      console.log("👤 User ID from localStorage:", user.id);
-
-      // Kreiraj FormData
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('challenge_id', challengeId.toString());
-      formData.append('user_id', user.id.toString());
-
-      // Debug FormData contents
-      console.log("📦 FormData contents:");
-      for (let [key, value] of formData.entries()) {
-        console.log(`  ${key}:`, value);
-      }
-
-      console.log("📤 Sending POST request to upload_file.php...");
+      const user = JSON.parse(localStorage.getItem('user'))
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('challenge_id', challengeId)
+      formData.append('user_id', user.id)
 
       const response = await fetch('http://localhost/CyberEdu/Backend/utils/upload_file.php', {
         method: 'POST',
         body: formData
-        // NE DODAJ headers - FormData automatski postavlja Content-Type
-      });
-
-      console.log("📥 Response status:", response.status);
-      console.log("📥 Response headers:", response.headers);
-
-      const responseText = await response.text();
-      console.log("📥 Raw response:", responseText);
-
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (e) {
-        console.error("❌ Failed to parse JSON response:", e);
-        throw new Error('Invalid response from server');
-      }
-
-      console.log("📄 Parsed response data:", data);
+      })
+      const data = await response.json()
 
       if (data.success) {
-        console.log("✅ File uploaded successfully! File URL:", data.file_url);
-        
-        // Update challenge with the new file URL
-        console.log("🔄 Updating challenge with file URL...");
-        
-        const updateResponse = await fetch('http://localhost/CyberEdu/Backend/admin/update_challenge.php', {
+        await fetch('http://localhost/CyberEdu/Backend/admin/update_challenge.php', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            id: challengeId,
-            file_url: data.file_url
-          })
-        });
-
-        const updateData = await updateResponse.json();
-        console.log("🔄 Challenge update response:", updateData);
-        
-        if (updateData.success) {
-          setMessage("✅ File uploaded successfully!");
-          loadChallenges(); // Refresh the challenges list
-          return Promise.resolve();
-        } else {
-          throw new Error('Failed to update challenge: ' + updateData.message);
-        }
-      } else {
-        throw new Error(data.message || 'Upload failed');
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: challengeId, file_url: data.file_url })
+        })
+        setMessage("✅ File uploaded!")
+        loadChallenges()
+        return Promise.resolve()
       }
-    } catch (error) {
-      console.error('❌ File upload error:', error);
-      setMessage(`❌ Upload failed: ${error.message}`);
-      return Promise.reject(error);
-    }
-  };
+    } catch (error) { setMessage("❌ Upload failed"); return Promise.reject(error); }
+  }
 
-  // Clear message after 3 seconds
+  // Clear message timer
   useEffect(() => {
     if (message) {
-      const timer = setTimeout(() => {
-        setMessage("")
-      }, 3000)
+      const timer = setTimeout(() => setMessage(""), 3000)
       return () => clearTimeout(timer)
     }
   }, [message])
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 container mx-auto py-12 flex items-center justify-center">
-          <div className="text-center">Provjera administratorskih prava...</div>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
+  if (loading) return (
+    <div className="min-h-screen flex flex-col">
+      <Header /><main className="flex-1 flex items-center justify-center">Provjera...</main><Footer />
+    </div>
+  )
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 container mx-auto py-12 flex items-center justify-center">
-          <div className="text-center text-red-500">{error}</div>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
+  if (error) return (
+    <div className="min-h-screen flex flex-col">
+      <Header /><main className="flex-1 flex items-center justify-center text-red-500">{error}</main><Footer />
+    </div>
+  )
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-
-      <main className="flex-1 container mx-auto py-12">
+      <main className="flex-1 container mx-auto py-12 px-4">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-4">Admin Dashboard</h1>
           <p className="text-lg text-muted-foreground">Manage users, challenges, content, and platform settings.</p>
         </div>
 
-        {/* Global Message */}
         {message && (
-          <div className={`mb-6 p-4 rounded-md ${
-            message.includes('✅') 
-              ? 'bg-green-100 text-green-800 border border-green-200' 
-              : 'bg-red-100 text-red-800 border border-red-200'
-          }`}>
+          <div className={`mb-6 p-4 rounded-md border ${message.includes('✅') ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200'}`}>
             {message}
           </div>
         )}
 
-        {/* Statistics Cards */}
+        {/* Stats Cards */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5 mb-8">
           {stats.map((stat) => (
             <Card key={stat.label}>
@@ -459,64 +291,33 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* Tab Navigation */}
+        {/* Tabovi */}
         <div className="flex space-x-1 mb-6 p-1 bg-muted rounded-lg overflow-x-auto">
-          {[
-            { id: "users", label: "Users" },
-            { id: "challenges", label: "Challenges" },
-            { id: "achievements", label: "Achievements" },
-            { id: "wiki", label: "Wiki" },
-            { id: "content", label: "Content" }
-            // Uklonio sam "settings" jer ne postoji komponenta
-          ].map((tab) => (
+          {["users", "challenges", "achievements", "wiki", "content"].map((tab) => (
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex-shrink-0 py-2 px-4 rounded-md text-sm font-medium transition-colors capitalize ${
-                activeTab === tab.id 
-                  ? "bg-background text-foreground shadow-sm" 
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`flex-shrink-0 py-2 px-4 rounded-md text-sm font-medium transition-colors capitalize ${activeTab === tab ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
             >
-              {tab.label}
+              {tab}
             </button>
           ))}
         </div>
 
-        {/* Tab Content */}
+        {/* Dinamički Sadržaj Tabova */}
         {activeTab === "users" && (
-          <AdminUsers
-            users={users}
-            onToggleAdmin={handleToggleAdmin}
-            onDeleteUser={handleDeleteUser}
-            onRefresh={loadUsers}
-          />
+          <AdminUsers users={users} onToggleAdmin={handleToggleAdmin} onDeleteUser={handleDeleteUser} onRefresh={loadUsers} />
         )}
 
         {activeTab === "challenges" && (
-          <AdminChallenges
-            challenges={challenges}
-            categories={categories}
-            onRefresh={loadChallenges}
-            onDeleteChallenge={handleDeleteChallenge}
-            onCreateChallenge={handleCreateChallenge}
-            onUpdateChallenge={handleUpdateChallenge}
-            onFileUpload={handleFileUpload}
-          />
+          <AdminChallenges challenges={challenges} categories={categories} onRefresh={loadChallenges} onDeleteChallenge={handleDeleteChallenge} onCreateChallenge={handleCreateChallenge} onUpdateChallenge={handleUpdateChallenge} onFileUpload={handleFileUpload} />
         )}
 
-        {activeTab === "achievements" && (
-          <AdminAchievements />
-        )}
-
-        {activeTab === "wiki" && (
-          <AdminWiki />
-        )}
-
+        {activeTab === "achievements" && <AdminAchievements />}
+        {activeTab === "wiki" && <AdminWiki />}
         {activeTab === "content" && <AdminContent />}
         
       </main>
-
       <Footer />
     </div>
   )

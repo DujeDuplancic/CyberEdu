@@ -16,9 +16,9 @@ class AdminStats {
     private $db;
     private $userTable = 'users';
     private $challengesTable = 'challenges';
-    private $solvesTable = 'solves';
     private $lecturesTable = 'lectures';
-    private $discussionsTable = 'discussions';
+    private $wikiTable = 'wiki_articles'; // Dodano
+    private $achievementsTable = 'achievements'; // Dodano
 
     public function __construct() {
         $database = new Database();
@@ -27,29 +27,35 @@ class AdminStats {
 
     public function getDashboardStats() {
         try {
-            // Ukupno korisnika
+            // 1. Ukupno korisnika
             $query = "SELECT COUNT(*) as total_users FROM " . $this->userTable;
             $stmt = $this->db->prepare($query);
             $stmt->execute();
             $users = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Aktivni challengeovi
+            // 2. Aktivni challengeovi
             $query = "SELECT COUNT(*) as total_challenges FROM " . $this->challengesTable . " WHERE is_active = true";
             $stmt = $this->db->prepare($query);
             $stmt->execute();
             $challenges = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Ukupno lekcija
+            // 3. Ukupno lekcija
             $query = "SELECT COUNT(*) as total_lectures FROM " . $this->lecturesTable;
             $stmt = $this->db->prepare($query);
             $stmt->execute();
             $lectures = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Forum postovi
-            $query = "SELECT COUNT(*) as total_posts FROM " . $this->discussionsTable;
+            // 4. Wiki Articles (Popravljeno)
+            $query = "SELECT COUNT(*) as total_wiki FROM " . $this->wikiTable;
             $stmt = $this->db->prepare($query);
             $stmt->execute();
-            $posts = $stmt->fetch(PDO::FETCH_ASSOC);
+            $wiki = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // 5. Achievements (Popravljeno)
+            $query = "SELECT COUNT(*) as total_achievements FROM " . $this->achievementsTable;
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            $achievements = $stmt->fetch(PDO::FETCH_ASSOC);
 
             return [
                 'success' => true,
@@ -57,7 +63,8 @@ class AdminStats {
                     'total_users' => (int)$users['total_users'],
                     'total_challenges' => (int)$challenges['total_challenges'],
                     'total_lectures' => (int)$lectures['total_lectures'],
-                    'total_posts' => (int)$posts['total_posts']
+                    'wiki_articles' => (int)$wiki['total_wiki'], // Ključ usklađen s frontendom
+                    'total_achievements' => (int)$achievements['total_achievements'] // Ključ usklađen s frontendom
                 ]
             ];
 
@@ -67,7 +74,6 @@ class AdminStats {
     }
 }
 
-// Handle GET request
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $adminStats = new AdminStats();
     $result = $adminStats->getDashboardStats();

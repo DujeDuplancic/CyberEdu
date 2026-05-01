@@ -27,7 +27,8 @@ export default function AdminUsers({ users, onToggleAdmin, onDeleteUser, onRefre
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <p className="font-semibold">{user.username}</p>
-                    {user.is_admin && (
+                    {/* ISPRAVAK 1: Prikaz Admin značke */}
+                    {!!user.is_admin && (
                       <span className="px-2 py-1 text-xs bg-red-500 text-white rounded-md">
                         Admin
                       </span>
@@ -46,8 +47,8 @@ export default function AdminUsers({ users, onToggleAdmin, onDeleteUser, onRefre
                     size="sm"
                     onClick={() => onToggleAdmin(user.id, user.is_admin)}
                   >
-                    {user.is_admin ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
-                    {user.is_admin ? ' Remove Admin' : ' Make Admin'}
+                    {!!user.is_admin ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
+                    {!!user.is_admin ? ' Remove Admin' : ' Make Admin'}
                   </Button>
                   <Button 
                     variant="outline" 
