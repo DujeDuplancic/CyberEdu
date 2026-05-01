@@ -244,6 +244,19 @@
             "created_by": 3,
             "is_active": 1,
             "created_at": "2026-04-28 23:41:42"
+        },
+        {
+            "id": 16,
+            "title": "The Gatekeeper",
+            "description": "You've been called in by a small tech company after their server was breached. The attacker left behind a mysterious program on the system — seemingly a custom lock they installed to protect something. Your job: figure out what secret key it accepts. Crack the lock, and you'll have what you need to move forward.\nA suspicious binary was found on the compromised server. Reverse engineer it to find the key it accepts. Submit the key as your flag.",
+            "category_id": 1,
+            "difficulty": "Medium",
+            "points": 140,
+            "flag": "$2y$10$QXNCa6xNLeAJQM8RyfdQouQTuv0cSltmgp4UD9B55Yo2fO6aQsjCa",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_16_challenge_9_gatekeeper_1777423242_1777641508.zip",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-01 15:17:39"
         }
     ],
     "discussions": [
@@ -3660,6 +3673,12 @@
             "user_id": 3,
             "challenge_id": 8,
             "solved_at": "2026-04-27 23:40:35"
+        },
+        {
+            "id": 3,
+            "user_id": 3,
+            "challenge_id": 16,
+            "solved_at": "2026-05-01 15:18:56"
         }
     ],
     "user_achievements": [
@@ -3683,7 +3702,7 @@
             "email": "admin@cyberedu.com",
             "password_hash": "$2y$10$EPka4dOjJQYSExkUCxTbPOR68a2xSTqAKR6tNgStBwfyRQ8Jv3jDm",
             "avatar_url": "uploads\/avatars\/69d2b22d8f337_1775415853.jpg",
-            "points": 300,
+            "points": 440,
             "rank": 0,
             "created_at": "2025-11-23 17:05:10",
             "is_admin": 1
@@ -4027,6 +4046,17 @@
             "points": 0,
             "rank": 0,
             "created_at": "2026-04-02 15:32:28",
+            "is_admin": 0
+        },
+        {
+            "id": 66,
+            "username": "vavav",
+            "email": "fiwjf@gmail.com",
+            "password_hash": "$2y$10$w32iv4anQ10C1PlmZPgz5OvGCZ.kpTJH9j69DlP9gJhsx5OC53N8C",
+            "avatar_url": null,
+            "points": 0,
+            "rank": 0,
+            "created_at": "2026-05-01 14:13:21",
             "is_admin": 0
         }
     ],
