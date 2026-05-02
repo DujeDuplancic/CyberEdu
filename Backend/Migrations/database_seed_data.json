@@ -309,6 +309,45 @@
             "created_by": 3,
             "is_active": 1,
             "created_at": "2026-05-01 21:39:12"
+        },
+        {
+            "id": 21,
+            "title": "The Intern's Secret",
+            "description": "A junior developer at MegaCorp accidentally left a hidden flag in a validation binary before pushing to production. Their senior colleague noticed something odd in the binary and challenged you to find it. The intern thought XOR-encoding the digits would be \"secure enough.\" Spoiler: it wasn't.",
+            "category_id": 1,
+            "difficulty": "Easy",
+            "points": 50,
+            "flag": "$2y$10$v\/oP4cpyfcYVfTwRaG1ENuHWg4KY\/lGKCyqUEkjongjLc5CXtyZJW",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_21_challenge_theintern_secret_handout_1777726503.zip",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-02 14:52:15"
+        },
+        {
+            "id": 22,
+            "title": "Phantom Key",
+            "description": "A sophisticated piece of malware was discovered on an air-gapped server. Forensic analysts believe it stores a stolen numeric key inside itself, reconstructing it at runtime only when certain environmental conditions are met. The malware actively resists debugging attempts. Your mission: bypass its defenses and recover the hidden numeric key before it's used.",
+            "category_id": 1,
+            "difficulty": "Hard",
+            "points": 200,
+            "flag": "$2y$10$PyZWGroCkE0f5nxxci0DI.sTaWInE1UWi3JHM7U2GX6Elf83Ek8Hu",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_22_phantom_key_1777726745.zip",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-02 14:57:51"
+        },
+        {
+            "id": 23,
+            "title": "CIPHER-VM",
+            "description": "CIPHER is a covert agency that protects its most sensitive activation codes using a custom bytecode virtual machine embedded directly in their verification software. An operative has exfiltrated a copy of the binary. You must reverse-engineer the VM's instruction set, reconstruct the bytecode program it executes, and determine the correct numeric passphrase that causes the VM to output the hidden flag.",
+            "category_id": 1,
+            "difficulty": "Hard",
+            "points": 350,
+            "flag": "$2y$10$6VlJJ.4rD.Djl2y4SupC1uzqdZukPZrTMaJ5B7y\/C\/jBaJpfyETza",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_23_cyphervm_1777726897.zip",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-02 15:00:41"
         }
     ],
     "discussions": [
@@ -3679,6 +3718,24 @@
             "user_id": 3,
             "challenge_id": 18,
             "solved_at": "2026-05-01 23:50:06"
+        },
+        {
+            "id": 6,
+            "user_id": 3,
+            "challenge_id": 21,
+            "solved_at": "2026-05-02 14:55:55"
+        },
+        {
+            "id": 7,
+            "user_id": 3,
+            "challenge_id": 22,
+            "solved_at": "2026-05-02 15:02:15"
+        },
+        {
+            "id": 8,
+            "user_id": 3,
+            "challenge_id": 23,
+            "solved_at": "2026-05-02 15:02:25"
         }
     ],
     "user_achievements": [
@@ -3702,7 +3759,7 @@
             "email": "admin@cyberedu.com",
             "password_hash": "$2y$10$EPka4dOjJQYSExkUCxTbPOR68a2xSTqAKR6tNgStBwfyRQ8Jv3jDm",
             "avatar_url": "uploads\/avatars\/69d2b22d8f337_1775415853.jpg",
-            "points": 690,
+            "points": 1290,
             "rank": 0,
             "created_at": "2025-11-23 17:05:10",
             "is_admin": 1
