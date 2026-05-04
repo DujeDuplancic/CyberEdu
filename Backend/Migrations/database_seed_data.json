@@ -348,6 +348,32 @@
             "created_by": 3,
             "is_active": 1,
             "created_at": "2026-05-02 15:00:41"
+        },
+        {
+            "id": 24,
+            "title": "TimingIsEverything ",
+            "description": "SecureBank — trusted by millions, secured by one developer.\nA whistleblower tipped us off: the bank's admin account holds evidence of a massive fraud. We managed to find the login portal, and we know the admin's username. That's it.\nThe system reveals nothing — no error details, no hints, no stack traces. Just a cold Invalid credentials on every failed attempt.\nBut every system talks, if you know how to listen.\n???? https:\/\/timing-is-everything.vercel.app\/\nNote: The flag is in CTF{...} format.",
+            "category_id": 5,
+            "difficulty": "Hard",
+            "points": 400,
+            "flag": "$2y$10$rPiZ\/w7gZ88ldra6E8wODu69Q29BVccQysOEFyQSuHop1lq6MOdi2",
+            "file_url": null,
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-04 20:20:55"
+        },
+        {
+            "id": 25,
+            "title": "RustBank Transfer",
+            "description": "Our security team flagged a suspicious integer check in RustBank's transfer system. The developer swears the validation is bulletproof — after all, it's written in Rust.\n\nYour balance is $100. The maximum transfer is $100.\nSomething about how the numbers are handled doesn't add up.\n\nCan you break the bank?\n\nConnection: nc <host> 1337",
+            "category_id": 2,
+            "difficulty": "Easy",
+            "points": 100,
+            "flag": "$2y$10$xtTIJVL6\/CZLSYnI\/sqXVedDawb4xArdynWL8BPVrVdiFdmIZ.Qaa",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_25_rustbank2-handout_1777923140.zip",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-04 21:31:56"
         }
     ],
     "discussions": [
@@ -2408,11 +2434,11 @@
             "video_url": "https:\/\/www.youtube.com\/watch?v=qS98S_o9_3I",
             "embed_url": "https:\/\/www.youtube.com\/embed\/qS98S_o9_3I",
             "thumbnail_url": "https:\/\/img.youtube.com\/vi\/qS98S_o9_3I\/hqdefault.jpg",
-            "views": 0,
+            "views": 2,
             "is_published": 1,
             "author_id": 3,
             "created_at": "2026-03-17 12:40:31",
-            "updated_at": "2026-03-17 12:40:31"
+            "updated_at": "2026-05-04 19:48:49"
         },
         {
             "id": 81,
@@ -3750,6 +3776,12 @@
             "user_id": 3,
             "achievement_id": 5,
             "unlocked_at": "2026-03-16 23:27:34"
+        },
+        {
+            "id": 3,
+            "user_id": 3,
+            "achievement_id": 2,
+            "unlocked_at": "2026-05-04 19:49:07"
         }
     ],
     "users": [
@@ -3759,7 +3791,7 @@
             "email": "admin@cyberedu.com",
             "password_hash": "$2y$10$EPka4dOjJQYSExkUCxTbPOR68a2xSTqAKR6tNgStBwfyRQ8Jv3jDm",
             "avatar_url": "uploads\/avatars\/69d2b22d8f337_1775415853.jpg",
-            "points": 1290,
+            "points": 1390,
             "rank": 0,
             "created_at": "2025-11-23 17:05:10",
             "is_admin": 1
