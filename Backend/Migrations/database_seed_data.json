@@ -374,6 +374,58 @@
             "created_by": 3,
             "is_active": 1,
             "created_at": "2026-05-04 21:31:56"
+        },
+        {
+            "id": 26,
+            "title": "DotBank XML Profile Parser",
+            "description": "DotBank has launched a new feature: XML-based user profiles.\nSubmit your profile data in XML format and our system will parse and display it back to you — fast, flexible, \"enterprise-grade.\"\nThe developer followed all the tutorials... almost.\nnc <host> 9999",
+            "category_id": 2,
+            "difficulty": "Medium",
+            "points": 300,
+            "flag": "$2y$10$GKjZO9aWYTYYkUJ\/1xs78u4H3lpXd6tIBc7MD79Qy2mRQoQnnEoPW",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_26_Program_1778002788.zip",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-05 19:37:15"
+        },
+        {
+            "id": 27,
+            "title": "ASM Vault Security",
+            "description": "\"No C. No libc. No mercy.\" — This vault is written in pure x86-64 Assembly. The developers are proud — no C runtime, no libc. But the syscall reading your input doesn't check the length... There's a function that's never called from _start. Find it. Call it. Connection: nc <host> 4444 — Files: vault (binary), vault.asm (source)",
+            "category_id": 2,
+            "difficulty": "Hard",
+            "points": 500,
+            "flag": "$2y$10$9rIGcOSH7O74Up7QNuuKzuhuYrJl531K3\/zLmmRjW3BxBDbvtw5Uq",
+            "file_url": "\/CyberEdu\/uploads\/challenges\/challenge_27_asmvault2-handout_1778006024.zip",
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-05 20:33:01"
+        },
+        {
+            "id": 28,
+            "title": "BrainVault",
+            "description": "\"The vault speaks only one language.\" — The guards of this vault are mysterious. They don't speak English, they don't speak Croatian. They speak something... different. A strange sequence of symbols is displayed on the vault door. Only those who understand it may enter. Connection: nc <host> 5555",
+            "category_id": 2,
+            "difficulty": "Easy",
+            "points": 100,
+            "flag": "$2y$10$g78NyrexJBYU4iikQT.E6.eVKtW8RChDBJXawntNo8tldFQRBwJZ2",
+            "file_url": null,
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-05 20:49:29"
+        },
+        {
+            "id": 29,
+            "title": "BrainVault v2.0",
+            "description": "\"We rewrote our entire security system in Brainfuck. No one will ever understand it.\" — The vault guards an 8-character key. The entire program is written in pure Brainfuck — every +, -, [, ] is there for a reason. Analyze the code. Find the key. Connection: nc <host> 7777 ",
+            "category_id": 1,
+            "difficulty": "Hard",
+            "points": 600,
+            "flag": "$2y$10$FsN74ENzpmiwGuxK\/Gb7oujEklQDhWA8yTBcdiortBEQmrDi5FmRC",
+            "file_url": null,
+            "created_by": 3,
+            "is_active": 1,
+            "created_at": "2026-05-05 21:10:58"
         }
     ],
     "discussions": [
