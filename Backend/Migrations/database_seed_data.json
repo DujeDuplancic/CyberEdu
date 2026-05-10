@@ -4210,6 +4210,28 @@
             "rank": 0,
             "created_at": "2026-05-01 22:13:55",
             "is_admin": 0
+        },
+        {
+            "id": 68,
+            "username": "adminadmin",
+            "email": "adminadmin@gmail.com",
+            "password_hash": "$2y$10$8EHryfcNNoc2wviF0RtbmO9hO8uaMC9h5M1BjZHlLpO1AN\/Q2bYGK",
+            "avatar_url": null,
+            "points": 0,
+            "rank": 0,
+            "created_at": "2026-05-10 20:54:20",
+            "is_admin": 1
+        },
+        {
+            "id": 69,
+            "username": "usertask",
+            "email": "usertask@gmail.com",
+            "password_hash": "$2y$10$kY2oxKIpV0YOcSlhTdUyUOjKH9jnOIM70XtMjv3fDDAe.TIhg7oTq",
+            "avatar_url": null,
+            "points": 0,
+            "rank": 0,
+            "created_at": "2026-05-10 20:56:42",
+            "is_admin": 0
         }
     ],
     "wiki_articles": [

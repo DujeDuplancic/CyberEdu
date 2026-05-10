@@ -54,6 +54,10 @@ export function Header() {
             </Link>
           )}
           
+          <Link to="/about" className="text-sm font-medium transition-colors hover:text-primary">
+            About
+          </Link>
+          
           {/* POPRAVAK: Dodan !! ispred user?.is_admin da se izbjegne ispis nule */}
           {!!user?.is_admin && (
             <Link to="/admin" className="text-sm font-medium transition-colors hover:text-primary text-red-500 font-bold">
@@ -145,6 +149,14 @@ export function Header() {
                   Achievements
                 </Link>
               )}
+              
+              <Link 
+                to="/about" 
+                className="block text-sm font-medium transition-colors hover:text-primary py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About
+              </Link>
               
               {/* POPRAVAK: Isto i ovdje za mobilni meni */}
               {!!user?.is_admin && (

@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { 
     Lock, Code, Key, ImageIcon, Globe, 
-    BookOpen, Loader2, ChevronRight, MonitorPlay, Search 
+    BookOpen, Loader2, ChevronRight, MonitorPlay, Search, X 
 } from "lucide-react"
 
 // --- KONFIGURACIJA IKONA ---
@@ -27,12 +27,30 @@ const ICON_MAP = {
 
 export default function WikiPage() {
     const [data, setData] = useState({ categories: [], articles: [] });
+    const [filteredArticles, setFilteredArticles] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(true);
+    const [searching, setSearching] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
         fetchWikiData();
     }, []);
+
+    useEffect(() => {
+        if (searchQuery.trim() === "") {
+            setFilteredArticles(data.articles);
+            setSearching(false);
+        } else {
+            setSearching(true);
+            const filtered = data.articles.filter(article => 
+                article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                article.category_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                article.content?.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            setFilteredArticles(filtered);
+        }
+    }, [searchQuery, data.articles]);
 
     const fetchWikiData = async () => {
         try {
@@ -47,12 +65,22 @@ export default function WikiPage() {
                 categories: catData.success ? catData.categories : [],
                 articles: artData.success ? artData.articles : []
             });
+            setFilteredArticles(artData.success ? artData.articles : []);
         } catch (error) {
             console.error('❌ Wiki API Error:', error);
             setData({ categories: [], articles: [] });
+            setFilteredArticles([]);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleSearch = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const clearSearch = () => {
+        setSearchQuery("");
     };
 
     const getCategoryIcon = (category) => {
@@ -102,9 +130,19 @@ export default function WikiPage() {
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                                 <input 
                                     type="text"
+                                    value={searchQuery}
+                                    onChange={handleSearch}
                                     placeholder="Search library intelligence..." 
-                                    className="w-full bg-slate-50 border border-slate-200 h-12 pl-11 pr-4 rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#4461f2]/20 transition-all font-medium text-slate-600"
+                                    className="w-full bg-slate-50 border border-slate-200 h-12 pl-11 pr-11 rounded-xl shadow-inner focus:outline-none focus:ring-2 focus:ring-[#4461f2]/20 transition-all font-medium text-slate-600"
                                 />
+                                {searchQuery && (
+                                    <button
+                                        onClick={clearSearch}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -132,25 +170,44 @@ export default function WikiPage() {
                 <section className="mt-8">
                     <div className="flex items-center gap-3 mb-6 px-2">
                         <div className="h-1 w-8 bg-indigo-600 rounded-full" />
-                        <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">Featured Intel</h2>
+                        <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">
+                            {searching ? "Search Results" : "Featured Intel"}
+                        </h2>
+                        {searching && (
+                            <Badge variant="secondary" className="text-xs">
+                                {filteredArticles.length} result(s)
+                            </Badge>
+                        )}
                     </div>
 
                     <Card className="border-slate-200 rounded-2xl shadow-sm overflow-hidden bg-white">
                         <CardContent className="p-0 divide-y divide-slate-100">
-                            {data.articles.length > 0 ? (
-                                data.articles.map((art) => (
+                            {filteredArticles.length > 0 ? (
+                                filteredArticles.map((art) => (
                                     <Link 
                                         key={art.id} 
                                         to={`/wiki/${art.category_slug}/${art.slug}`}
                                         className="flex items-center justify-between p-6 hover:bg-slate-50 transition-colors group"
                                     >
                                         <div className="flex-1 pr-4">
-                                            <p className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors mb-1">{art.title}</p>
+                                            <p className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors mb-1">
+                                                {art.title}
+                                                {searching && searchQuery && (
+                                                    <span className="ml-2 text-xs text-indigo-500 font-mono bg-indigo-50 px-2 py-0.5 rounded-full">
+                                                        match
+                                                    </span>
+                                                )}
+                                            </p>
                                             <div className="flex items-center gap-3 text-xs font-medium text-slate-400">
                                                 <span className="text-indigo-500 font-bold uppercase tracking-wider">{art.category_name}</span>
                                                 <span className="h-1 w-1 bg-slate-300 rounded-full" />
                                                 <span className="italic">{art.reading_time || 5} min read</span>
                                             </div>
+                                            {searching && searchQuery && art.content && (
+                                                <p className="text-sm text-slate-500 mt-2 line-clamp-1">
+                                                    {art.content.substring(0, 150)}...
+                                                </p>
+                                            )}
                                         </div>
                                         <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-slate-50 group-hover:bg-indigo-50 transition-colors">
                                             <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all" />
@@ -158,8 +215,21 @@ export default function WikiPage() {
                                     </Link>
                                 ))
                             ) : (
-                                <div className="p-16 text-center text-slate-400 font-medium italic">
-                                    No intelligence gathered yet.
+                                <div className="p-16 text-center">
+                                    <div className="flex flex-col items-center gap-4">
+                                        <BookOpen className="h-12 w-12 text-slate-300" />
+                                        <p className="text-slate-500 font-medium">
+                                            {searching ? "No articles match your search." : "No intelligence gathered yet."}
+                                        </p>
+                                        {searching && (
+                                            <button
+                                                onClick={clearSearch}
+                                                className="text-indigo-500 hover:text-indigo-700 text-sm font-medium flex items-center gap-1"
+                                            >
+                                                Clear search <X className="h-3 w-3" />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </CardContent>

@@ -21,6 +21,14 @@ export default function LeaderboardPage() {
 
   const API_BASE = 'http://localhost/CyberEdu/Backend/'
 
+  // Helper function to get full avatar URL
+  const getAvatarUrl = (avatarPath) => {
+    if (!avatarPath) return ""
+    if (avatarPath.startsWith('http')) return avatarPath
+    if (avatarPath.startsWith('/')) return `${API_BASE.slice(0, -1)}${avatarPath}`
+    return `${API_BASE}${avatarPath}`
+  }
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -42,7 +50,16 @@ export default function LeaderboardPage() {
         const json = await res.json()
         if (json.success) {
           const users = json.leaderboard || []
-          setData(prev => ({ ...prev, top: users.slice(0, 3), others: users.slice(3) }))
+          // Process users to ensure profile_image is properly formatted
+          const processedUsers = users.map(user => ({
+            ...user,
+            profile_image: user.avatar_url || user.profile_image || null
+          }))
+          setData(prev => ({ 
+            ...prev, 
+            top: processedUsers.slice(0, 3), 
+            others: processedUsers.slice(3) 
+          }))
         }
       } catch (err) { console.error("Error:", err) }
       finally { setLoading(false) }
@@ -73,9 +90,8 @@ export default function LeaderboardPage() {
 
       <main className="flex-1 w-full max-w-[1600px] mx-auto px-6 md:px-10 py-10">
         
-        {/* --- HERO BANNER (S MARGINAMA - NIJE FULL WIDTH) --- */}
+        {/* --- HERO BANNER --- */}
         <div className="mb-12 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          {/* Plavi vrh unutar kartice */}
           <div className="h-32 bg-[#4461f2] relative overflow-hidden">
             <div className="absolute inset-0 opacity-10" style={{ 
               backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', 
@@ -83,10 +99,8 @@ export default function LeaderboardPage() {
             }}></div>
           </div>
           
-          {/* Sadržaj bannera */}
           <div className="p-8 md:p-10 -mt-16 flex flex-col md:flex-row justify-between items-end gap-6 relative z-10">
             <div className="flex flex-col md:flex-row gap-6 items-end w-full">
-              {/* Ikona profila sekcije */}
               <div className="h-32 w-32 rounded-2xl bg-white p-2 shadow-md flex-shrink-0 border border-slate-100">
                 <div className="w-full h-full rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100">
                   <Target className="h-12 w-12 text-[#4461f2]" />
@@ -105,7 +119,6 @@ export default function LeaderboardPage() {
                 </p>
               </div>
 
-              {/* Statistika na desnoj strani */}
               <div className="hidden lg:flex items-center gap-10 pb-2 mr-4">
                 <div className="text-center">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active</p>
@@ -162,8 +175,13 @@ export default function LeaderboardPage() {
                         {getRankIcon(idx + 1)}
                       </div>
                       <Avatar className="h-28 w-28 border-4 border-white shadow-xl">
-                        <AvatarImage src={user.profile_image} />
-                        <AvatarFallback className="text-3xl font-black bg-slate-100 text-slate-400">{user.username?.[0].toUpperCase()}</AvatarFallback>
+                        <AvatarImage 
+                          src={getAvatarUrl(user.profile_image)} 
+                          alt={user.username}
+                        />
+                        <AvatarFallback className="text-3xl font-black bg-slate-100 text-slate-400">
+                          {user.username?.[0]?.toUpperCase() || 'U'}
+                        </AvatarFallback>
                       </Avatar>
                       <div className="text-center">
                         <CardTitle className="text-2xl font-black text-slate-800 tracking-tight">{user.username}</CardTitle>
@@ -179,7 +197,7 @@ export default function LeaderboardPage() {
               ))}
             </div>
 
-            {/* Glavna Tablica */}
+            {/* Main Table */}
             <Card className="border-slate-200 shadow-sm bg-white overflow-hidden rounded-3xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
@@ -199,8 +217,13 @@ export default function LeaderboardPage() {
                         <td className="px-10 py-6">
                           <div className="flex items-center gap-5">
                             <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-                              <AvatarImage src={user.profile_image} />
-                              <AvatarFallback className="bg-slate-100 font-bold text-slate-400">{user.username?.[0]}</AvatarFallback>
+                              <AvatarImage 
+                                src={getAvatarUrl(user.profile_image)} 
+                                alt={user.username}
+                              />
+                              <AvatarFallback className="bg-slate-100 font-bold text-slate-400">
+                                {user.username?.[0]?.toUpperCase() || 'U'}
+                              </AvatarFallback>
                             </Avatar>
                             <div>
                               <p className="text-lg font-black text-slate-800 group-hover:text-[#4461f2] transition-colors tracking-tight">{user.username}</p>
@@ -219,7 +242,7 @@ export default function LeaderboardPage() {
                 </table>
               </div>
 
-              {/* Paginacija */}
+              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-between px-10 py-8 border-t border-slate-100 bg-slate-50/30">
                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">

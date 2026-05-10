@@ -88,26 +88,32 @@ export default function ProfilePage() {
             <CardContent className="relative pt-0 pb-6 px-6">
               <div className="flex flex-col md:flex-row gap-6 items-start md:items-end -mt-10">
                 <Avatar className="h-32 w-32 border-4 border-background shadow-xl ring-2 ring-primary/10">
-                  <AvatarImage src={userStats.avatar_url ? `http://localhost/CyberEdu/Backend/${userStats.avatar_url}` : ""} />
+                  <AvatarImage 
+                    src={userStats?.avatar_url 
+                      ? (userStats.avatar_url.startsWith('http') 
+                        ? userStats.avatar_url 
+                        : `http://localhost/CyberEdu/Backend/${userStats.avatar_url}`)
+                      : ""} 
+                  />
                   <AvatarFallback className="bg-primary text-primary-foreground text-3xl font-bold">
-                    {userStats.username?.substring(0, 2).toUpperCase()}
+                    {userStats?.username?.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 
                 <div className="flex-1 space-y-2">
                   <div className="flex flex-wrap items-center gap-3">
-                    <h1 className="text-4xl font-extrabold tracking-tight">{userStats.username}</h1>
+                    <h1 className="text-4xl font-extrabold tracking-tight">{userStats?.username}</h1>
                     <Badge variant="outline" className="px-3 py-1 text-sm border-primary/30 bg-primary/5 text-primary">
-                      Rank #{userStats.rank}
+                      Rank #{userStats?.rank}
                     </Badge>
-                    {userStats.is_admin && (
+                    {userStats?.is_admin && (
                       <Badge variant="destructive" className="animate-pulse">ADMIN</Badge>
                     )}
                   </div>
                   
                   <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground font-medium">
-                    <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> Member since {userStats.joinedDate}</span>
-                    <span className="flex items-center gap-1.5"><TrendingUp className="h-4 w-4" /> Last active: {userStats.lastActive}</span>
+                    <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> Member since {userStats?.joinedDate}</span>
+                    <span className="flex items-center gap-1.5"><TrendingUp className="h-4 w-4" /> Last active: {userStats?.lastActive}</span>
                   </div>
                 </div>
 
@@ -121,10 +127,10 @@ export default function ProfilePage() {
           {/* 2. STATS GRID: Quick Look */}
           <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
             {[
-              { label: "Global Rank", val: `#${userStats.rank}`, icon: Trophy, color: "text-yellow-500" },
-              { label: "Total Points", val: userStats.points, icon: Target, color: "text-blue-500" },
-              { label: "Solved Challenges", val: userStats.solves, icon: CheckCircle2, color: "text-green-500" },
-              { label: "Last Activity", val: userStats.lastActive, icon: Calendar, color: "text-purple-500" },
+              { label: "Global Rank", val: `#${userStats?.rank}`, icon: Trophy, color: "text-yellow-500" },
+              { label: "Total Points", val: userStats?.points, icon: Target, color: "text-blue-500" },
+              { label: "Solved Challenges", val: userStats?.solves, icon: CheckCircle2, color: "text-green-500" },
+              { label: "Last Activity", val: userStats?.lastActive, icon: Calendar, color: "text-purple-500" },
             ].map((stat, i) => (
               <Card key={i} className="hover:shadow-md transition-shadow cursor-default group">
                 <CardContent className="p-6 flex items-center gap-4">
@@ -205,7 +211,7 @@ export default function ProfilePage() {
                         <Target className="h-6 w-6 text-muted-foreground/50" />
                       </div>
                       <p className="text-sm font-medium text-muted-foreground">No challenges solved yet.</p>
-                      <Button variant="link" size="sm" onClick={() => navigate('/challenges')}>
+                      <Button variant="link" size="sm" onClick={() => navigate('/ctf')}>
                         Get started →
                       </Button>
                     </div>
