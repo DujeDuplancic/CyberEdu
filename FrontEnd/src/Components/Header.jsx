@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Terminal, Menu, X, Trophy, Bot } from "lucide-react"
+import { Terminal, Menu, X, Trophy, Bot, Newspaper } from "lucide-react"
 import { Button } from "./ui/button"
 import { useState, useEffect } from "react"
 
@@ -46,7 +46,13 @@ export function Header() {
           <Link to="/community" className="text-sm font-medium transition-colors hover:text-primary">
             Community
           </Link>
-          
+
+          {/* Link na agregator vijesti iz svijeta cyber sigurnosti */}
+          <Link to="/news" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+            <Newspaper className="h-4 w-4" />
+            News
+          </Link>
+
           {user && (
             <Link to="/achievements" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
               <Trophy className="h-4 w-4" />
@@ -139,14 +145,24 @@ export function Header() {
               >
                 Lectures
               </Link>
-              <Link 
-                to="/community" 
+              <Link
+                to="/community"
                 className="block text-sm font-medium transition-colors hover:text-primary py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Community
               </Link>
-              
+
+              {/* News link u mobilnom izborniku */}
+              <Link
+                to="/news"
+                className="block text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Newspaper className="h-4 w-4" />
+                News
+              </Link>
+
               {user && (
                 <Link
                   to="/achievements"

@@ -19,6 +19,7 @@ import DiscussionDetail from './Community/DiscussionDetail';
 import CreateDiscussion from './Community/CreateDiscussion';
 import AchievementsPage from './Achievements/AchievementsPage';
 import AssistantPage from './Assistant/Assistant';
+import NewsPage from './News/News';
 import { NotificationProvider } from './contexts/NotificationContext';
 
 // Protected Route Component
@@ -109,6 +110,7 @@ function App() {
           {/* Public Routes - Always accessible */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/news" element={<NewsPage />} />
           
           {/* Auth Routes - Only accessible when NOT logged in */}
           <Route path="/login" element={
