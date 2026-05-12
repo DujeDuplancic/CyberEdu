@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Terminal, Menu, X, Trophy, Bot, Newspaper } from "lucide-react"
+import { Terminal, Menu, X, Trophy, Bot, Newspaper, MessageSquare } from "lucide-react"
 import { Button } from "./ui/button"
 import { useState, useEffect } from "react"
 
@@ -65,6 +65,14 @@ export function Header() {
             <Link to="/assistant" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
               <Bot className="h-4 w-4" />
               AI Assistant
+            </Link>
+          )}
+
+          {/* Link na chat sučelje - dostupno samo prijavljenim korisnicima */}
+          {user && (
+            <Link to="/chat" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+              <MessageSquare className="h-4 w-4" />
+              Chat
             </Link>
           )}
 
@@ -183,6 +191,18 @@ export function Header() {
                 >
                   <Bot className="h-4 w-4" />
                   AI Assistant
+                </Link>
+              )}
+
+              {/* Chat link u mobilnom izborniku */}
+              {user && (
+                <Link
+                  to="/chat"
+                  className="block text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  Chat
                 </Link>
               )}
 

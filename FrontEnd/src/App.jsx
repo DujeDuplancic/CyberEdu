@@ -20,6 +20,7 @@ import CreateDiscussion from './Community/CreateDiscussion';
 import AchievementsPage from './Achievements/AchievementsPage';
 import AssistantPage from './Assistant/Assistant';
 import NewsPage from './News/News';
+import ChatPage from './Chat/Chat';
 import { NotificationProvider } from './contexts/NotificationContext';
 
 // Protected Route Component
@@ -188,6 +189,11 @@ function App() {
           <Route path="/assistant" element={
             <ProtectedRoute>
               <AssistantPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/chat" element={
+            <ProtectedRoute>
+              <ChatPage />
             </ProtectedRoute>
           } />
           <Route path="/community/discussion/:id" element={

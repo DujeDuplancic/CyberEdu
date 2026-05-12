@@ -17,5 +17,7 @@ return [
     "user_achievements",
 
     "leaderboard_snapshots",
-    "leaderboard_entries"
+    "leaderboard_entries",
+
+    "chat_messages"
 ];
