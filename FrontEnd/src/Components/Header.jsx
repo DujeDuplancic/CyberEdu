@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Terminal, Menu, X, Trophy } from "lucide-react"
+import { Terminal, Menu, X, Trophy, Bot } from "lucide-react"
 import { Button } from "./ui/button"
 import { useState, useEffect } from "react"
 
@@ -53,7 +53,15 @@ export function Header() {
               Achievements
             </Link>
           )}
-          
+
+          {/* Link na SentinelAI asistenta - prikazuje se samo prijavljenim korisnicima */}
+          {user && (
+            <Link to="/assistant" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+              <Bot className="h-4 w-4" />
+              AI Assistant
+            </Link>
+          )}
+
           <Link to="/about" className="text-sm font-medium transition-colors hover:text-primary">
             About
           </Link>
@@ -140,8 +148,8 @@ export function Header() {
               </Link>
               
               {user && (
-                <Link 
-                  to="/achievements" 
+                <Link
+                  to="/achievements"
                   className="block text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -149,9 +157,21 @@ export function Header() {
                   Achievements
                 </Link>
               )}
-              
-              <Link 
-                to="/about" 
+
+              {/* Link na SentinelAI asistenta u mobilnom izborniku */}
+              {user && (
+                <Link
+                  to="/assistant"
+                  className="block text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Bot className="h-4 w-4" />
+                  AI Assistant
+                </Link>
+              )}
+
+              <Link
+                to="/about"
                 className="block text-sm font-medium transition-colors hover:text-primary py-2"
                 onClick={() => setIsMenuOpen(false)}
               >

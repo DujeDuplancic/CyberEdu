@@ -18,6 +18,7 @@ import AboutPage from "./About/About"
 import DiscussionDetail from './Community/DiscussionDetail';
 import CreateDiscussion from './Community/CreateDiscussion';
 import AchievementsPage from './Achievements/AchievementsPage';
+import AssistantPage from './Assistant/Assistant';
 import { NotificationProvider } from './contexts/NotificationContext';
 
 // Protected Route Component
@@ -180,6 +181,11 @@ function App() {
           <Route path="/achievements" element={
             <ProtectedRoute>
               <AchievementsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/assistant" element={
+            <ProtectedRoute>
+              <AssistantPage />
             </ProtectedRoute>
           } />
           <Route path="/community/discussion/:id" element={
