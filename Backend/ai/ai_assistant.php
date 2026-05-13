@@ -6,13 +6,12 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header('Content-Type: application/json');
 
-// Preflight zahtjev (OPTIONS) - browser ga šalje prije pravog POST-a
+// Preflight zahtjev (OPTIONS)
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// Dozvoljavamo isključivo POST metodu jer šaljemo poruke u tijelu zahtjeva
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Method not allowed']);
@@ -20,19 +19,39 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // =====================================================================
-// KONFIGURACIJA: Gemini 2.5 Flash API ključ i endpoint
-// NAPOMENA: U produkciji ključ obavezno premjestiti u .env ili sustavske
-// varijable okoline. Ovdje je radi jednostavnosti integracije u XAMPP.
+// KONFIGURACIJA: Gemini API ključ + lista modela koje pokušavamo redom
+// (fallback chain). Ako prvi model vrati grešku (npr. nije dostupan u
+// ovoj regiji ili za ovu verziju API-ja), automatski pokušavamo sljedeći.
+//
+// API ključ se učitava iz Backend/config/secrets.php (gitignored).
+// Ako file ne postoji ili ključ nije postavljen, pokušava environment
+// varijablu GEMINI_API_KEY. NIKAD se ne hardcoda u kod.
 // =====================================================================
-$GEMINI_API_KEY = getenv('GEMINI_API_KEY') ?: 'AIzaSyBcp0Oq1eh8Qh6AhIG8L1M1PjOXzYpWsGY';
-$GEMINI_MODEL   = 'gemini-2.5-flash';
-$GEMINI_URL     = "https://generativelanguage.googleapis.com/v1beta/models/{$GEMINI_MODEL}:generateContent?key={$GEMINI_API_KEY}";
+$GEMINI_API_KEY = '';
+$secretsFile    = __DIR__ . '/../config/secrets.php';
+if (file_exists($secretsFile)) {
+    $secrets = require $secretsFile;
+    if (is_array($secrets) && !empty($secrets['GEMINI_API_KEY'])) {
+        $GEMINI_API_KEY = $secrets['GEMINI_API_KEY'];
+    }
+}
+if (empty($GEMINI_API_KEY) || $GEMINI_API_KEY === 'PASTE_YOUR_NEW_KEY_HERE') {
+    // Fallback na environment varijablu
+    $GEMINI_API_KEY = getenv('GEMINI_API_KEY') ?: '';
+}
+
+// Modeli poredani od najnovijeg/najjačeg prema starijem/stabilnijem.
+// Ako Gemini odbije prvi (npr. zbog "model not found"), fallback osigurava
+// da chat i dalje radi za korisnika.
+$GEMINI_MODELS = [
+    'gemini-2.5-flash',
+    'gemini-2.0-flash',
+    'gemini-1.5-flash-latest',
+    'gemini-1.5-flash'
+];
 
 // =====================================================================
-// SUSTAVSKI PROMPT (System Instruction)
-// Strogo ograničava asistenta isključivo na cyber sigurnost. Ime
-// asistenta je "SentinelAI". Asistent NIKADA ne otkriva rješenja CTF
-// zadataka - daje samo natuknice i preporučuje alate.
+// SYSTEM PROMPT - strogo ograničava asistenta na cyber sigurnost
 // =====================================================================
 $systemPrompt = <<<PROMPT
 You are "SentinelAI", an AI cybersecurity assistant integrated into the CyberEdu learning platform.
@@ -48,7 +67,7 @@ STRICT RULES:
 PROMPT;
 
 // =====================================================================
-// Dohvat i validacija ulaznih podataka iz tijela zahtjeva
+// Validacija ulaznih podataka
 // =====================================================================
 $rawInput = file_get_contents('php://input');
 $input    = json_decode($rawInput, true);
@@ -62,52 +81,38 @@ if (!is_array($input) || !isset($input['messages']) || !is_array($input['message
     exit();
 }
 
-// Provjera prisutnosti API ključa
-if ($GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE' || empty($GEMINI_API_KEY)) {
+if (empty($GEMINI_API_KEY)) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Gemini API key is not configured on the server. Please set the GEMINI_API_KEY environment variable.'
+        'message' => 'Gemini API key is not configured. Copy Backend/config/secrets.example.php to secrets.php and add your key from https://aistudio.google.com/app/apikey'
     ]);
     exit();
 }
 
 // =====================================================================
-// Transformacija povijesti razgovora u format koji očekuje Gemini API
-// - Naša uloga "assistant" mapira se na Gemini-jevu ulogu "model"
-// - Uloga "user" ostaje "user"
+// Transformacija poruka u Gemini format
 // =====================================================================
 $contents = [];
 foreach ($input['messages'] as $msg) {
-    if (!isset($msg['role'], $msg['content'])) {
-        continue;
-    }
+    if (!isset($msg['role'], $msg['content'])) continue;
     $role = $msg['role'] === 'assistant' ? 'model' : 'user';
     $text = (string)$msg['content'];
-
-    // Preskačemo prazne poruke
-    if (trim($text) === '') {
-        continue;
-    }
-
+    if (trim($text) === '') continue;
     $contents[] = [
         'role'  => $role,
         'parts' => [['text' => $text]]
     ];
 }
 
-// Provjera da postoji barem jedna korisnička poruka
 if (empty($contents)) {
     http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'message' => 'No valid messages provided.'
-    ]);
+    echo json_encode(['success' => false, 'message' => 'No valid messages provided.']);
     exit();
 }
 
 // =====================================================================
-// Konstrukcija payload-a za Gemini API
+// Payload za Gemini
 // =====================================================================
 $payload = [
     'systemInstruction' => [
@@ -119,7 +124,6 @@ $payload = [
         'topP'            => 0.9,
         'maxOutputTokens' => 1024
     ],
-    // Sigurnosne postavke - blokiramo eksplicitne kategorije sadržaja
     'safetySettings' => [
         ['category' => 'HARM_CATEGORY_HARASSMENT',       'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'],
         ['category' => 'HARM_CATEGORY_HATE_SPEECH',      'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'],
@@ -128,49 +132,100 @@ $payload = [
     ]
 ];
 
-// =====================================================================
-// Slanje zahtjeva prema Gemini API-ju koristeći cURL
-// =====================================================================
-$ch = curl_init($GEMINI_URL);
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST           => true,
-    CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
-    CURLOPT_POSTFIELDS     => json_encode($payload),
-    CURLOPT_TIMEOUT        => 30,
-]);
+$payloadJson = json_encode($payload);
 
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlErr  = curl_error($ch);
-curl_close($ch);
+// =====================================================================
+// Pomoćna funkcija: pošalji POST na Gemini za dani model.
+// Vraća asocijativni niz: ok, httpCode, body, decoded, error
+// =====================================================================
+function callGemini($model, $apiKey, $payloadJson) {
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
 
-// Provjera mrežnih grešaka
-if ($response === false) {
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+        CURLOPT_POSTFIELDS     => $payloadJson,
+        CURLOPT_TIMEOUT        => 30,
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlErr  = curl_error($ch);
+    curl_close($ch);
+
+    if ($response === false) {
+        return [
+            'ok'       => false,
+            'httpCode' => 0,
+            'body'     => null,
+            'decoded'  => null,
+            'error'    => $curlErr ?: 'cURL request failed'
+        ];
+    }
+
+    $decoded = json_decode($response, true);
+
+    return [
+        'ok'       => ($httpCode >= 200 && $httpCode < 300),
+        'httpCode' => $httpCode,
+        'body'     => $response,
+        'decoded'  => $decoded,
+        // Pokušaj izvući strukturiranu poruku iz Gemini error body-ja
+        'error'    => $decoded['error']['message']
+                    ?? $decoded['error']['status']
+                    ?? null
+    ];
+}
+
+// =====================================================================
+// Fallback chain: probaj svaki model dok jedan ne uspije.
+// Zadržavamo zadnju strukturiranu grešku za vraćanje frontend-u ako svi padnu.
+// =====================================================================
+$lastError    = null;
+$lastCode     = null;
+$lastModel    = null;
+$result       = null;
+$usedModel    = null;
+
+foreach ($GEMINI_MODELS as $model) {
+    $result    = callGemini($model, $GEMINI_API_KEY, $payloadJson);
+    $lastModel = $model;
+
+    if ($result['ok']) {
+        $usedModel = $model;
+        break;
+    }
+
+    $lastError = $result['error'] ?: ('HTTP ' . $result['httpCode']);
+    $lastCode  = $result['httpCode'];
+
+    // 4xx greške (osim 404/400 model-not-found) najčešće znače da problem
+    // nije u modelu nego u zahtjevu/API ključu - nema smisla probavati dalje.
+    // 401/403/429 -> stop. 404/400 -> pokušaj sljedeći model.
+    if (in_array($lastCode, [401, 403, 429], true)) {
+        break;
+    }
+}
+
+// Svi modeli su pali - vrati informativnu poruku frontend-u
+if (!$result || !$result['ok']) {
     http_response_code(502);
     echo json_encode([
-        'success' => false,
-        'message' => 'Failed to reach Gemini API: ' . $curlErr
+        'success'     => false,
+        'message'     => 'Gemini API error: ' . ($lastError ?? 'unknown error'),
+        'gemini_code' => $lastCode,
+        'last_model'  => $lastModel,
+        'tried'       => $GEMINI_MODELS
     ]);
     exit();
 }
 
-// Provjera HTTP statusa Gemini-ja
-if ($httpCode < 200 || $httpCode >= 300) {
-    http_response_code(502);
-    echo json_encode([
-        'success'      => false,
-        'message'      => 'Gemini API returned an error.',
-        'gemini_code'  => $httpCode,
-        'gemini_body'  => json_decode($response, true)
-    ]);
-    exit();
-}
-
 // =====================================================================
-// Parsiranje odgovora i ekstrakcija generiranog teksta
+// Parsiranje uspješnog odgovora
 // =====================================================================
-$decoded = json_decode($response, true);
+$decoded = $result['decoded'];
 $reply   = '';
 
 if (isset($decoded['candidates'][0]['content']['parts']) && is_array($decoded['candidates'][0]['content']['parts'])) {
@@ -181,16 +236,14 @@ if (isset($decoded['candidates'][0]['content']['parts']) && is_array($decoded['c
     }
 }
 
-// Ako odgovor nije generiran (npr. sigurnosni filter), vrati informativnu poruku
 if (trim($reply) === '') {
     $finishReason = $decoded['candidates'][0]['finishReason'] ?? 'UNKNOWN';
     $reply = "I couldn't generate a response for that request (reason: {$finishReason}). Please rephrase your cybersecurity question.";
 }
 
-// Vraćanje konačnog odgovora prema frontend-u
 echo json_encode([
     'success' => true,
     'reply'   => $reply,
-    'model'   => $GEMINI_MODEL
+    'model'   => $usedModel
 ]);
 ?>

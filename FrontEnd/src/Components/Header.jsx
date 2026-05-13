@@ -1,11 +1,23 @@
 import { Link } from "react-router-dom"
-import { Terminal, Menu, X, Trophy, Bot, Newspaper, MessageSquare } from "lucide-react"
+import {
+  Terminal, Menu, X, Trophy, Bot, Newspaper, MessageSquare,
+  Flag, BarChart3, BookOpen, GraduationCap, Users, Info, ShieldAlert
+} from "lucide-react"
 import { Button } from "./ui/button"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
+
+// Endpoint koji vraća broj nepročitanih chat poruka za prijavljenog korisnika
+const UNREAD_URL = "http://localhost/CyberEdu/Backend/chat/unread_count.php"
+// Polling interval - dovoljno često da se točkica pojavi brzo, a da ne tuče bazu
+const UNREAD_POLL_MS = 10000
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [user, setUser] = useState(null)
+  // Broj nepročitanih poruka - koristi se za prikaz plave točkice na Chat linku
+  const [unreadCount, setUnreadCount] = useState(0)
+  // Ref za interval kako bismo ga mogli ispravno cleanup-ati
+  const pollRef = useRef(null)
 
   useEffect(() => {
     const userData = localStorage.getItem('user')
@@ -14,11 +26,54 @@ export function Header() {
     }
   }, [])
 
+  // Dohvat broja nepročitanih poruka + polling. Aktivira se samo kad korisnik
+  // postoji - inače nema smisla zvati endpoint.
+  useEffect(() => {
+    if (!user?.id) {
+      setUnreadCount(0)
+      return
+    }
+
+    const fetchUnread = async () => {
+      try {
+        const res = await fetch(`${UNREAD_URL}?user_id=${encodeURIComponent(user.id)}`)
+        const data = await res.json()
+        if (res.ok && data.success) {
+          setUnreadCount(data.unread_count || 0)
+        }
+      } catch (err) {
+        // Tiho ignoriramo greške - point notifikacije nije kritični feature
+        console.error("Failed to fetch unread count:", err)
+      }
+    }
+
+    fetchUnread()
+    pollRef.current = setInterval(fetchUnread, UNREAD_POLL_MS)
+
+    return () => {
+      if (pollRef.current) {
+        clearInterval(pollRef.current)
+        pollRef.current = null
+      }
+    }
+  }, [user])
+
   const handleLogout = () => {
     localStorage.removeItem('user')
     setUser(null)
+    setUnreadCount(0)
     setIsMenuOpen(false)
   }
+
+  // Plava točkica - mali kružić koji se pojavljuje preko ikone Chat linka
+  // kad postoji barem jedna nepročitana poruka.
+  const UnreadDot = () => (
+    <span
+      className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-blue-500 ring-2 ring-background"
+      aria-label={`${unreadCount} unread messages`}
+      title={`${unreadCount} unread message${unreadCount === 1 ? "" : "s"}`}
+    />
+  )
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -31,19 +86,24 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <Link to="/ctf" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link to="/ctf" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+            <Flag className="h-4 w-4" />
             CTF
           </Link>
-          <Link to="/leaderboard" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link to="/leaderboard" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+            <BarChart3 className="h-4 w-4" />
             Leaderboard
           </Link>
-          <Link to="/wiki" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link to="/wiki" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+            <BookOpen className="h-4 w-4" />
             Wiki
           </Link>
-          <Link to="/lectures" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link to="/lectures" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+            <GraduationCap className="h-4 w-4" />
             Lectures
           </Link>
-          <Link to="/community" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link to="/community" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+            <Users className="h-4 w-4" />
             Community
           </Link>
 
@@ -68,21 +128,27 @@ export function Header() {
             </Link>
           )}
 
-          {/* Link na chat sučelje - dostupno samo prijavljenim korisnicima */}
+          {/* Link na chat sučelje - dostupno samo prijavljenim korisnicima.
+              Ikona dobiva plavu točkicu kad postoje nepročitane poruke. */}
           {user && (
-            <Link to="/chat" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
-              <MessageSquare className="h-4 w-4" />
+            <Link to="/chat" className="relative text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+              <span className="relative inline-flex">
+                <MessageSquare className="h-4 w-4" />
+                {unreadCount > 0 && <UnreadDot />}
+              </span>
               Chat
             </Link>
           )}
 
-          <Link to="/about" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link to="/about" className="text-sm font-medium transition-colors hover:text-primary flex items-center gap-1">
+            <Info className="h-4 w-4" />
             About
           </Link>
-          
+
           {/* POPRAVAK: Dodan !! ispred user?.is_admin da se izbjegne ispis nule */}
           {!!user?.is_admin && (
-            <Link to="/admin" className="text-sm font-medium transition-colors hover:text-primary text-red-500 font-bold">
+            <Link to="/admin" className="text-sm font-medium transition-colors hover:text-primary text-red-500 font-bold flex items-center gap-1">
+              <ShieldAlert className="h-4 w-4" />
               Admin
             </Link>
           )}
@@ -113,10 +179,12 @@ export function Header() {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2"
+          className="md:hidden p-2 relative"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {/* Točkica i na hamburger ikoni kako bi se znalo da postoje nepročitane */}
+          {user && unreadCount > 0 && !isMenuOpen && <UnreadDot />}
         </button>
       </div>
 
@@ -125,39 +193,44 @@ export function Header() {
         <div className="md:hidden border-t border-border bg-background">
           <div className="container mx-auto py-4 px-4 space-y-4">
             <nav className="space-y-3">
-              <Link 
-                to="/ctf" 
-                className="block text-sm font-medium transition-colors hover:text-primary py-2"
+              <Link
+                to="/ctf"
+                className="text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2"
                 onClick={() => setIsMenuOpen(false)}
               >
+                <Flag className="h-4 w-4" />
                 CTF
               </Link>
-              <Link 
-                to="/leaderboard" 
-                className="block text-sm font-medium transition-colors hover:text-primary py-2"
+              <Link
+                to="/leaderboard"
+                className="text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2"
                 onClick={() => setIsMenuOpen(false)}
               >
+                <BarChart3 className="h-4 w-4" />
                 Leaderboard
               </Link>
-              <Link 
-                to="/wiki" 
-                className="block text-sm font-medium transition-colors hover:text-primary py-2"
+              <Link
+                to="/wiki"
+                className="text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2"
                 onClick={() => setIsMenuOpen(false)}
               >
+                <BookOpen className="h-4 w-4" />
                 Wiki
               </Link>
-              <Link 
-                to="/lectures" 
-                className="block text-sm font-medium transition-colors hover:text-primary py-2"
+              <Link
+                to="/lectures"
+                className="text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2"
                 onClick={() => setIsMenuOpen(false)}
               >
+                <GraduationCap className="h-4 w-4" />
                 Lectures
               </Link>
               <Link
                 to="/community"
-                className="block text-sm font-medium transition-colors hover:text-primary py-2"
+                className="text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2"
                 onClick={() => setIsMenuOpen(false)}
               >
+                <Users className="h-4 w-4" />
                 Community
               </Link>
 
@@ -194,33 +267,38 @@ export function Header() {
                 </Link>
               )}
 
-              {/* Chat link u mobilnom izborniku */}
+              {/* Chat link u mobilnom izborniku - s plavom točkicom kad ima nepročitanih */}
               {user && (
                 <Link
                   to="/chat"
-                  className="block text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2"
+                  className="block text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2 relative"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <MessageSquare className="h-4 w-4" />
+                  <span className="relative inline-flex">
+                    <MessageSquare className="h-4 w-4" />
+                    {unreadCount > 0 && <UnreadDot />}
+                  </span>
                   Chat
                 </Link>
               )}
 
               <Link
                 to="/about"
-                className="block text-sm font-medium transition-colors hover:text-primary py-2"
+                className="text-sm font-medium transition-colors hover:text-primary py-2 flex items-center gap-2"
                 onClick={() => setIsMenuOpen(false)}
               >
+                <Info className="h-4 w-4" />
                 About
               </Link>
-              
+
               {/* POPRAVAK: Isto i ovdje za mobilni meni */}
               {!!user?.is_admin && (
-                <Link 
-                  to="/admin" 
-                  className="block text-sm font-medium transition-colors hover:text-primary py-2 text-red-500 font-bold"
+                <Link
+                  to="/admin"
+                  className="text-sm font-medium transition-colors hover:text-primary py-2 text-red-500 font-bold flex items-center gap-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
+                  <ShieldAlert className="h-4 w-4" />
                   Admin
                 </Link>
               )}
@@ -229,15 +307,15 @@ export function Header() {
             <div className="pt-4 border-t border-border space-y-3">
               {user ? (
                 <>
-                  <Link 
-                    to="/profile" 
+                  <Link
+                    to="/profile"
                     className="block text-sm font-medium text-center py-2 border border-border rounded-md"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Profile ({user.username})
                   </Link>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full"
                     onClick={handleLogout}
                   >

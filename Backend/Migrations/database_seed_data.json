@@ -428,6 +428,140 @@
             "created_at": "2026-05-05 21:10:58"
         }
     ],
+    "chat_messages": [
+        {
+            "id": 1,
+            "sender_id": 3,
+            "recipient_id": 68,
+            "content": "Disi kolega",
+            "attachment_url": null,
+            "attachment_name": null,
+            "attachment_type": null,
+            "is_read": 1,
+            "created_at": "2026-05-12 15:53:17"
+        },
+        {
+            "id": 2,
+            "sender_id": 3,
+            "recipient_id": 68,
+            "content": "",
+            "attachment_url": "\/CyberEdu\/uploads\/chat\/chat_3_ea0cd5d4f29a_Vje__ba-_Bolnica__DELETE_i_PUT_.pdf",
+            "attachment_name": "Vježba- Bolnica (DELETE i PUT).pdf",
+            "attachment_type": "file",
+            "is_read": 1,
+            "created_at": "2026-05-12 16:06:33"
+        },
+        {
+            "id": 3,
+            "sender_id": 3,
+            "recipient_id": 68,
+            "content": "????️",
+            "attachment_url": null,
+            "attachment_name": null,
+            "attachment_type": null,
+            "is_read": 1,
+            "created_at": "2026-05-12 16:06:40"
+        },
+        {
+            "id": 4,
+            "sender_id": 3,
+            "recipient_id": 68,
+            "content": "????",
+            "attachment_url": null,
+            "attachment_name": null,
+            "attachment_type": null,
+            "is_read": 1,
+            "created_at": "2026-05-12 16:06:48"
+        },
+        {
+            "id": 5,
+            "sender_id": 68,
+            "recipient_id": 3,
+            "content": "fuckahh",
+            "attachment_url": null,
+            "attachment_name": null,
+            "attachment_type": null,
+            "is_read": 1,
+            "created_at": "2026-05-12 16:08:14"
+        },
+        {
+            "id": 6,
+            "sender_id": 68,
+            "recipient_id": 3,
+            "content": "",
+            "attachment_url": "\/CyberEdu\/uploads\/chat\/chat_68_c1386fce9526_pozadina.jpg",
+            "attachment_name": "pozadina.jpg",
+            "attachment_type": "image",
+            "is_read": 1,
+            "created_at": "2026-05-12 16:08:39"
+        },
+        {
+            "id": 7,
+            "sender_id": 68,
+            "recipient_id": 3,
+            "content": "yo",
+            "attachment_url": null,
+            "attachment_name": null,
+            "attachment_type": null,
+            "is_read": 1,
+            "created_at": "2026-05-13 23:44:45"
+        },
+        {
+            "id": 8,
+            "sender_id": 68,
+            "recipient_id": 3,
+            "content": "😚",
+            "attachment_url": null,
+            "attachment_name": null,
+            "attachment_type": null,
+            "is_read": 1,
+            "created_at": "2026-05-13 23:44:51"
+        },
+        {
+            "id": 9,
+            "sender_id": 3,
+            "recipient_id": 68,
+            "content": "Helloooooo",
+            "attachment_url": null,
+            "attachment_name": null,
+            "attachment_type": null,
+            "is_read": 0,
+            "created_at": "2026-05-14 00:04:08"
+        },
+        {
+            "id": 10,
+            "sender_id": 3,
+            "recipient_id": 67,
+            "content": "yo",
+            "attachment_url": null,
+            "attachment_name": null,
+            "attachment_type": null,
+            "is_read": 0,
+            "created_at": "2026-05-14 00:05:40"
+        },
+        {
+            "id": 11,
+            "sender_id": 3,
+            "recipient_id": 60,
+            "content": "bam",
+            "attachment_url": null,
+            "attachment_name": null,
+            "attachment_type": null,
+            "is_read": 0,
+            "created_at": "2026-05-14 00:05:49"
+        },
+        {
+            "id": 12,
+            "sender_id": 3,
+            "recipient_id": 68,
+            "content": "📊",
+            "attachment_url": null,
+            "attachment_name": null,
+            "attachment_type": null,
+            "is_read": 0,
+            "created_at": "2026-05-14 00:06:05"
+        }
+    ],
     "discussions": [
         {
             "id": 6,

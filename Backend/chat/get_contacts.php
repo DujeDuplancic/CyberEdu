@@ -15,13 +15,15 @@ require_once '../config/database.php';
 
 /**
  * Endpoint koji vraća listu svih korisnika osim trenutno prijavljenog.
- * Uz svakog korisnika dolazi i sažetak zadnje poruke razgovora te broj
- * nepročitanih poruka kako bi se sidebar u chatu mogao odmah popuniti.
+ * Uz svakog korisnika dolazi i sažetak zadnje poruke razgovora, broj
+ * nepročitanih poruka te indikator da li uopće postoji razgovor.
+ *
+ * Frontend onda sam odlučuje koga prikazati u sidebaru (samo postojeći
+ * razgovori) i koga ponuditi kao rezultat pretrage.
  *
  * Očekivani query parametar: ?user_id=ID_trenutnog_korisnika
  */
 try {
-    // Dohvat ID-a trenutnog korisnika iz query parametra
     $currentUserId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 0;
     if ($currentUserId <= 0) {
         http_response_code(400);
@@ -36,12 +38,14 @@ try {
         throw new Exception("Database connection failed");
     }
 
-    // =====================================================================
-    // Glavni upit: za svakog korisnika (osim trenutnog) izvlačimo
-    // zadnju poruku razgovora i broj nepročitanih poruka prema nama.
+    // Glavni upit: za svakog korisnika (osim trenutnog) izvlačimo:
+    //   - zadnju poruku razgovora (tekst ili oznaka privitka)
+    //   - tip te zadnje poruke (sent/received) i privitak/tekst
+    //   - timestamp zadnje poruke
+    //   - broj nepročitanih poruka prema meni
+    //
     // Koristimo korelirane subqueryje radi čitljivosti i kompatibilnosti
     // sa starijim MySQL verzijama na XAMPP-u (bez window funkcija).
-    // =====================================================================
     $query = "
         SELECT
             u.id,
@@ -50,7 +54,13 @@ try {
             u.is_admin,
             u.points,
             (
-                SELECT cm.content
+                SELECT
+                    CASE
+                        WHEN cm.content IS NOT NULL AND cm.content <> '' THEN cm.content
+                        WHEN cm.attachment_type = 'image' THEN '[Image]'
+                        WHEN cm.attachment_url IS NOT NULL THEN CONCAT('[File] ', COALESCE(cm.attachment_name, 'attachment'))
+                        ELSE ''
+                    END
                 FROM chat_messages cm
                 WHERE (cm.sender_id = u.id AND cm.recipient_id = :me1)
                    OR (cm.sender_id = :me2 AND cm.recipient_id = u.id)
@@ -78,7 +88,6 @@ try {
     ";
 
     $stmt = $conn->prepare($query);
-    // Bindamo isti ID više puta jer ga koristimo u više subqueryja
     $stmt->bindValue(':me1', $currentUserId, PDO::PARAM_INT);
     $stmt->bindValue(':me2', $currentUserId, PDO::PARAM_INT);
     $stmt->bindValue(':me3', $currentUserId, PDO::PARAM_INT);
@@ -89,11 +98,6 @@ try {
 
     $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // =====================================================================
-    // Pretvaranje sirovih DB rezultata u format prilagođen frontend-u.
-    // - unread_count kastamo u int
-    // - dodajemo polje 'role' iz is_admin / points radi UI prikaza
-    // =====================================================================
     $contacts = array_map(function ($c) {
         return [
             'id'              => (int)$c['id'],
@@ -103,7 +107,9 @@ try {
             'points'          => (int)$c['points'],
             'last_message'    => $c['last_message'],
             'last_message_at' => $c['last_message_at'],
-            'unread_count'    => (int)$c['unread_count']
+            'unread_count'    => (int)$c['unread_count'],
+            // Eksplicitan flag za frontend - "ima li uopće razgovora s ovom osobom"
+            'has_conversation'=> $c['last_message_at'] !== null
         ];
     }, $contacts);
 

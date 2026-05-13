@@ -15,7 +15,10 @@ require_once '../config/database.php';
 
 /**
  * Endpoint koji sprema novu chat poruku u bazu.
- * Očekuje JSON tijelo: { sender_id, recipient_id, content }
+ * Očekuje JSON tijelo:
+ *   { sender_id, recipient_id, content, attachment_url?, attachment_name?, attachment_type? }
+ *
+ * Sadržaj poruke (content) može biti prazan AKO postoji privitak.
  */
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -31,7 +34,15 @@ try {
     $recipientId = isset($input['recipient_id']) ? (int)$input['recipient_id'] : 0;
     $content     = isset($input['content'])      ? trim((string)$input['content']) : '';
 
-    // Provjere ispravnosti unosa - svi parametri moraju biti popunjeni
+    // Privitak (opcionalan) - tri usklađena polja koja stižu s upload endpointa
+    $attachmentUrl  = isset($input['attachment_url'])  ? trim((string)$input['attachment_url'])  : null;
+    $attachmentName = isset($input['attachment_name']) ? trim((string)$input['attachment_name']) : null;
+    $attachmentType = isset($input['attachment_type']) ? trim((string)$input['attachment_type']) : null;
+    // Prazne stringove tretiramo kao odsutne
+    if ($attachmentUrl  === '') $attachmentUrl  = null;
+    if ($attachmentName === '') $attachmentName = null;
+    if ($attachmentType === '') $attachmentType = null;
+
     if ($senderId <= 0 || $recipientId <= 0) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'sender_id and recipient_id are required']);
@@ -44,16 +55,23 @@ try {
         exit();
     }
 
-    if ($content === '') {
+    // Poruka mora imati ili tekst ili privitak (ili oboje)
+    if ($content === '' && $attachmentUrl === null) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Message content cannot be empty']);
+        echo json_encode(['success' => false, 'message' => 'Message must contain text or an attachment']);
         exit();
     }
 
-    // Limit duljine poruke radi zaštite baze - 5000 znakova je sasvim dovoljno
     if (mb_strlen($content) > 5000) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Message is too long (max 5000 characters)']);
+        exit();
+    }
+
+    // Whitelist tipova privitka da se ne ubacuje proizvoljna vrijednost
+    if ($attachmentType !== null && !in_array($attachmentType, ['image', 'file'], true)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid attachment_type']);
         exit();
     }
 
@@ -64,10 +82,7 @@ try {
         throw new Exception("Database connection failed");
     }
 
-    // =====================================================================
-    // Provjera da oba korisnika postoje u bazi prije inserta poruke.
-    // Time se izbjegava narušavanje foreign key constraint-a.
-    // =====================================================================
+    // Provjera da oba korisnika postoje radi FK constraint-a
     $check = $conn->prepare("SELECT COUNT(*) FROM users WHERE id IN (?, ?)");
     $check->execute([$senderId, $recipientId]);
     if ((int)$check->fetchColumn() !== 2) {
@@ -76,20 +91,29 @@ try {
         exit();
     }
 
-    // =====================================================================
-    // Spremanje poruke u bazu
-    // =====================================================================
+    // Insert poruke sa svim poljima (privitak može biti NULL)
     $insert = $conn->prepare("
-        INSERT INTO chat_messages (sender_id, recipient_id, content, is_read)
-        VALUES (?, ?, ?, 0)
+        INSERT INTO chat_messages
+            (sender_id, recipient_id, content, attachment_url, attachment_name, attachment_type, is_read)
+        VALUES
+            (?, ?, ?, ?, ?, ?, 0)
     ");
-    $insert->execute([$senderId, $recipientId, $content]);
+    $insert->execute([
+        $senderId,
+        $recipientId,
+        $content,
+        $attachmentUrl,
+        $attachmentName,
+        $attachmentType
+    ]);
 
     $messageId = (int)$conn->lastInsertId();
 
     // Dohvat upravo spremljene poruke radi vraćanja konzistentnog payload-a
     $fetch = $conn->prepare("
-        SELECT id, sender_id, recipient_id, content, is_read, created_at
+        SELECT id, sender_id, recipient_id, content,
+               attachment_url, attachment_name, attachment_type,
+               is_read, created_at
         FROM chat_messages
         WHERE id = ?
     ");
@@ -99,13 +123,16 @@ try {
     echo json_encode([
         'success' => true,
         'message' => [
-            'id'           => (int)$row['id'],
-            'sender_id'    => (int)$row['sender_id'],
-            'recipient_id' => (int)$row['recipient_id'],
-            'type'         => 'sent',
-            'content'      => $row['content'],
-            'is_read'      => (bool)$row['is_read'],
-            'created_at'   => $row['created_at']
+            'id'              => (int)$row['id'],
+            'sender_id'       => (int)$row['sender_id'],
+            'recipient_id'    => (int)$row['recipient_id'],
+            'type'            => 'sent',
+            'content'         => $row['content'],
+            'attachment_url'  => $row['attachment_url'],
+            'attachment_name' => $row['attachment_name'],
+            'attachment_type' => $row['attachment_type'],
+            'is_read'         => (bool)$row['is_read'],
+            'created_at'      => $row['created_at']
         ]
     ]);
 

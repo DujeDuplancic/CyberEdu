@@ -15,8 +15,7 @@ require_once '../config/database.php';
 
 /**
  * Endpoint koji vraća sve poruke razgovora između dva korisnika.
- * Pri svakom dohvatu automatski označava primljene poruke kao pročitane
- * kako bi se unread_count u sidebaru ispravno resetirao.
+ * Pri svakom dohvatu automatski označava primljene poruke kao pročitane.
  *
  * Očekivani parametri: ?user_id=trenutni&with=ID_sugovornika
  */
@@ -40,17 +39,16 @@ try {
         throw new Exception("Database connection failed");
     }
 
-    // =====================================================================
-    // Dohvat svih poruka razmijenjenih između para korisnika.
-    // Poruke vraćamo kronološki (najstarije prve) kako bi frontend
-    // mogao samo iterirati i prikazati ih odozgo prema dolje.
-    // =====================================================================
+    // Dohvat svih poruka razmijenjenih između para korisnika (kronološki)
     $query = "
         SELECT
             id,
             sender_id,
             recipient_id,
             content,
+            attachment_url,
+            attachment_name,
+            attachment_type,
             is_read,
             created_at
         FROM chat_messages
@@ -68,26 +66,23 @@ try {
 
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // =====================================================================
-    // Pretvaranje rezultata u oblik koji frontend očekuje.
-    // 'type' = "sent" ako je poslana s naše strane, inače "received".
-    // =====================================================================
+    // Pretvaranje u oblik koji frontend očekuje
     $messages = array_map(function ($r) use ($currentUserId) {
         return [
-            'id'           => (int)$r['id'],
-            'sender_id'    => (int)$r['sender_id'],
-            'recipient_id' => (int)$r['recipient_id'],
-            'type'         => ((int)$r['sender_id'] === $currentUserId) ? 'sent' : 'received',
-            'content'      => $r['content'],
-            'is_read'      => (bool)$r['is_read'],
-            'created_at'   => $r['created_at']
+            'id'              => (int)$r['id'],
+            'sender_id'       => (int)$r['sender_id'],
+            'recipient_id'    => (int)$r['recipient_id'],
+            'type'            => ((int)$r['sender_id'] === $currentUserId) ? 'sent' : 'received',
+            'content'         => $r['content'],
+            'attachment_url'  => $r['attachment_url'],
+            'attachment_name' => $r['attachment_name'],
+            'attachment_type' => $r['attachment_type'],
+            'is_read'         => (bool)$r['is_read'],
+            'created_at'      => $r['created_at']
         ];
     }, $rows);
 
-    // =====================================================================
-    // Automatski označavamo sve nepročitane poruke koje je sugovornik
-    // poslao nama - korisnik ih je sada vidio jer je otvorio razgovor.
-    // =====================================================================
+    // Automatski markiramo nepročitane poruke od sugovornika kao pročitane
     $markRead = $conn->prepare("
         UPDATE chat_messages
         SET is_read = 1

@@ -19,5 +19,7 @@ return [
     "leaderboard_snapshots",
     "leaderboard_entries",
 
-    "chat_messages"
+    "chat_messages",
+    "chat_messages_attachments",
+    "chat_messages_utf8mb4"
 ];

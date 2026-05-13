@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react"
 import { Header } from "../Components/Header"
-import { Footer } from "../Components/Footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Components/ui/card"
 import { Button } from "../Components/ui/button"
 import { Textarea } from "../Components/ui/textarea"
@@ -43,6 +42,19 @@ export default function AssistantPage() {
   // Scroll na vrh stranice pri ulasku (konzistentno s ostalim stranicama)
   useEffect(() => {
     window.scrollTo(0, 0)
+  }, [])
+
+  // Lock cijele stranice na viewport dok je korisnik na AI chat stranici.
+  // Skrola se samo područje poruka unutar chat kartice.
+  useEffect(() => {
+    const prevHtml = document.documentElement.style.overflow
+    const prevBody = document.body.style.overflow
+    document.documentElement.style.overflow = "hidden"
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.documentElement.style.overflow = prevHtml
+      document.body.style.overflow = prevBody
+    }
   }, [])
 
   // Auto-scroll na dno chat liste pri svakoj novoj poruci ili promjeni stanja učitavanja
@@ -132,36 +144,40 @@ export default function AssistantPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8fafc]">
+    // h-screen + overflow-hidden -> stranica je lockna na visinu prozora dok chatamo
+    <div className="h-screen flex flex-col bg-[#f8fafc] overflow-hidden">
       <Header />
 
-      <main className="flex-1 w-full max-w-[1600px] mx-auto px-6 md:px-12 py-12">
+      <main className="flex-1 min-h-0 w-full max-w-[1600px] mx-auto px-6 md:px-12 py-6 flex flex-col">
 
-        {/* Naslovni blok stranice - isti vizualni stil kao Contact stranica */}
-        <div className="mb-12 border-b border-slate-200 pb-8">
-          <div className="flex items-center gap-4 mb-3">
-            <div className="p-3 bg-primary/10 rounded-lg text-primary">
-              <Bot className="h-8 w-8" />
+        {/* Naslovni blok stranice - kompaktniji da ostane mjesta za chat */}
+        {/* Kompaktniji naslov - mora ostati mjesta za chat unutar viewport visine */}
+        <div className="mb-4 border-b border-slate-200 pb-3 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-primary/10 rounded-lg text-primary">
+              <Bot className="h-6 w-6" />
             </div>
-            <div>
-              <h1 className="text-5xl font-black text-slate-900 tracking-tight">
-                SentinelAI Assistant
-              </h1>
-              <Badge variant="outline" className="mt-2 font-mono text-xs">
-                Powered by Gemini 2.5 Flash
-              </Badge>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
+                  SentinelAI Assistant
+                </h1>
+                <Badge variant="outline" className="font-mono text-[10px]">
+                  Powered by Gemini 2.5 Flash
+                </Badge>
+              </div>
+              <p className="text-slate-500 text-sm mt-0.5 hidden md:block">
+                Your AI co-pilot for cybersecurity - hints, tools, concepts.
+              </p>
             </div>
           </div>
-          <p className="text-slate-500 mt-3 text-lg max-w-3xl">
-            Your AI co-pilot for cybersecurity. Get hints for CTF challenges (no spoilers),
-            tool recommendations and concept explanations - 24/7.
-          </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-10">
+        <div className="grid lg:grid-cols-3 gap-6 flex-1 min-h-0">
 
-          {/* Lijevi stupac - info kartice i brze akcije */}
-          <div className="lg:col-span-1 space-y-6">
+          {/* Lijevi stupac - info kartice i brze akcije s tanjim scrollbar-om
+              (da glavni chat scrollbar ostane vizualno dominantan) */}
+          <div className="lg:col-span-1 space-y-4 overflow-y-auto pr-1 [scrollbar-width:thin] [scrollbar-color:rgb(148_163_184)_rgb(241_245_249)] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-slate-100 [&::-webkit-scrollbar-thumb]:bg-slate-400 [&::-webkit-scrollbar-thumb]:rounded-full">
 
             <Card className="border-none shadow-md bg-white overflow-hidden group">
               <div className="h-1 bg-primary/20 group-hover:bg-primary transition-colors" />
@@ -229,9 +245,10 @@ export default function AssistantPage() {
             </Card>
           </div>
 
-          {/* Desni stupac - chat sučelje */}
-          <div className="lg:col-span-2">
-            <Card className="border-none shadow-xl bg-white p-2 flex flex-col h-[75vh] min-h-[600px]">
+          {/* Desni stupac - chat sučelje. min-h-0 + h-full kako bi Card mogao
+              biti flex-1 i savršeno popuniti viewport bez page scrolla. */}
+          <div className="lg:col-span-2 min-h-0 h-full">
+            <Card className="border-none shadow-xl bg-white p-2 flex flex-col h-full">
               <CardHeader className="pb-4 border-b border-slate-100">
                 <CardTitle className="text-2xl font-bold flex items-center gap-2">
                   <Bot className="h-6 w-6 text-primary" />
@@ -242,8 +259,8 @@ export default function AssistantPage() {
                 </CardDescription>
               </CardHeader>
 
-              {/* Lista poruka - skrolabilni dio chata */}
-              <CardContent className="flex-1 overflow-y-auto py-6 space-y-6">
+              {/* Lista poruka - uvijek vidljiv prominent scrollbar */}
+              <CardContent className="flex-1 overflow-y-scroll py-6 space-y-6 min-h-0 [scrollbar-width:auto] [scrollbar-color:rgb(100_116_139)_rgb(241_245_249)] [&::-webkit-scrollbar]:w-3.5 [&::-webkit-scrollbar-track]:bg-slate-100 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-500 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-slate-100 [&::-webkit-scrollbar-thumb]:min-h-[40px]">
                 {messages.map((msg, idx) => {
                   const isUser = msg.role === "user"
                   return (
@@ -340,17 +357,10 @@ export default function AssistantPage() {
                 </Button>
               </form>
             </Card>
-
-            {/* Disclaimer ispod chat kartice */}
-            <p className="text-xs text-slate-400 mt-4 text-center max-w-2xl mx-auto">
-              SentinelAI may produce inaccurate information. Always verify critical commands
-              before running them. CTF flags and full exploit chains will never be revealed.
-            </p>
           </div>
         </div>
       </main>
-
-      <Footer />
+      {/* Footer namjerno izostavljen - stranica je lockna na viewport */}
     </div>
   )
 }

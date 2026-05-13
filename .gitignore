@@ -1,0 +1,54 @@
+# =====================================================================
+# CyberEdu - root .gitignore
+# Sve datoteke s API ključevima i lozinkama MORAJU bit ovdje navedene.
+# =====================================================================
+
+# ---------------------------------------------------------------------
+# SECRETS - nikad ne committat
+# ---------------------------------------------------------------------
+Backend/config/secrets.php
+Backend/config/secrets.local.php
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# ---------------------------------------------------------------------
+# PHP / XAMPP
+# ---------------------------------------------------------------------
+*.log
+Backend/logs/
+error_log
+
+# ---------------------------------------------------------------------
+# User uploads (sadrže korisničke podatke) - ostavi folder, ignoriraj sadržaj
+# ---------------------------------------------------------------------
+Backend/uploads/avatars/*
+Backend/uploads/challenges/*
+Backend/uploads/chat/*
+!Backend/uploads/avatars/.gitkeep
+!Backend/uploads/challenges/.gitkeep
+!Backend/uploads/chat/.gitkeep
+
+# ---------------------------------------------------------------------
+# Node / Vite (FrontEnd ima i svoj .gitignore)
+# ---------------------------------------------------------------------
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# ---------------------------------------------------------------------
+# Editor / OS
+# ---------------------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

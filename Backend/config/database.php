@@ -29,7 +29,9 @@ class Database {
                 $this->password
             );
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->conn->exec("set names utf8");
+            // utf8mb4 je potreban za 4-bajtne znakove (emojiji 🚀😀 itd.).
+            // Bez ovoga MySQL trim-a emoji-je i oni se prikazuju kao "????".
+            $this->conn->exec("set names utf8mb4");
         } catch(PDOException $exception) {
             // PROMENJENO: Koristi error_log umesto echo
             error_log("Connection error: " . $exception->getMessage());
