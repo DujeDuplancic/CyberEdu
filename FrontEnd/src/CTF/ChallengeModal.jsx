@@ -21,7 +21,7 @@ export default function ChallengeModal({ challenge, onClose, onSolve, isSolved =
 
     if (!challenge) return null
 
-    const handleDownload = async () => {
+    const handleDownload = () => {
         if (!challenge.file_url) {
             showError('No file available for this challenge')
             return
@@ -29,28 +29,19 @@ export default function ChallengeModal({ challenge, onClose, onSolve, isSolved =
 
         setDownloading(true)
         try {
-            // Construct the full URL for the file
-            let fileUrl = challenge.file_url
-            
-            // If it's a relative path, make it absolute
-            if (fileUrl.startsWith('/')) {
-                fileUrl = `http://localhost:5173${fileUrl}`
-            } else if (!fileUrl.startsWith('http')) {
-                fileUrl = `http://localhost/CyberEdu/Backend/uploads/challenges/${fileUrl}`
-            }
-            
-            // Get filename from URL
-            const filename = fileUrl.split('/').pop() || 'challenge_file'
-            
-            // Create download link
+            // Preuzmi preko backend proxyja (download.php).
+            // download.php salje Content-Disposition: attachment pa browser uvijek
+            // preuzme ispravne bajtove s tocnim imenom (radi za slike, zip, sve formate).
+            // Cijeli file_url se prosljedjuje - download.php sam skida /CyberEdu/, uploads/, challenges/ prefikse.
+            const downloadUrl = `http://localhost/CyberEdu/Backend/challenges/download.php?file=${encodeURIComponent(challenge.file_url)}`
+            const filename = challenge.file_url.split('/').pop() || 'challenge_file'
+
             const link = document.createElement('a')
-            link.href = fileUrl
-            link.download = filename
-            link.target = '_blank'
+            link.href = downloadUrl
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
-            
+
             showSuccess('Download started', filename)
         } catch (error) {
             console.error('Download error:', error)
