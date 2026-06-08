@@ -3,28 +3,76 @@ import { Footer } from "../Components/Footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Components/ui/card"
 import { Badge } from "../Components/ui/badge"
 import { Button } from "../Components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "../Components/ui/avatar"
 import { Users, Target, Shield, GraduationCap, Globe, Award, Code } from "lucide-react"
 import { Link } from "react-router-dom"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { api } from "../lib/api"
+
+/**
+ * Pomoćna funkcija koja velike brojeve prikazuje u kompaktnom obliku
+ * (npr. 2500 -> "2.5K", 8200 -> "8.2K") s "+" sufiksom kao na originalu.
+ */
+const formatStatValue = (n) => {
+  const num = Number(n) || 0
+  if (num >= 1000) {
+    // Jedna decimala, bez nepotrebne nule (npr. "2K+" umjesto "2.0K+")
+    const k = (num / 1000).toFixed(1).replace(/\.0$/, "")
+    return `${k}K+`
+  }
+  return `${num}+`
+}
 
 export default function AboutPage() {
+  // Stanje za stats brojeve - dohvaća se s istog endpoint-a kao Homepage
+  const [stats, setStats] = useState({
+    activeChallenges: 0,
+    activeUsers: 0,
+    videoLectures: 0,
+    flagsCaptured: 0
+  })
+
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    window.scrollTo(0, 0)
+    // Asinkroni dohvat statistike platforme s backend-a
+    const fetchStats = async () => {
+      try {
+        const res = await api.get('/homepage/get_stats.php')
+        if (res?.success && res.stats) {
+          setStats(res.stats)
+        } else if (res?.stats) {
+          // Endpoint vraća fallback stats i u slučaju greške
+          setStats(res.stats)
+        }
+      } catch (err) {
+        console.error('Failed to load platform stats:', err)
+      }
+    }
+    fetchStats()
+  }, [])
+
+  // Team članovi - foto path-evi pokazuju na FrontEnd/public/team/*
+  // (Vite servira statiku iz public/ na root URL-u)
   const teamMembers = [
     {
       name: "Duje Duplančić",
       role: "CyberSec Student & Web Developer",
       expertise: "Binary Exploitation, Reverse Engineering, Web Security",
       bio: "Passionate about low-level programming and web application security",
+      photo: "/team/duje.jpg"
     },
     {
       name: "Vittorio Mihaljević Parat",
-      role: "CyberSec Student & Web Developer", 
+      role: "CyberSec Student & Web Developer",
       expertise: "Cryptography, Reverse Engineering, Web Security",
       bio: "Interested in encryption algorithms and secure web development",
+      photo: "/team/vittorio.jpg"
     },
   ]
+
+  // Helper za fallback inicijale unutar AvatarFallback komponente
+  const getInitials = (name) =>
+    name.split(/\s+/).map(p => p[0]).slice(0, 2).join("").toUpperCase()
 
   const features = [
     {
@@ -59,11 +107,12 @@ export default function AboutPage() {
     },
   ]
 
-  const stats = [
-    { label: "Active Challenges", value: "117+" },
-    { label: "Video Lectures", value: "45+" },
-    { label: "Registered Users", value: "2.5K+" },
-    { label: "Flags Captured", value: "8.2K+" },
+  // Stats kartice se sada generiraju dinamički iz dohvaćenih backend vrijednosti
+  const statsCards = [
+    { label: "Active Challenges", value: formatStatValue(stats.activeChallenges) },
+    { label: "Video Lectures",    value: formatStatValue(stats.videoLectures) },
+    { label: "Registered Users",  value: formatStatValue(stats.activeUsers) },
+    { label: "Flags Captured",    value: formatStatValue(stats.flagsCaptured) },
   ]
 
   return (
@@ -99,7 +148,7 @@ export default function AboutPage() {
         <section className="container mx-auto py-16 bg-muted/30">
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              {stats.map((stat, index) => (
+              {statsCards.map((stat, index) => (
                 <div key={index}>
                   <div className="text-4xl md:text-5xl font-bold text-primary mb-2">{stat.value}</div>
                   <div className="text-sm text-muted-foreground">{stat.label}</div>
@@ -151,9 +200,17 @@ export default function AboutPage() {
               {teamMembers.map((member) => (
                 <Card key={member.name} className="text-center">
                   <CardHeader>
-                    <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                      <Users className="h-8 w-8 text-primary" />
-                    </div>
+                    {/* Avatar s fotografijom - fallback na inicijale ako slika nije dostupna */}
+                    <Avatar className="h-24 w-24 mx-auto mb-4 ring-4 ring-primary/10 shadow-md">
+                      <AvatarImage
+                        src={member.photo}
+                        alt={member.name}
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">
+                        {getInitials(member.name)}
+                      </AvatarFallback>
+                    </Avatar>
                     <CardTitle>{member.name}</CardTitle>
                     <CardDescription>{member.role}</CardDescription>
                   </CardHeader>

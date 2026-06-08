@@ -6,11 +6,53 @@ import { Input } from "../Components/ui/input"
 import { Badge } from "../Components/ui/badge"
 import { useNotifications } from '../contexts/NotificationContext'
 import { api } from '../lib/api'
-import { 
-    Download, File, CheckCircle, ExternalLink, 
-    X, Info, AlertTriangle, Terminal, Trophy, 
-    ShieldAlert, Loader2, XCircle, FolderArchive, Image, FileText
+import {
+    Download, File, CheckCircle, ExternalLink,
+    X, Info, AlertTriangle, Terminal, Trophy,
+    ShieldAlert, Loader2, XCircle, FolderArchive, Image, FileText,
+    Target, Link2
 } from "lucide-react"
+
+// =====================================================================
+// Pomoćna funkcija: pronalazi sve URL-ove u opisu izazova.
+// Vraća objekt { urls, cleaned } gdje je 'cleaned' originalni tekst
+// s uklonjenim duplikatima razmaka i razdijeljenim u logičke odlomke.
+// =====================================================================
+const URL_REGEX = /https?:\/\/[^\s)<>"']+/gi
+
+const extractUrls = (text) => {
+    if (!text) return []
+    const matches = text.match(URL_REGEX) || []
+    // Uklanjamo eventualne završne interpunkcijske znakove (.,;:!?)
+    return matches.map(u => u.replace(/[.,;:!?]+$/, ''))
+}
+
+// =====================================================================
+// Pomoćna funkcija koja rastavlja tekst na "tokene" - obični tekstualni
+// segmenti i URL-ovi. Frontend ih onda može renderirati s linkovima.
+// =====================================================================
+const tokenizeDescription = (text) => {
+    if (!text) return []
+    const tokens = []
+    let lastIndex = 0
+    let match
+
+    // Resetiramo regex jer ima 'g' flag
+    URL_REGEX.lastIndex = 0
+    while ((match = URL_REGEX.exec(text)) !== null) {
+        const url = match[0].replace(/[.,;:!?]+$/, '')
+        const start = match.index
+        if (start > lastIndex) {
+            tokens.push({ type: 'text', value: text.slice(lastIndex, start) })
+        }
+        tokens.push({ type: 'url', value: url })
+        lastIndex = start + url.length
+    }
+    if (lastIndex < text.length) {
+        tokens.push({ type: 'text', value: text.slice(lastIndex) })
+    }
+    return tokens
+}
 
 export default function ChallengeModal({ challenge, onClose, onSolve, isSolved = false }) {
     const [flag, setFlag] = useState('')
@@ -133,14 +175,85 @@ export default function ChallengeModal({ challenge, onClose, onSolve, isSolved =
                 <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-[#fcfdfe]">
                     
                     {/* BRIEFING */}
-                    <section className="space-y-3">
-                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
-                            <Info className="h-3.5 w-3.5" /> Mission Briefing
-                        </h3>
-                        <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200/50 leading-relaxed text-slate-600 font-medium italic">
-                            {challenge.description || "No description provided."}
-                        </div>
-                    </section>
+                    {(() => {
+                        // Sirovi opis i pripadajuća lista URL-ova
+                        const rawDescription = challenge.description || "No description provided."
+                        const urls = extractUrls(rawDescription)
+                        // Cijeli opis razbijamo po novim redovima u logičke odlomke
+                        const paragraphs = rawDescription
+                            .split(/\r?\n+/)
+                            .map(p => p.trim())
+                            .filter(p => p.length > 0)
+
+                        return (
+                            <section className="space-y-3">
+                                <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                                    <Info className="h-3.5 w-3.5" /> Mission Briefing
+                                </h3>
+
+                                {/* Glavni blok s opisom - veća tipografija, bez italic-a radi čitljivosti */}
+                                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200/60 space-y-3">
+                                    {paragraphs.map((paragraph, idx) => {
+                                        const tokens = tokenizeDescription(paragraph)
+                                        return (
+                                            <p
+                                                key={idx}
+                                                className="text-slate-700 text-[15px] leading-7 font-medium"
+                                            >
+                                                {tokens.map((tok, i) =>
+                                                    tok.type === 'url' ? (
+                                                        <a
+                                                            key={i}
+                                                            href={tok.value}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="inline-flex items-center gap-1 text-indigo-600 font-semibold underline decoration-indigo-300 hover:decoration-indigo-600 hover:text-indigo-700 break-all"
+                                                        >
+                                                            {tok.value}
+                                                            <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+                                                        </a>
+                                                    ) : (
+                                                        <span key={i}>{tok.value}</span>
+                                                    )
+                                                )}
+                                            </p>
+                                        )
+                                    })}
+                                </div>
+
+                                {/* Prominent "Target" kartice za sve detektirane URL-ove */}
+                                {urls.length > 0 && (
+                                    <div className="grid gap-2 pt-1">
+                                        {urls.map((url, idx) => (
+                                            <a
+                                                key={idx}
+                                                href={url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="group flex items-center gap-3 p-4 bg-gradient-to-r from-indigo-50 to-white border border-indigo-200/70 rounded-xl hover:border-indigo-400 hover:shadow-md transition-all"
+                                            >
+                                                <div className="p-2.5 bg-indigo-600 rounded-lg shrink-0 shadow-sm shadow-indigo-200 group-hover:scale-105 transition-transform">
+                                                    <Target className="h-4 w-4 text-white" />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500">
+                                                        Target {urls.length > 1 ? `#${idx + 1}` : "URL"}
+                                                    </p>
+                                                    <p className="font-mono text-sm font-semibold text-slate-700 truncate group-hover:text-indigo-700">
+                                                        {url}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-1 text-xs font-bold text-indigo-600 shrink-0 group-hover:gap-2 transition-all">
+                                                    Open
+                                                    <ExternalLink className="h-3.5 w-3.5" />
+                                                </div>
+                                            </a>
+                                        ))}
+                                    </div>
+                                )}
+                            </section>
+                        )
+                    })()}
 
                     {/* HANDOUTS & FILES SECTION - Now using file_url from database */}
                     {challenge.file_url && (
