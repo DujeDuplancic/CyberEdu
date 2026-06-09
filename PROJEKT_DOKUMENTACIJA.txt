@@ -1,0 +1,1074 @@
+================================================================================
+                    CYBEREDU - DOKUMENTACIJA ZAVRŠNOG PROJEKTA
+================================================================================
+
+Autori:  Duje Duplančić, Vittorio Mihaljević Parat
+Tema:    Edukacijska cybersecurity platforma s CTF izazovima
+Stack:   React (Vite) + PHP + MySQL (XAMPP)
+
+================================================================================
+SADRŽAJ
+================================================================================
+ 1. PREGLED PROJEKTA - što je CyberEdu i čemu služi
+ 2. TEHNOLOGIJE - što je korišteno i zašto
+ 3. ARHITEKTURA - kako frontend i backend komuniciraju
+ 4. STRUKTURA MAPA - gdje se što nalazi
+ 5. BAZA PODATAKA - tablice i veze
+ 6. BACKEND - PHP endpoint-i po grupama
+ 7. FRONTEND - React stranice i komponente
+ 8. KAKO FUNKCIONIRA - autentifikacija, CTF, achievementi, chat
+ 9. AI ASISTENT (SentinelAI) - integracija s Gemini API
+10. CHAT SUSTAV - real-time komunikacija među korisnicima
+11. ADMIN PANEL - upravljanje sadržajem
+12. KAKO POKRENUTI PROJEKT
+
+
+================================================================================
+1. PREGLED PROJEKTA
+================================================================================
+
+CyberEdu je web platforma za učenje cyber sigurnosti namijenjena studentima
+i entuzijastima. Glavna ideja je spojiti TEORIJU (lekcije, wiki članci) s
+PRAKSOM (CTF izazovi koje korisnik mora "hakirati" i pronaći flag).
+
+KLJUČNE FUNKCIONALNOSTI:
+- Registracija i prijava korisnika s admin/regular ulogama
+- CTF (Capture The Flag) izazovi raspoređeni po kategorijama
+  (Reverse Engineering, Binary Exploitation, Cryptography, Web Security,
+   Steganography, itd.)
+- Sustav bodova, ranking i leaderboard
+- Achievementi (postignuća) koja se automatski otključavaju
+- Wiki - baza znanja s člancima po kategorijama
+- Video lekcije s YouTube embedom
+- Community - forum tipa diskusije + odgovori
+- Chat - poruke između korisnika u stvarnom vremenu (polling)
+- AI Asistent SentinelAI - integracija s Google Gemini 2.5 Flash
+- News - agregator vijesti iz svijeta cyber sigurnosti (RSS)
+- Admin panel - kompletna kontrola nad svim sadržajem
+
+CILJ:
+Pružiti studentima sigurno okruženje za etičko hakiranje. Svi izazovi
+imaju "flag" (npr. CTF{moja_zastavica}) koji korisnik mora otkriti
+hakiranjem - bilo cracking, reverse engineering, web exploit, itd.
+
+
+================================================================================
+2. TEHNOLOGIJE
+================================================================================
+
+FRONTEND (mapa: FrontEnd/)
+--------------------------
+- React 19 - knjižnica za izgradnju korisničkog sučelja
+- Vite - build alat i development server (port 5173)
+- React Router 7 - routing između stranica
+- Tailwind CSS - utility-first CSS framework
+- shadcn/ui - kolekcija pristupačnih UI komponenti (Card, Button, Avatar...)
+- Lucide React - icon library (sve ikone u app-u)
+- Axios - HTTP klijent (uz native fetch)
+
+BACKEND (mapa: Backend/)
+------------------------
+- PHP (vanilla, bez Symfony framework-a) - REST API endpoint-i
+- MySQL - relacijska baza (preko XAMPP-a)
+- PDO - Database abstraction layer u PHP-u
+- cURL - za pozive prema vanjskim API-ima (Gemini, RSS feedovi)
+
+EKSTERNI SERVISI:
+- Google Gemini 2.5 Flash API (AI asistent)
+- The Hacker News, BleepingComputer, Krebs on Security RSS (vijesti)
+- YouTube (embed videa u lekcijama)
+
+DEVELOPMENT OKOLINA:
+- XAMPP (Apache + MySQL + PHP) za lokalni backend
+- Node.js + npm za frontend
+- Lokalni development na portovima:
+  * Frontend: http://localhost:5173 (Vite dev server)
+  * Backend:  http://localhost (Apache, mapa /CyberEdu/Backend/)
+
+
+================================================================================
+3. ARHITEKTURA - KAKO FRONTEND I BACKEND KOMUNICIRAJU
+================================================================================
+
+Frontend i backend su POTPUNO ODVOJENI. To se zove "decoupled architecture".
+
+KORIŠTENJE:
+1. Korisnik otvara http://localhost:5173 (React aplikacija)
+2. React aplikacija šalje fetch() zahtjev na
+   http://localhost/CyberEdu/Backend/[endpoint].php
+3. PHP backend čita podatke iz MySQL-a i vraća JSON
+4. React parsira JSON i prikazuje rezultat
+
+CORS:
+Pošto frontend i backend rade na različitim portovima (5173 vs 80),
+svaki PHP endpoint mora imati CORS headere na vrhu:
+
+   header("Access-Control-Allow-Origin: http://localhost:5173");
+   header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+   header("Access-Control-Allow-Headers: Content-Type, Authorization");
+   header("Access-Control-Allow-Credentials: true");
+
+OPTIONS preflight zahtjev se mora obraditi posebno:
+   if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+       http_response_code(200);
+       exit();
+   }
+
+AUTENTIFIKACIJA:
+Koristi se localStorage na frontendu. Pri prijavi se cijeli user objekt
+sprema u localStorage.user (kao JSON). Pri svakom pozivu prema backendu,
+frontend šalje user.id u tijelu zahtjeva ili query string-u.
+
+   localStorage.getItem('user')  ->  { id, username, email, is_admin, ... }
+
+
+================================================================================
+4. STRUKTURA MAPA - GDJE SE ŠTO NALAZI
+================================================================================
+
+CyberEdu/
+├── Backend/                    # PHP backend
+│   ├── config/
+│   │   ├── database.php        # PDO konekcija na MySQL (host, dbname, user, pass)
+│   │   └── database_cli.php    # CLI verzija za migracije
+│   ├── auth/
+│   │   ├── login.php           # POST /auth/login - prijava
+│   │   └── register.php        # POST /auth/register - registracija
+│   ├── admin/                  # Admin endpoint-i (zahtijevaju admin ulogu)
+│   │   ├── check_admin.php     # Provjera je li korisnik admin
+│   │   ├── users.php           # Lista korisnika + toggle_admin + delete
+│   │   ├── create_challenge.php
+│   │   ├── update_challenge.php
+│   │   ├── delete_challenge.php
+│   │   ├── create_wiki_article.php
+│   │   ├── update_wiki_article.php
+│   │   ├── delete_wiki_article.php
+│   │   ├── create_lecture.php
+│   │   ├── update_lecture.php
+│   │   ├── delete_lecture.php
+│   │   ├── create_achievement.php
+│   │   ├── update_achievement.php
+│   │   ├── delete_achievement.php
+│   │   ├── toggle_achievement_visibility.php
+│   │   └── stats.php           # Brojači za admin dashboard
+│   ├── challenges/             # CTF endpoint-i (javni za prijavljene)
+│   │   ├── get_challenges.php  # Lista svih izazova
+│   │   ├── get_challenge_details.php
+│   │   ├── get_categories.php
+│   │   ├── get_daily_goal.php  # Dnevni cilj korisnika
+│   │   ├── submit_flag.php     # Provjera flaga + dodjeljivanje bodova
+│   │   └── download.php        # Sigurno preuzimanje handout fajlova
+│   ├── lectures/
+│   │   ├── get_lectures.php
+│   │   └── get_lecture_details.php
+│   ├── wiki/
+│   │   ├── get_wiki_articles.php
+│   │   ├── get_wiki_article.php
+│   │   └── get_wiki_categories.php
+│   ├── discussions/            # Forum/community
+│   │   ├── get_discussions.php
+│   │   ├── get_discussion_details.php
+│   │   ├── create_discussion.php
+│   │   ├── get_replies.php
+│   │   ├── create_reply.php
+│   │   └── search_discussions.php
+│   ├── chat/                   # Privatne poruke
+│   │   ├── get_contacts.php    # Lista usera + zadnja poruka + unread count
+│   │   ├── get_messages.php    # Razgovor između dva korisnika
+│   │   └── send_message.php    # Slanje poruke
+│   ├── leaderboard/
+│   │   ├── get_leaderboard.php # Glavna tablica top korisnika
+│   │   ├── get_user_stats.php  # Statistika za jednog korisnika
+│   │   └── get_daily_stats.php # Dnevna statistika
+│   ├── achievements/
+│   │   ├── get_achievements.php
+│   │   └── get_user_stats.php
+│   ├── profile/
+│   │   ├── get_profile.php     # Podaci korisničkog profila
+│   │   └── update_profile.php  # Parcijalno ažuriranje (info/lozinka/avatar)
+│   ├── homepage/
+│   │   ├── get_stats.php       # Brojači za homepage (challenges, users...)
+│   │   └── get_categories.php
+│   ├── ai/
+│   │   └── ai_assistant.php    # Proxy prema Gemini API-ju
+│   ├── news/
+│   │   └── get_news.php        # RSS agregator
+│   ├── utils/
+│   │   ├── upload_file.php     # Generic file upload za challenge handout-e
+│   │   └── functions.php       # Pomoćne funkcije
+│   ├── uploads/                # Servirani statički fajlovi
+│   │   └── avatars/            # Profilne slike korisnika
+│   └── Migrations/             # Database migracije
+│       ├── force_migrate.php   # Skripta koja izvršava sve migracije
+│       ├── import_order.php    # Redoslijed kreiranja tablica
+│       ├── import_seed_only.php
+│       ├── export_database.php
+│       └── migrations/         # SQL skripte (jedna po tablici)
+│           ├── 001_create_users_table.php
+│           ├── 002_create_categories_table.php
+│           ├── 003_create_challenges_table.php
+│           ├── 004_create_solves_table.php
+│           ├── 005_create_lectures_table.php
+│           ├── 006_create_discussions_table.php
+│           ├── 007_create_replies_table.php
+│           ├── 008_create_achievements_table.php
+│           ├── 009_create_user_achievements_table.php
+│           ├── 010_create_wiki_articles_table.php
+│           ├── 011_create_leaderboard_snapshots_table.php
+│           ├── 012_create_leaderboard_entries_table.php
+│           ├── 013_add_file_url_to_challenges.php
+│           ├── 014_create_wiki_categories_table.php
+│           ├── 015_add_user_foreign_keys_to_discussions.php
+│           ├── 016_add_user_foreign_keys_to_replies.php
+│           └── 017_create_chat_messages_table.php
+│
+├── FrontEnd/                   # React aplikacija
+│   ├── public/                 # Statički fajlovi servirani s root URL-a
+│   │   └── team/               # Team fotografije za About page
+│   ├── src/
+│   │   ├── main.jsx            # Entry point - mountanje React-a
+│   │   ├── App.jsx             # Glavni router (sve rute)
+│   │   ├── Globals.css         # Tailwind direktive + CSS varijable
+│   │   ├── lib/
+│   │   │   ├── api.js          # Centralizirani fetch wrapper
+│   │   │   └── utils.jsx       # cn() helper za className
+│   │   ├── contexts/
+│   │   │   └── NotificationContext.jsx  # Global achievement notifikacije
+│   │   ├── Components/
+│   │   │   ├── Header.jsx      # Glavni navbar s linkovima
+│   │   │   ├── Footer.jsx      # Footer
+│   │   │   └── ui/             # shadcn/ui komponente
+│   │   │       (Card, Button, Input, Avatar, Dialog, ...)
+│   │   ├── Homepage/Homepage.jsx
+│   │   ├── About/About.jsx
+│   │   ├── Login/Login.jsx
+│   │   ├── Register/Register.jsx
+│   │   ├── Contact/Contact.jsx
+│   │   ├── CTF/                # CTF tab
+│   │   │   ├── Ctf.jsx         # Lista izazova
+│   │   │   ├── ChallengeList.jsx
+│   │   │   ├── ChallengeModal.jsx  # Modal za rješavanje izazova
+│   │   │   ├── CategoryFilter.jsx
+│   │   │   └── components/
+│   │   ├── Lectures/
+│   │   │   ├── Lectures.jsx    # Grid svih lekcija
+│   │   │   └── LectureDetail.jsx
+│   │   ├── Wiki/
+│   │   │   ├── Wiki.jsx
+│   │   │   ├── WikiCategory.jsx
+│   │   │   └── WikiArticle.jsx
+│   │   ├── Community/          # Forum
+│   │   │   ├── Community.jsx
+│   │   │   ├── CreateDiscussion.jsx
+│   │   │   ├── DiscussionDetail.jsx
+│   │   │   └── DiscussionCard.jsx
+│   │   ├── Profile/
+│   │   │   ├── Profile.jsx
+│   │   │   └── EditProfileModal.jsx
+│   │   ├── Leaderboard/Leaderboard.jsx
+│   │   ├── Achievements/AchievementsPage.jsx
+│   │   ├── Chat/Chat.jsx       # Privatne poruke
+│   │   ├── Assistant/Assistant.jsx  # SentinelAI chat sučelje
+│   │   ├── News/News.jsx       # RSS news agregator
+│   │   └── Admin/
+│   │       ├── Admin.jsx       # Glavni admin dashboard
+│   │       ├── AdminUsers.jsx
+│   │       ├── AdminChallenges.jsx
+│   │       ├── AdminAchievements.jsx
+│   │       ├── AdminContent.jsx       # Upravljanje lekcijama
+│   │       └── Components/
+│   │           ├── AdminWiki.jsx
+│   │           ├── AdminPagination.jsx  # Generička paginacija
+│   │           ├── CreateChallengeForm.jsx
+│   │           ├── EditChallengeForm.jsx
+│   │           ├── CreateAchievementForm.jsx
+│   │           ├── EditAchievementForm.jsx
+│   │           └── AddLecture.jsx
+│   ├── vite.config.js          # Vite konfiguracija
+│   ├── tailwind.config.js
+│   └── package.json            # NPM dependencies
+│
+├── uploads/                    # Korisnički uploadovi (challenge fajlovi, chat...)
+│   ├── challenges/
+│   └── chat/
+└── PROJEKT_DOKUMENTACIJA.txt   # OVAJ DOKUMENT
+
+
+================================================================================
+5. BAZA PODATAKA - TABLICE I VEZE
+================================================================================
+
+Baza podataka se zove "cyberedu". Sve tablice koriste InnoDB engine i UTF-8.
+
+TABLICA: users (001_create_users_table.php)
+-------------------------------------------
+Glavna tablica korisnika.
+  - id                INT PRIMARY KEY AUTO_INCREMENT
+  - username          VARCHAR(50) UNIQUE NOT NULL
+  - email             VARCHAR(100) UNIQUE NOT NULL
+  - password_hash     VARCHAR(255) NOT NULL  (bcrypt hash, NIKAD plain text)
+  - avatar_url        VARCHAR(255)            (npr. "uploads/avatars/xyz.jpg")
+  - points            INT DEFAULT 0           (ukupni bodovi)
+  - rank              INT DEFAULT 0
+  - created_at        TIMESTAMP
+  - is_admin          BOOLEAN DEFAULT FALSE
+
+TABLICA: categories (002_create_categories_table.php)
+-----------------------------------------------------
+Kategorije izazova (Reverse Engineering, Web Security, itd.)
+  - id, name UNIQUE, description, icon_name
+
+TABLICA: challenges (003_create_challenges_table.php)
+-----------------------------------------------------
+CTF izazovi.
+  - id, title, description, points, difficulty (Easy/Medium/Hard)
+  - category_id        FK -> categories
+  - flag               VARCHAR  (BCRYPT HASH, ne plain text!)
+  - file_url           VARCHAR  (dodato u migraciji 013)
+  - is_active          BOOLEAN
+  - created_by         FK -> users
+  - created_at         TIMESTAMP
+
+VAŽNO: Flag se sprema kao bcrypt hash (password_hash funkcija). Pri submit-u
+se koristi password_verify() - tako da NITKO ne može pročitati flag iz baze.
+
+TABLICA: solves (004_create_solves_table.php)
+---------------------------------------------
+Tko je riješio koji izazov.
+  - id, user_id (FK), challenge_id (FK), solved_at TIMESTAMP
+  - UNIQUE KEY (user_id, challenge_id) - jedan user ne može riješiti isti izazov dvaput
+
+TABLICA: lectures (005_create_lectures_table.php)
+-------------------------------------------------
+Video lekcije (YouTube embed-ovi).
+  - id, title, description, video_url, thumbnail_url
+  - duration_minutes, level (Beginner/Intermediate/Advanced)
+  - instructor, category_id (FK), is_published, views
+
+TABLICA: discussions (006_create_discussions_table.php)
+-------------------------------------------------------
+Forum teme.
+  - id, title, content, author_id (FK), category, is_pinned, views, created_at
+
+TABLICA: replies (007_create_replies_table.php)
+-----------------------------------------------
+Odgovori na forum teme.
+  - id, discussion_id (FK), author_id (FK), content, created_at
+
+TABLICA: achievements (008_create_achievements_table.php)
+---------------------------------------------------------
+Postignuća koja korisnik može osvojiti.
+  - id, name, description, icon_url, points_reward
+  - criteria_type ENUM('solves_count', 'points_total', 'category_master', 'streak')
+  - criteria_value INT  (npr. 10 = "riješi 10 izazova")
+  - category_id (FK, opcionalno - za category_master)
+  - is_hidden BOOLEAN
+
+TABLICA: user_achievements (009_create_user_achievements_table.php)
+-------------------------------------------------------------------
+Tko je dobio koje achievement.
+  - user_id (FK), achievement_id (FK), unlocked_at
+
+TABLICA: wiki_categories (014_create_wiki_categories_table.php)
+TABLICA: wiki_articles (010_create_wiki_articles_table.php)
+-----------------------------------------------------------
+Wiki članci po kategorijama.
+  - id, title, slug, content, excerpt, category_id (FK)
+  - reading_time, difficulty_level, is_published, views
+
+TABLICA: leaderboard_snapshots / leaderboard_entries (011, 012)
+---------------------------------------------------------------
+Cached snapshot-ovi leaderboard-a (za optimizaciju).
+
+TABLICA: chat_messages (017_create_chat_messages_table.php) - DODANO U PROJEKTU
+------------------------------------------------------------------------------
+Privatne poruke između korisnika.
+  - id, sender_id (FK), recipient_id (FK)
+  - content TEXT
+  - attachment_url, attachment_name, attachment_type (image/file)
+  - is_read BOOLEAN
+  - created_at TIMESTAMP
+  - INDEX (sender_id, recipient_id, created_at) - za brže pretrage razgovora
+  - INDEX (recipient_id, is_read) - za brži unread count
+
+
+MIGRACIJSKI SUSTAV:
+-------------------
+Migracije se izvršavaju preko Backend/Migrations/force_migrate.php skripte.
+Skripta:
+1. Kreira tablicu 'migrations' ako ne postoji (za praćenje koje su pokrenute).
+2. Učita sve fajlove iz mape /migrations/ sortirane po imenu (001, 002, ...).
+3. Za svaki fajl provjeri je li već izvršen.
+4. Ako nije, izvrši SQL i upiše u 'migrations' tablicu.
+
+Tako se može sigurno ponovno pokretati - neće dva puta kreirati istu tablicu.
+
+
+================================================================================
+6. BACKEND - PHP ENDPOINT-i PO GRUPAMA
+================================================================================
+
+OPĆI PATTERN SVAKOG ENDPOINT-a:
+-------------------------------
+1. CORS headeri na vrhu
+2. OPTIONS preflight handling
+3. require_once '../config/database.php'
+4. try/catch oko logike
+5. echo json_encode([...]) na kraju
+
+------ AUTH (Backend/auth/) ------
+
+login.php
+  POST { email, password }
+  - Pronalazi usera po email-u
+  - password_verify() s bcrypt hash-om
+  - Vraća { success, user: { id, username, email, points, rank, is_admin } }
+  Frontend onda taj user objekt sprema u localStorage.
+
+register.php
+  POST { username, email, password }
+  - Validira input (email format, lozinka min duljina)
+  - password_hash() PRIJE spremanja
+  - INSERT INTO users
+  - Vraća user objekt isto kao login.
+
+------ ADMIN (Backend/admin/) ------
+
+check_admin.php
+  POST { user_id }
+  - Vraća { success, is_admin } - frontend ovaj endpoint poziva pri ulasku
+    na /admin rutu i preusmjerava ako user nije admin.
+
+users.php
+  GET     - lista svih korisnika
+  POST    - { action: 'toggle_admin', user_id, admin_status } - promijeni admin status
+          - { action: 'delete_user', user_id } - obriši korisnika
+  Multi-action endpoint - dispatch po 'action' polju.
+
+create_challenge.php / update_challenge.php / delete_challenge.php
+  POST za svaki - obrada CRUD operacija nad izazovima.
+  VAŽNO: flag se HASH-a (password_hash) prije INSERT-a.
+  create_challenge sada vraća i 'challenge_id' kako bi frontend mogao
+  uploadati file odmah nakon kreiranja.
+
+create_lecture.php / update_lecture.php / delete_lecture.php
+  Slično kao za izazove, ali za video lekcije.
+
+create_wiki_article.php / update_wiki_article.php / delete_wiki_article.php
+  Slično za wiki članke.
+
+create_achievement.php / update_achievement.php / delete_achievement.php /
+toggle_achievement_visibility.php
+  Slično za postignuća.
+
+stats.php
+  GET - vraća { total_users, total_challenges, total_lectures, wiki_articles, total_achievements }
+  Za admin dashboard kartice.
+
+------ CHALLENGES (Backend/challenges/) ------
+
+get_challenges.php
+  GET ?user_id=X (opcionalno)
+  - Vraća sve izazove s flag-om "solved" ako je proslijeđen user_id.
+  - Bodovi se prikazuju, ali flag NIKAD nije u JSON-u.
+
+submit_flag.php  <-- NAJVAŽNIJI ENDPOINT ZA CTF
+  POST { user_id, challenge_id, flag }
+  - Dohvaća izazov iz baze
+  - password_verify($posted_flag, $stored_hashed_flag)
+  - Ako se podudara:
+    * INSERT INTO solves (user_id, challenge_id) - UNIQUE constraint sprečava duple
+    * UPDATE users SET points = points + challenge.points
+    * Provjeri može li user dobiti neki achievement (logika u submit_flag.php
+      ili u functions.php)
+  - Vraća { success, points } ili { success: false }
+
+get_categories.php
+  GET - lista kategorija (za filter chips).
+
+get_daily_goal.php  <-- DODANO U PROJEKTU
+  GET ?user_id=X
+  - Konstanta DAILY_GOAL_TARGET = 3 (može se mijenjati).
+  - Broji koliko je izazova rješeno DANAS (DATE(solved_at) = CURDATE()).
+  - Računa streak (uzastopne dane s barem jednim solve-om).
+  - Vraća { goal, solves_today, remaining, progress_pct, completed, streak_days }
+  - Frontend koristi za "Daily Goal" widget na CTF stranici.
+
+download.php
+  GET ?file=... - sigurno serviranje challenge handout fajlova.
+
+------ PROFILE (Backend/profile/) ------
+
+get_profile.php
+  GET ?user_id=X
+  - Vraća user objekt + kategoriju progress + zadnja rješenja.
+  - Računa rank dinamički: COUNT(*) + 1 gdje points > moji.
+  - UKLJUČUJE id i email (popravljeno tijekom projekta).
+
+update_profile.php  <-- POPRAVLJEN ZA PARCIJALNI UPDATE
+  POST multipart/form-data ili JSON
+  Fields (svi opcionalni):
+    - user_id (obavezno)
+    - username (ako prosljeđujemo - mijenjamo)
+    - email
+    - current_password + new_password (mijenja lozinku)
+    - avatar (file)
+    - remove_avatar=1 (briše postojeću sliku)
+  - UPDATE upit se gradi DINAMIČKI iz $sets[] niza - polja koja nisu poslana
+    nikad se ne dotaknu.
+
+------ CHAT (Backend/chat/) - DODANO U PROJEKTU ------
+
+get_contacts.php
+  GET ?user_id=X
+  - Vraća sve korisnike osim trenutnog.
+  - Za svakog computa:
+    * last_message (zadnja poruka razgovora)
+    * last_message_at (timestamp)
+    * unread_count (broj nepročitanih poruka prema meni)
+    * has_conversation (boolean - postoji li razgovor)
+  - Koristi KORELIRANE SUBQUERY-je da bude kompatibilno s XAMPP MySQL verzijom.
+
+get_messages.php
+  GET ?user_id=X&with=Y
+  - Vraća sve poruke između dva korisnika kronološki.
+  - AUTOMATSKI markira nepročitane poruke (sender=Y, recipient=X) kao pročitane.
+
+send_message.php
+  POST { sender_id, recipient_id, content, attachment_url?, attachment_name?, attachment_type? }
+  - Validira (sender != recipient, content ili attachment je prisutan, max 5000 char).
+  - Provjerava da oba usera postoje (FK constraint).
+  - INSERT, vraća upravo spremljenu poruku.
+
+------ AI ASSISTANT (Backend/ai/) - DODANO U PROJEKTU ------
+
+ai_assistant.php
+  POST { messages: [{ role, content }, ...] }
+  - Proxy prema Google Gemini 2.5 Flash API-ju.
+  - Frontend NE poziva Gemini direktno (zbog API key sigurnosti).
+  - System prompt strogo ograničava asistenta na cyber security teme.
+  - Asistent je "SentinelAI" - daje hintove za CTF (NIKAD ne otkriva flag).
+  - Mapira "assistant" role iz našeg formata na "model" role koji Gemini koristi.
+  - Šalje zahtjev preko cURL-a.
+  - Parsira response i ekstraktira tekst.
+
+------ NEWS (Backend/news/) - DODANO U PROJEKTU ------
+
+get_news.php
+  GET (opcionalno ?refresh=1 za bypass cache)
+  - Dohvaća RSS feed-ove s 3 izvora:
+    * The Hacker News
+    * BleepingComputer
+    * Krebs on Security
+  - SimpleXML parsira XML.
+  - Ekstrahira sliku iz <media>, <content:encoded>, <enclosure>.
+  - Cache na disk (news_cache.json) 10 minuta - ne udaramo izvore prečesto.
+  - Sortira po datumu, limit 60 članaka.
+
+------ OSTALI ENDPOINT-i ------
+
+leaderboard/get_leaderboard.php   - top 100 korisnika po bodovima
+leaderboard/get_user_stats.php    - statistika jednog korisnika
+discussions/get_discussions.php   - paginirane teme s reply count-om
+discussions/create_discussion.php - kreiranje nove teme
+wiki/get_wiki_articles.php        - lista članaka
+achievements/get_achievements.php - lista achievementa s "unlocked" za user-a
+homepage/get_stats.php            - brojači za homepage (i About stranicu)
+
+
+================================================================================
+7. FRONTEND - REACT STRANICE I KOMPONENTE
+================================================================================
+
+ENTRY POINT (FrontEnd/src/main.jsx):
+------------------------------------
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './Globals.css'
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />)
+
+ROUTER (FrontEnd/src/App.jsx):
+------------------------------
+Definira sve rute koristeći react-router-dom 7. Postoje 3 tipa ruta:
+
+1. PUBLIC ROUTES - dostupne svima
+   - "/"          -> Homepage
+   - "/about"     -> AboutPage
+   - "/news"      -> NewsPage
+
+2. PUBLIC ROUTES (nedostupne kad je user logiran)
+   - "/login"     -> Login (wrappirana u <PublicRoute>)
+   - "/register"  -> Register
+
+3. PROTECTED ROUTES (samo za prijavljene)
+   - "/ctf"       -> CTFPage
+   - "/lectures"  -> Lectures
+   - "/wiki"      -> Wiki
+   - "/community" -> Community
+   - "/profile"   -> Profile
+   - "/leaderboard" -> Leaderboard
+   - "/achievements" -> AchievementsPage
+   - "/assistant" -> AssistantPage  (SentinelAI)
+   - "/chat"      -> ChatPage
+
+4. ADMIN ROUTES
+   - "/admin"     -> Admin (wrappirana u <AdminRoute>)
+
+Logika provjere autentifikacije:
+  function ProtectedRoute({ children }) {
+    const user = localStorage.getItem('user')
+    return user ? children : <Navigate to="/login" replace />
+  }
+
+GLOBALNI KOMPONENTI (FrontEnd/src/Components/):
+-----------------------------------------------
+
+Header.jsx
+  - Sticky navbar (top-0 z-50)
+  - Linkovi: CTF, Leaderboard, Wiki, Lectures, Community, News
+  - Conditional (user only): Achievements, AI Assistant, Chat
+  - Conditional (admin only): Admin (crveni link)
+  - Mobile menu s hamburger ikonom
+  - Login/Register gumbi kada nije logiran
+  - User dropdown s logout kada jest
+
+Footer.jsx
+  - Klasični footer sa social linkovima i copyright
+
+UI komponente (src/Components/ui/):
+  Sve su iz shadcn/ui (custom React komponente buildane na top od Radix UI):
+  - Card, Button, Input, Textarea, Label, Avatar, Badge
+  - Dialog, AlertDialog, Sheet, Drawer
+  - Tabs, Select, Checkbox, Switch
+  - Table, Pagination
+  - itd.
+
+NOTIFICATION CONTEXT (contexts/NotificationContext.jsx):
+--------------------------------------------------------
+Globalni context koji omogućuje da bilo gdje u app-u zovemo:
+  - showAchievement(name, points)
+  - showSuccess(title, message)
+  - showError(message)
+
+Notifikacije se renderiraju kao toast u kutu ekrana.
+
+KLJUČNE STRANICE:
+-----------------
+
+Homepage.jsx
+  - Hero sekcija s CTA gumbima
+  - Statistike platforme (challenges, users, lectures, flags)
+  - Kategorije CTF-a kao chip-ovi
+  - Footer s linkovima
+
+CTF/Ctf.jsx                    <-- GLAVNA STRANICA ZA CTF
+  - Lista svih izazova
+  - Filter po kategoriji (sidebar)
+  - Search po naslovu/opisu
+  - Daily Goal widget (dohvaća se s get_daily_goal.php)
+  - Klik na izazov otvara ChallengeModal
+
+CTF/ChallengeModal.jsx
+  - Veliki modal s:
+    * Header (gradient s ikonom + title + kategorija)
+    * Mission Briefing (tekst opisa)
+      - URL-ovi u opisu se AUTOMATSKI pretvaraju u klikabilne linkove
+      - Posebna "Target URL" kartica ispod briefing-a
+    * Handouts & Resources (file za download)
+    * Submit Credentials (input za flag + Verify gumb)
+    * Mission Accomplished state ako je već riješeno
+  - Pri submit: POST submit_flag.php
+  - Animacije pri uspjehu (zelena boja) ili neuspjehu (shake animation)
+
+Profile/Profile.jsx
+  - Avatar + username + rank badge
+  - Stat kartice (Rank, Points, Solved, Last Active)
+  - Recent solves tablica
+  - Category progress bars
+  - "Edit Profile" gumb otvara EditProfileModal
+
+Profile/EditProfileModal.jsx  <-- REDIZAJNIRAN ZA ACTION-BASED
+  - 3 chip-a na vrhu: "Account info", "Password", "Avatar"
+  - Korisnik bira što želi mijenjati - šalje se SAMO to.
+  - Avatar tab: upload nove ili Remove postojeće (s remove_avatar=1 flagom).
+
+Leaderboard/Leaderboard.jsx
+  - Top korisnici sortirani po bodovima
+  - Paginacija (8 po stranici)
+  - Search bar
+  - Trophy ikone za prva 3 mjesta
+
+Lectures/Lectures.jsx
+  - Grid lekcija s YouTube thumbnail-ima
+  - Paginacija
+  - Search + filter
+
+Wiki/Wiki.jsx
+  - Lista wiki kategorija
+  - Klik vodi u WikiCategory s člancima
+
+Community/Community.jsx
+  - Forum teme s reply count-om
+  - Search + filter po kategoriji
+  - "New Discussion" gumb otvara CreateDiscussion
+
+Assistant/Assistant.jsx       <-- AI ASISTENT (DODANO U PROJEKTU)
+  - Sidebar lijevo s 4 info kartice + Quick Actions chip-ovi
+  - Chat sučelje desno (povijest poruka + input)
+  - User poruke desno (plave), asistent lijevo (sive)
+  - Mini markdown renderer za bold, code, listove
+  - POST /ai/ai_assistant.php s povijesti razgovora
+
+Chat/Chat.jsx                 <-- PRIVATNI CHAT (DODANO U PROJEKTU)
+  - Sidebar lijevo (340px na desktopu):
+    * Search bar
+    * Lista kontakata s avatarom + zelena točka (online status mock)
+    * Preview zadnje poruke + timestamp + unread badge
+  - Chat prozor desno:
+    * Header s avatarom sugovornika + akcijske ikone
+    * Messages area (auto-scroll na nove poruke)
+    * Input area (Paperclip + Emoji + Textarea + Send)
+  - Polling: contacts svakih 8s, messages svakih 3s
+  - Responsive: na mobilnom se sidebar i chat naizmjenično prikazuju
+    s back arrow gumbom
+
+News/News.jsx                 <-- NEWS AGGREGATOR (DODANO U PROJEKTU)
+  - Hero s "Cybersecurity News" naslovom + Refresh gumb
+  - Filter chips po izvoru (All / The Hacker News / BleepingComputer / Krebs)
+  - Search bar
+  - Grid kartica vijesti (slika + source badge + datum + naslov + opis)
+  - "Read full article" link otvara članak u novom tab-u
+
+Achievements/AchievementsPage.jsx
+  - Grid postignuća
+  - Otključana imaju boju + datum, zaključana su grayed-out
+  - Progress bar za svaku
+
+ADMIN PANEL:
+------------
+
+Admin/Admin.jsx               <-- GLAVNI DASHBOARD (REDIZAJNIRAN)
+  - Provjera admin pristupa pri ulazu (check_admin.php)
+  - 5 stat kartica (Users, Challenges, Lectures, Wiki, Achievements)
+    s različitim akcent bojama
+  - Tab chip-ovi: Users / Challenges / Achievements / Wiki / Lectures
+  - Toast poruke za success/error
+  - Sve child komponente primaju props (handlers).
+
+Admin/AdminUsers.jsx
+  - Lista korisnika s avatarom, badge-om admin/regular
+  - Search + paginacija
+  - Make/Remove admin gumb
+  - Delete user gumb
+
+Admin/AdminChallenges.jsx
+  - Lista izazova s difficulty chip-om
+  - File indikator ako ima privitak
+  - Edit gumb otvara EditChallengeForm
+  - New Challenge gumb otvara CreateChallengeForm
+
+Admin/AdminAchievements.jsx
+  - Lista achievementa s filter (All/Visible/Hidden)
+  - Show/Hide gumb za visibility
+  - Edit + Delete
+
+Admin/AdminContent.jsx        <-- LEKCIJE (REDIZAJNIRAN)
+  - Grid lekcija s thumbnail-om
+  - Modal s YouTube URL preview-om (auto-detect thumbnail)
+  - Validacija YouTube URL regex-om
+  - Edit + Delete + View na YouTube
+
+Admin/Components/AdminWiki.jsx (REDIZAJNIRAN)
+  - Lista wiki članaka
+  - Status chip (Published/Draft) + Difficulty chip
+  - Modal za create/edit s HTML textarea-om
+
+Admin/Components/CreateChallengeForm.jsx  <-- REDIZAJNIRAN
+  - Gradient header s Plus ikonom
+  - Forma s polja: title, description, category, difficulty, points, flag
+  - "Add file" drop-zone (opcionalno) - upload odmah nakon kreiranja izazova
+  - Dvostupanjski submit:
+    1. POST create_challenge.php → dobije challenge_id
+    2. Ako je file odabran → POST upload_file.php s challenge_id-om
+
+Admin/Components/AdminPagination.jsx  <-- DODANO U PROJEKTU
+  - Generička paginacija za sve admin liste.
+  - Prikazuje "1, 2, ..., 9, 10" s ellipsisom za skip range-ove.
+  - "Showing X–Y of Z" tekst.
+
+
+================================================================================
+8. KAKO FUNKCIONIRA - GLAVNI TIJEKOVI
+================================================================================
+
+------ TIJEK PRIJAVE ------
+
+1. Korisnik upiše email + password u Login.jsx
+2. Frontend → POST /auth/login.php
+3. PHP:
+   - SELECT * FROM users WHERE email = :email
+   - password_verify($posted, $stored_hash)
+   - Vrati cijeli user objekt
+4. Frontend:
+   - localStorage.setItem('user', JSON.stringify(data.user))
+   - navigate('/')
+
+Tako se user "logira" - zapamtimo ga u localStorage-u. Sve buduće provjere
+gledaju localStorage. Pri logout-u: localStorage.removeItem('user').
+
+------ TIJEK SUBMIT FLAGA ------
+
+1. Korisnik klikne na izazov u CTF listi
+2. Otvori se ChallengeModal s briefing-om i input poljem
+3. Korisnik upiše flag (npr. CTF{moja_zastavica})
+4. Frontend → POST /challenges/submit_flag.php { user_id, challenge_id, flag }
+5. PHP:
+   - SELECT flag FROM challenges WHERE id = :challenge_id
+   - password_verify($posted_flag, $stored_hash)
+   - Ako se podudara:
+     * INSERT INTO solves
+     * UPDATE users SET points = points + :challenge_points
+     * Provjeri može li dobiti achievement (npr. solves_count == 10)
+     * Ako da: INSERT INTO user_achievements
+   - Vrati { success, points }
+6. Frontend:
+   - Animacija uspjeha (zelena)
+   - showAchievement notifikacija ako je novi achievement
+   - Refresh CTF liste (da ovaj izazov bude označen kao riješen)
+
+------ TIJEK AI ASISTENTA ------
+
+1. Korisnik upiše pitanje u Assistant.jsx (npr. "Daj mi hint za SQL injection")
+2. Frontend dodaje poruku u messagesList state
+3. Frontend → POST /ai/ai_assistant.php { messages: [...puna_povijest] }
+4. PHP:
+   - Konstruira payload za Gemini API:
+     * systemInstruction (stroge upute - samo cyber security, ne otkrij flag)
+     * contents (mapirane poruke)
+   - cURL POST na Gemini API endpoint s API ključem
+   - Parsira response
+5. Frontend:
+   - Dodaje asistentov odgovor u messages
+   - Renderira mini-markdown (bold, code blocks, listovi)
+
+------ TIJEK CHAT-a ------
+
+INICIJALNI LOAD:
+1. Korisnik otvori /chat
+2. Frontend čita currentUser iz localStorage
+3. GET /chat/get_contacts.php?user_id=X
+4. Prikaže listu kontakata u sidebaru
+5. Default-no odabire prvog kontakta s razgovorom
+
+KLIK NA KONTAKT:
+1. setActiveId(contact.id)
+2. GET /chat/get_messages.php?user_id=X&with=Y
+3. Backend AUTOMATSKI markira primljene poruke kao pročitane
+4. Frontend prikaže messages
+
+SLANJE PORUKE:
+1. Korisnik upiše tekst, klikne Send
+2. Frontend → POST /chat/send_message.php { sender_id, recipient_id, content }
+3. Backend INSERT-a u chat_messages, vrati upravo spremljenu poruku
+4. Frontend doda poruku u state (optimistically)
+
+REAL-TIME ASPEKT (preko polling-a):
+- Svakih 8s: refetch get_contacts (osvježi listu + unread count-ove)
+- Svakih 3s: refetch get_messages (osvježi razgovor s novim porukama)
+- Nije pravi WebSocket, ali daje feel real-time chat-a.
+
+------ TIJEK ACHIEVEMENT-A ------
+
+Achievementi su automatski - korisnik ih ne traži, samo se otključavaju.
+
+Logika:
+- Pri svakom solve-u (submit_flag.php), backend provjerava SVE achievementa.
+- Za svaki achievement provjerava criteria:
+  * solves_count → COUNT(solves WHERE user_id = X) >= criteria_value
+  * points_total → users.points >= criteria_value
+  * category_master → COUNT(solves JOIN challenges WHERE category_id = X) >= criteria_value
+  * streak → izračun uzastopnih dana s aktivnošću
+- Ako kriterij ispunjen, INSERT INTO user_achievements (ako već nije).
+- Frontend pri sljedećem GET-u dohvaća user_achievements i prikazuje notifikaciju.
+
+
+================================================================================
+9. AI ASISTENT (SentinelAI) - DETALJI INTEGRACIJE
+================================================================================
+
+CILJ: Daj korisniku AI pomoć za cyber security ali strogo ograničeno.
+
+ZAŠTO PROXY KROZ PHP UMJESTO DIREKTNO IZ REACT-A?
+1. Sigurnost - Gemini API key bi bio izložen u browser bundle.
+2. Kontrola - možemo logirati, ograničiti, modificirati zahtjeve.
+
+SYSTEM PROMPT (stroga ograničenja):
+1. Samo cyber security teme (refuza za sve ostalo).
+2. CTF challenge-ima daje HINT-ove, NIKAD ne otkriva flag/solution.
+3. Preporučuje alate (Burp Suite, Nmap, Ghidra, Wireshark, John, Hashcat...).
+4. Promovira etičko korištenje znanja.
+5. Odgovara na engleskom, koristi Markdown.
+
+FRONTEND (Assistant.jsx):
+- Drži cijelu povijest razgovora u state-u.
+- Pri svakom upit šalje CIJELU povijest (Gemini je stateless model).
+- Quick Actions chip-ovi za najčešće upite.
+- Mini markdown renderer:
+  * **bold** → <strong>
+  * `code` → <code class="...">
+  * ```code block``` → <pre>
+  * - list item → <li class="list-disc">
+
+BACKEND (ai_assistant.php):
+- API key čita iz environment varijable getenv('GEMINI_API_KEY').
+- Mapira "assistant" role na "model" (Gemini koristi taj naziv).
+- Sigurnosne postavke (safetySettings) blokiraju harassment, hate speech itd.
+- Vraća { success, reply, model } JSON.
+
+
+================================================================================
+10. CHAT SUSTAV
+================================================================================
+
+ARHITEKTURA:
+- Tablica chat_messages drži sve poruke (sender, recipient, content, is_read).
+- Polling: frontend periodički refetcha podatke.
+- Indeksi na (sender_id, recipient_id, created_at) i (recipient_id, is_read)
+  za brzo dohvaćanje razgovora i unread count-a.
+
+GET_CONTACTS SQL TRIK:
+- Za svakog korisnika izvlačimo zadnju poruku razgovora.
+- Koristimo korelirani subquery umjesto window funkcija (kompatibilnost s
+  starijim MySQL-om na XAMPP-u).
+- ORDER BY (last_message_at IS NULL), last_message_at DESC, username ASC
+  - NULL postavlja kontakte bez razgovora na kraj.
+  - Inače sortira po vremenu zadnje poruke (najnovije prvi).
+
+UNREAD COUNT:
+- Računa se kao COUNT(*) WHERE sender = other AND recipient = me AND is_read = 0.
+- Pri otvaranju razgovora, get_messages.php automatski radi
+  UPDATE is_read = 1 - tako da se badge resetira čim user pogleda razgovor.
+
+ATTACHMENTI:
+- Tri polja: attachment_url, attachment_name, attachment_type ('image' ili 'file').
+- Frontend uploada file preko zasebnog endpoint-a, pa onda send_message.php
+  s URL-om od uploadanog fajla.
+
+
+================================================================================
+11. ADMIN PANEL
+================================================================================
+
+ZAŠTITA:
+- Pri ulazu na /admin: <AdminRoute> wrapper provjerava localStorage.user.is_admin.
+- Ako nije admin, redirekt na "/".
+- BACKEND mora UVIJEK ponovno provjeravati admin status - nikad ne vjerovati frontendu!
+
+STRUKTURA:
+1. Admin.jsx - shell s hero header-om, stat karticama i tab navigation-om.
+2. Svaki tab učitava svoju komponentu (AdminUsers, AdminChallenges...).
+3. Sve komponente koriste isti AdminPagination za paginaciju.
+
+VAŽNE STAVKE:
+- "Refresh" gumb na svakom tab-u za ručno osvježavanje.
+- Search bar gdje je relevantno.
+- Soft color palette za chip-ove (bg-emerald-50 umjesto bg-green-500) za moderniji izgled.
+- Modal forme imaju gradient header s ikonom + body s formom + footer s akcijama.
+
+
+================================================================================
+12. KAKO POKRENUTI PROJEKT
+================================================================================
+
+PREDUVJETI:
+- XAMPP instaliran (s Apache + MySQL + PHP 8.x).
+- Node.js v18+ s npm.
+
+KORACI:
+1. Klonirati projekt u C:\xampp\htdocs\CyberEdu
+
+2. Pokrenuti XAMPP:
+   - Start Apache (port 80)
+   - Start MySQL (port 3306)
+
+3. Kreirati bazu:
+   - Otvoriti http://localhost/phpmyadmin
+   - CREATE DATABASE cyberedu;
+
+4. Pokrenuti migracije:
+   - cd C:\xampp\htdocs\CyberEdu\Backend\Migrations
+   - php force_migrate.php
+   - (Ovo će kreirati sve tablice.)
+
+5. (Opcionalno) Importati seed data:
+   - php import_seed_only.php
+
+6. Postaviti Gemini API key (za AI asistenta):
+   - U Backend/ai/ai_assistant.php, zamijeniti vrijednost $GEMINI_API_KEY
+   - ILI postaviti environment varijablu GEMINI_API_KEY u Apache config.
+
+7. Frontend setup:
+   - cd C:\xampp\htdocs\CyberEdu\FrontEnd
+   - npm install
+   - npm run dev
+
+8. Otvoriti aplikaciju:
+   - http://localhost:5173
+
+9. Kreirati prvog admin korisnika:
+   - Registriraj se preko UI-ja
+   - U bazi: UPDATE users SET is_admin = 1 WHERE username = 'tvoje_ime';
+
+
+================================================================================
+DODATNE NAPOMENE ZA PREZENTACIJU
+================================================================================
+
+KLJUČNE TOČKE KOJE BIH NAGLASIO:
+
+1. SIGURNOST
+   - Lozinke se SPREMAJU samo kao bcrypt hash (password_hash + password_verify).
+   - Flag-ovi izazova se ISTO hash-aju - nitko ne može pročitati iz baze.
+   - SQL injection zaštita: SVI upiti koriste PDO prepared statements (:param).
+   - XSS zaštita: AI Asistent escapea HTML znakove prije markdown renderiranja.
+   - CORS strogo ograničen na http://localhost:5173.
+   - Admin endpoint-i provjeravaju autentifikaciju i admin status.
+
+2. PROFESIONALNI UX
+   - Sve stranice prate isti dizajn jezik (bg-[#f8fafc], hero header s ikonom,
+     veliki naslov "text-5xl font-black tracking-tight", border-b separator).
+   - Soft color palette (bg-*-50 / text-*-700 chip-ovi).
+   - Loading states, error states, empty states posvuda.
+   - Real-time feedback (polling chat, optimistic updates).
+
+3. SKALABILNOST
+   - Backend je modularan - svaki endpoint je samostalan PHP fajl.
+   - Migracije omogućuju da bilo tko reproducira bazu.
+   - Frontend ima reusable komponente (AdminPagination koristi se 5 puta).
+
+4. INTEGRACIJE
+   - Google Gemini 2.5 Flash za AI asistenta.
+   - 3 RSS feed-a za news agregator.
+   - YouTube embed za video lekcije.
+
+5. KLJUČNI ALGORITAMSKI DIO
+   - Streak izračun u get_daily_goal.php: iteracija unazad od danas,
+     prekid pri prvom danu bez aktivnosti.
+   - Achievement detection: pri svakom solve-u backend provjerava SVE
+     achievement-e i otključava one čiji su kriteriji ispunjeni.
+   - Chat unread count s koreliranim subquery-jem.
+
+MOGUĆA POBOLJŠANJA (ako pitaju):
+- WebSocket umjesto polling-a za chat.
+- JWT tokeni umjesto localStorage-a za autentifikaciju.
+- Migracija na Symfony framework za backend.
+- Docker compose za jednostavniji setup.
+- HTTPS za produkciju.
+- Rate limiting na API-ima.
+
+
+================================================================================
+KRAJ DOKUMENTACIJE
+================================================================================

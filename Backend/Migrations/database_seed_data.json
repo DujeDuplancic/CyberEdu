@@ -758,6 +758,17 @@
             "attachment_type": null,
             "is_read": 1,
             "created_at": "2026-06-08 18:49:14"
+        },
+        {
+            "id": 19,
+            "sender_id": 67,
+            "recipient_id": 3,
+            "content": "Test🧐",
+            "attachment_url": "\/CyberEdu\/uploads\/chat\/chat_67_47dad0b3428d_challenge_30_Screenshot-2024-12-13-at-12_42_40___PM_1780941950.png",
+            "attachment_name": "challenge_30_Screenshot-2024-12-13-at-12_42_40___PM_1780941950.png",
+            "attachment_type": "image",
+            "is_read": 1,
+            "created_at": "2026-06-08 23:00:02"
         }
     ],
     "discussions": [
@@ -1520,6 +1531,16 @@
             "is_pinned": 0,
             "views": 5,
             "created_at": "2026-06-08 18:46:36"
+        },
+        {
+            "id": 82,
+            "title": "Test",
+            "content": "Test",
+            "author_id": 67,
+            "category": "Web Security",
+            "is_pinned": 0,
+            "views": 3,
+            "created_at": "2026-06-08 22:58:55"
         }
     ],
     "leaderboard_entries": [],
@@ -1961,11 +1982,11 @@
             "video_url": "https:\/\/www.youtube.com\/watch?v=U2-JPqrALsA",
             "embed_url": "https:\/\/www.youtube.com\/embed\/U2-JPqrALsA",
             "thumbnail_url": "https:\/\/img.youtube.com\/vi\/U2-JPqrALsA\/hqdefault.jpg",
-            "views": 6,
+            "views": 8,
             "is_published": 1,
             "author_id": 3,
             "created_at": "2026-06-08 17:37:50",
-            "updated_at": "2026-06-08 20:10:26"
+            "updated_at": "2026-06-08 22:58:21"
         },
         {
             "id": 159,
@@ -3236,6 +3257,13 @@
             "author_id": 67,
             "content": "test",
             "created_at": "2026-06-08 18:46:49"
+        },
+        {
+            "id": 137,
+            "discussion_id": 82,
+            "author_id": 67,
+            "content": "Nice",
+            "created_at": "2026-06-08 22:59:00"
         }
     ],
     "solves": [
@@ -3740,11 +3768,11 @@
             "author_id": 3,
             "slug": "introduction-to-reverse-engineering",
             "reading_time": 8,
-            "views": 22,
+            "views": 26,
             "difficulty_level": "beginner",
             "is_published": 1,
             "created_at": "2026-01-05 02:06:13",
-            "updated_at": "2026-06-08 20:10:20"
+            "updated_at": "2026-06-08 23:01:17"
         },
         {
             "id": 3,
