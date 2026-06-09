@@ -1,12 +1,11 @@
 <?php
-// CORS headers - OBAVEZNO na samom vrhu (isti pattern kao i ostatak backend-a)
+// CORS headers - OBAVEZNO na samom vrhu
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 header('Content-Type: application/json');
 
-// Preflight zahtjev (OPTIONS)
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -19,39 +18,37 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // =====================================================================
-// KONFIGURACIJA: Gemini API ključ + lista modela koje pokušavamo redom
-// (fallback chain). Ako prvi model vrati grešku (npr. nije dostupan u
-// ovoj regiji ili za ovu verziju API-ja), automatski pokušavamo sljedeći.
+// KONFIGURACIJA: Groq API + Llama 3.3 70B
+// Groq je odabran jer ima najbrži inference (LPU hardware) i izdašan
+// free tier (14 400 req/dan, ~30 req/min) - sasvim dovoljno za chat asistenta.
+// API je kompatibilan s OpenAI Chat Completions formatom.
 //
-// API ključ se učitava iz Backend/config/secrets.php (gitignored).
-// Ako file ne postoji ili ključ nije postavljen, pokušava environment
-// varijablu GEMINI_API_KEY. NIKAD se ne hardcoda u kod.
+// Ključ se učitava iz Backend/config/secrets.php (gitignored).
 // =====================================================================
-$GEMINI_API_KEY = '';
-$secretsFile    = __DIR__ . '/../config/secrets.php';
+$GROQ_API_KEY = '';
+$secretsFile  = __DIR__ . '/../config/secrets.php';
 if (file_exists($secretsFile)) {
     $secrets = require $secretsFile;
-    if (is_array($secrets) && !empty($secrets['GEMINI_API_KEY'])) {
-        $GEMINI_API_KEY = $secrets['GEMINI_API_KEY'];
+    if (is_array($secrets) && !empty($secrets['GROQ_API_KEY'])) {
+        $GROQ_API_KEY = $secrets['GROQ_API_KEY'];
     }
 }
-if (empty($GEMINI_API_KEY) || $GEMINI_API_KEY === 'PASTE_YOUR_NEW_KEY_HERE') {
-    // Fallback na environment varijablu
-    $GEMINI_API_KEY = getenv('GEMINI_API_KEY') ?: '';
+if (empty($GROQ_API_KEY) || $GROQ_API_KEY === 'YOUR_GROQ_API_KEY_HERE') {
+    $GROQ_API_KEY = getenv('GROQ_API_KEY') ?: '';
 }
 
-// Modeli poredani od najnovijeg/najjačeg prema starijem/stabilnijem.
-// Ako Gemini odbije prvi (npr. zbog "model not found"), fallback osigurava
-// da chat i dalje radi za korisnika.
-$GEMINI_MODELS = [
-    'gemini-2.5-flash',
-    'gemini-2.0-flash',
-    'gemini-1.5-flash-latest',
-    'gemini-1.5-flash'
+// Modeli unutar Groq-a poredani od najjačeg prema najlakšem. Ako prvi vrati
+// grešku (npr. trenutni overload), padamo na sljedeći - i dalje je sve Groq.
+$GROQ_MODELS = [
+    'llama-3.3-70b-versatile',   // primarni - najbolja kvaliteta odgovora
+    'llama-3.1-8b-instant',      // brži/manji - rezerva za peak load
+    'gemma2-9b-it',              // dodatna rezerva
 ];
 
+$GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+
 // =====================================================================
-// SYSTEM PROMPT - strogo ograničava asistenta na cyber sigurnost
+// SYSTEM PROMPT - SentinelAI persona za cyber sigurnost
 // =====================================================================
 $systemPrompt = <<<PROMPT
 You are "SentinelAI", an AI cybersecurity assistant integrated into the CyberEdu learning platform.
@@ -67,7 +64,7 @@ STRICT RULES:
 PROMPT;
 
 // =====================================================================
-// Validacija ulaznih podataka
+// Validacija ulaza
 // =====================================================================
 $rawInput = file_get_contents('php://input');
 $input    = json_decode($rawInput, true);
@@ -81,72 +78,61 @@ if (!is_array($input) || !isset($input['messages']) || !is_array($input['message
     exit();
 }
 
-if (empty($GEMINI_API_KEY)) {
+if (empty($GROQ_API_KEY)) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Gemini API key is not configured. Copy Backend/config/secrets.example.php to secrets.php and add your key from https://aistudio.google.com/app/apikey'
+        'message' => 'Groq API key is not configured. Get a free key at https://console.groq.com/keys and add it to Backend/config/secrets.php as GROQ_API_KEY.'
     ]);
     exit();
 }
 
 // =====================================================================
-// Transformacija poruka u Gemini format
+// Transformacija u OpenAI/Groq format.
+// Naša povijest koristi "user" i "assistant" - Groq očekuje isto, samo
+// dodajemo system prompt na početak.
 // =====================================================================
-$contents = [];
+$messages = [
+    ['role' => 'system', 'content' => $systemPrompt]
+];
+
 foreach ($input['messages'] as $msg) {
     if (!isset($msg['role'], $msg['content'])) continue;
-    $role = $msg['role'] === 'assistant' ? 'model' : 'user';
+    $role = ($msg['role'] === 'assistant') ? 'assistant' : 'user';
     $text = (string)$msg['content'];
     if (trim($text) === '') continue;
-    $contents[] = [
-        'role'  => $role,
-        'parts' => [['text' => $text]]
-    ];
+    $messages[] = ['role' => $role, 'content' => $text];
 }
 
-if (empty($contents)) {
+// Mora postojati barem jedna user poruka uz system
+if (count($messages) < 2) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'No valid messages provided.']);
     exit();
 }
 
 // =====================================================================
-// Payload za Gemini
+// Pomoćna funkcija: pošalji request na Groq za dani model.
 // =====================================================================
-$payload = [
-    'systemInstruction' => [
-        'parts' => [['text' => $systemPrompt]]
-    ],
-    'contents'        => $contents,
-    'generationConfig' => [
-        'temperature'     => 0.7,
-        'topP'            => 0.9,
-        'maxOutputTokens' => 1024
-    ],
-    'safetySettings' => [
-        ['category' => 'HARM_CATEGORY_HARASSMENT',       'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'],
-        ['category' => 'HARM_CATEGORY_HATE_SPEECH',      'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'],
-        ['category' => 'HARM_CATEGORY_SEXUALLY_EXPLICIT','threshold' => 'BLOCK_MEDIUM_AND_ABOVE'],
-        ['category' => 'HARM_CATEGORY_DANGEROUS_CONTENT','threshold' => 'BLOCK_ONLY_HIGH']
-    ]
-];
-
-$payloadJson = json_encode($payload);
-
-// =====================================================================
-// Pomoćna funkcija: pošalji POST na Gemini za dani model.
-// Vraća asocijativni niz: ok, httpCode, body, decoded, error
-// =====================================================================
-function callGemini($model, $apiKey, $payloadJson) {
-    $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
+function callGroq($model, $apiKey, $messages, $url) {
+    $payload = [
+        'model'       => $model,
+        'messages'    => $messages,
+        'temperature' => 0.7,
+        'top_p'       => 0.9,
+        'max_tokens'  => 1024,
+        'stream'      => false,
+    ];
 
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST           => true,
-        CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
-        CURLOPT_POSTFIELDS     => $payloadJson,
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $apiKey
+        ],
+        CURLOPT_POSTFIELDS     => json_encode($payload),
         CURLOPT_TIMEOUT        => 30,
     ]);
 
@@ -159,7 +145,6 @@ function callGemini($model, $apiKey, $payloadJson) {
         return [
             'ok'       => false,
             'httpCode' => 0,
-            'body'     => null,
             'decoded'  => null,
             'error'    => $curlErr ?: 'cURL request failed'
         ];
@@ -170,28 +155,24 @@ function callGemini($model, $apiKey, $payloadJson) {
     return [
         'ok'       => ($httpCode >= 200 && $httpCode < 300),
         'httpCode' => $httpCode,
-        'body'     => $response,
         'decoded'  => $decoded,
-        // Pokušaj izvući strukturiranu poruku iz Gemini error body-ja
+        // Pokušaj izvući strukturiranu poruku iz Groq error body-ja
         'error'    => $decoded['error']['message']
-                    ?? $decoded['error']['status']
+                    ?? $decoded['error']['code']
                     ?? null
     ];
 }
 
 // =====================================================================
-// Fallback chain: probaj svaki model dok jedan ne uspije.
-// Zadržavamo zadnju strukturiranu grešku za vraćanje frontend-u ako svi padnu.
+// Fallback chain unutar Groq-a (model-level, ne provider-level)
 // =====================================================================
-$lastError    = null;
-$lastCode     = null;
-$lastModel    = null;
-$result       = null;
-$usedModel    = null;
+$lastError = null;
+$lastCode  = null;
+$result    = null;
+$usedModel = null;
 
-foreach ($GEMINI_MODELS as $model) {
-    $result    = callGemini($model, $GEMINI_API_KEY, $payloadJson);
-    $lastModel = $model;
+foreach ($GROQ_MODELS as $model) {
+    $result = callGroq($model, $GROQ_API_KEY, $messages, $GROQ_URL);
 
     if ($result['ok']) {
         $usedModel = $model;
@@ -201,49 +182,39 @@ foreach ($GEMINI_MODELS as $model) {
     $lastError = $result['error'] ?: ('HTTP ' . $result['httpCode']);
     $lastCode  = $result['httpCode'];
 
-    // 4xx greške (osim 404/400 model-not-found) najčešće znače da problem
-    // nije u modelu nego u zahtjevu/API ključu - nema smisla probavati dalje.
-    // 401/403/429 -> stop. 404/400 -> pokušaj sljedeći model.
+    // 401/403 = autentikacijska greška, 429 = rate limit -> nema smisla
+    // probavati drugi model jer je problem na razini accounta/ključa.
     if (in_array($lastCode, [401, 403, 429], true)) {
         break;
     }
 }
 
-// Svi modeli su pali - vrati informativnu poruku frontend-u
 if (!$result || !$result['ok']) {
     http_response_code(502);
     echo json_encode([
-        'success'     => false,
-        'message'     => 'Gemini API error: ' . ($lastError ?? 'unknown error'),
-        'gemini_code' => $lastCode,
-        'last_model'  => $lastModel,
-        'tried'       => $GEMINI_MODELS
+        'success'    => false,
+        'message'    => 'Groq API error: ' . ($lastError ?? 'unknown error'),
+        'groq_code'  => $lastCode,
+        'tried'      => $GROQ_MODELS
     ]);
     exit();
 }
 
 // =====================================================================
-// Parsiranje uspješnog odgovora
+// Parsiranje uspješnog odgovora (OpenAI-compatible format)
 // =====================================================================
 $decoded = $result['decoded'];
-$reply   = '';
-
-if (isset($decoded['candidates'][0]['content']['parts']) && is_array($decoded['candidates'][0]['content']['parts'])) {
-    foreach ($decoded['candidates'][0]['content']['parts'] as $part) {
-        if (isset($part['text'])) {
-            $reply .= $part['text'];
-        }
-    }
-}
+$reply   = $decoded['choices'][0]['message']['content'] ?? '';
 
 if (trim($reply) === '') {
-    $finishReason = $decoded['candidates'][0]['finishReason'] ?? 'UNKNOWN';
+    $finishReason = $decoded['choices'][0]['finish_reason'] ?? 'UNKNOWN';
     $reply = "I couldn't generate a response for that request (reason: {$finishReason}). Please rephrase your cybersecurity question.";
 }
 
 echo json_encode([
     'success' => true,
     'reply'   => $reply,
-    'model'   => $usedModel
+    'model'   => $usedModel,
+    'provider'=> 'Groq'
 ]);
 ?>

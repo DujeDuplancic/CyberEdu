@@ -10,10 +10,13 @@
  */
 
 return [
-    // Google AI Studio: https://aistudio.google.com/app/apikey
-    // Generiraj NOVI ključ ako je stari leak-an na public repo.
-    'GEMINI_API_KEY' => 'YOUR_GEMINI_API_KEY_HERE',
+    // Groq API ključ - https://console.groq.com/keys
+    // Free tier: 14 400 req/dan, ~30 req/min, Llama 3.3 70B model.
+    // Trenutno aktivan AI provider za SentinelAI asistenta.
+    'GROQ_API_KEY' => 'YOUR_GROQ_API_KEY_HERE',
 
-    // Ovdje dodaj sve buduće tajne (Stripe, SMTP, ...)
-    // 'SMTP_PASSWORD' => '...',
+    // Google AI Studio: https://aistudio.google.com/app/apikey
+    // Stari Gemini ključ - više se ne koristi po defaultu, ostavi prazno
+    // ili upiši ako se vratiš na Gemini.
+    'GEMINI_API_KEY' => 'YOUR_GEMINI_API_KEY_HERE',
 ];

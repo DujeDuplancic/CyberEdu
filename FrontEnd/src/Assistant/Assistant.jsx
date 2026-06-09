@@ -163,7 +163,7 @@ export default function AssistantPage() {
                   SentinelAI Assistant
                 </h1>
                 <Badge variant="outline" className="font-mono text-[10px]">
-                  Powered by Gemini 2.5 Flash
+                  Powered by Llama 3.3 70B (Groq)
                 </Badge>
               </div>
               <p className="text-slate-500 text-sm mt-0.5 hidden md:block">
