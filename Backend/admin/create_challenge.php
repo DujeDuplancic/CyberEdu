@@ -40,9 +40,17 @@ class ChallengeCreator {
             $stmt->bindParam(':created_by', $createdBy);
 
             if ($stmt->execute()) {
-                return ['success' => true, 'message' => 'Challenge uspješno kreiran'];
+                // VAŽNO: vraćamo ID upravo kreiranog izazova kako bi frontend
+                // mogao u istom flow-u uploadati i privitak preko upload_file.php.
+                $newId = (int)$this->db->lastInsertId();
+                return [
+                    'success'      => true,
+                    'message'      => 'Challenge created successfully',
+                    'challenge_id' => $newId,
+                    'id'           => $newId
+                ];
             } else {
-                return ['success' => false, 'message' => 'Greška pri kreiranju challengea'];
+                return ['success' => false, 'message' => 'Failed to create challenge'];
             }
 
         } catch (PDOException $e) {

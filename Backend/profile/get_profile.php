@@ -85,7 +85,11 @@ class Profile {
             return [
                 'success' => true,
                 'profile' => [
+                    // VAŽNO: id i email moraju biti uključeni - inače EditProfileModal
+                    // ne može poslati user_id niti predispuniti email polje.
+                    'id' => (int)$user['id'],
                     'username' => $user['username'],
+                    'email' => $user['email'],
                     'points' => (int)$user['points'],
                     'rank' => (int)$calculatedRank,
                     'solves' => (int)$solveCount,

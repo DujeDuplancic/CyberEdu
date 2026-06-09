@@ -9,9 +9,10 @@ import { Footer } from "../Components/Footer"
 import { Input } from "../Components/ui/input"
 import { Badge } from "../Components/ui/badge"
 import { Button } from "../Components/ui/button"
-import { 
-    Search, Flag, Target, ShieldCheck, 
-    XCircle, Trophy, Layers, Loader2 
+import {
+    Search, Flag, Target, ShieldCheck,
+    XCircle, Trophy, Layers, Loader2,
+    CheckCircle2, Flame
 } from "lucide-react"
 
 // Custom Components
@@ -26,7 +27,10 @@ export default function CTFPage() {
     const [searchQuery, setSearchQuery] = useState("")
     const [loading, setLoading] = useState(true)
     const [selectedChallenge, setSelectedChallenge] = useState(null)
-    
+
+    // Stanje za Daily Goal widget - puni se asinkrono iz backend endpoint-a
+    const [dailyGoal, setDailyGoal] = useState(null)
+
     const navigate = useNavigate()
 
     // --- INITIALIZATION ---
@@ -34,11 +38,37 @@ export default function CTFPage() {
         window.scrollTo(0, 0)
         const initializeData = async () => {
             setLoading(true)
-            await Promise.all([loadCategories(), loadChallenges()])
+            // Daily goal dohvaćamo paralelno - widget se može pojaviti odmah
+            await Promise.all([loadCategories(), loadChallenges(), loadDailyGoal()])
             setLoading(false)
         }
         initializeData()
     }, [])
+
+    /**
+     * Funkcija koja dohvaća dnevni cilj korisnika s backend-a.
+     * Ako korisnik nije prijavljen, ne radi ništa (widget se sakriva).
+     */
+    const loadDailyGoal = async () => {
+        try {
+            const userData = localStorage.getItem('user')
+            const user = userData ? JSON.parse(userData) : null
+            if (!user?.id) {
+                setDailyGoal(null)
+                return
+            }
+
+            const response = await fetch(
+                `http://localhost/CyberEdu/Backend/challenges/get_daily_goal.php?user_id=${user.id}`
+            )
+            const data = await response.json()
+            if (data.success) {
+                setDailyGoal(data)
+            }
+        } catch (error) {
+            console.error('Error loading daily goal:', error)
+        }
+    }
 
     const loadCategories = async () => {
         try {
@@ -80,9 +110,10 @@ export default function CTFPage() {
     const handleAttemptChallenge = (challenge) => setSelectedChallenge(challenge)
     const handleCloseModal = () => setSelectedChallenge(null)
 
-    // Pomjeranje "Solve" logike u modal, ovdje samo refreshamo listu nakon uspjeha
+    // Pomjeranje "Solve" logike u modal, ovdje refreshamo listu I daily goal nakon uspjeha
     const onChallengeSolved = () => {
         loadChallenges()
+        loadDailyGoal()
     }
 
     if (loading) {
@@ -166,15 +197,58 @@ export default function CTFPage() {
                             />
                         </div>
 
-                        {/* Muted CTA Card */}
-                        <div className="bg-gradient-to-br from-indigo-600 to-indigo-700 p-6 rounded-2xl shadow-lg shadow-indigo-100 text-white relative overflow-hidden group">
-                             <Trophy className="absolute -right-2 -bottom-2 h-20 w-20 opacity-10 group-hover:scale-110 transition-transform duration-500" />
-                            <h4 className="font-bold text-lg relative z-10">Daily Goal</h4>
-                            <p className="text-indigo-100 text-sm mt-1 relative z-10 font-medium">Solve 2 more today!</p>
-                            <div className="mt-4 h-1.5 w-full bg-white/20 rounded-full overflow-hidden relative z-10">
-                                <div className="h-full bg-white w-1/3 rounded-full shadow-[0_0_8px_white]"></div>
-                            </div>
-                        </div>
+                        {/* Daily Goal widget - dinamički prati napredak korisnika */}
+                        {dailyGoal && (() => {
+                            // Dinamički subtitle ovisno o stanju cilja
+                            const subtitle = dailyGoal.completed
+                                ? "Goal smashed - great job!"
+                                : dailyGoal.remaining === 1
+                                    ? "Solve 1 more today!"
+                                    : `Solve ${dailyGoal.remaining} more today!`
+
+                            // Boja kartice - kad je cilj postignut, prelazimo na zelenu (emerald)
+                            const gradient = dailyGoal.completed
+                                ? "from-emerald-500 to-emerald-600 shadow-emerald-100"
+                                : "from-indigo-600 to-indigo-700 shadow-indigo-100"
+
+                            return (
+                                <div className={`bg-gradient-to-br ${gradient} p-6 rounded-2xl shadow-lg text-white relative overflow-hidden group`}>
+                                    {/* Pozadinska ikona - mijenja se ovisno o ispunjenju cilja */}
+                                    {dailyGoal.completed ? (
+                                        <CheckCircle2 className="absolute -right-2 -bottom-2 h-20 w-20 opacity-10 group-hover:scale-110 transition-transform duration-500" />
+                                    ) : (
+                                        <Trophy className="absolute -right-2 -bottom-2 h-20 w-20 opacity-10 group-hover:scale-110 transition-transform duration-500" />
+                                    )}
+
+                                    <div className="flex items-center justify-between relative z-10">
+                                        <h4 className="font-bold text-lg">Daily Goal</h4>
+                                        <span className="text-[10px] font-black uppercase tracking-widest bg-white/15 backdrop-blur-sm px-2 py-1 rounded-md">
+                                            {dailyGoal.solves_today}/{dailyGoal.goal}
+                                        </span>
+                                    </div>
+
+                                    <p className="text-white/90 text-sm mt-1 relative z-10 font-medium">
+                                        {subtitle}
+                                    </p>
+
+                                    {/* Progress bar - širina se računa iz progress_pct */}
+                                    <div className="mt-4 h-1.5 w-full bg-white/20 rounded-full overflow-hidden relative z-10">
+                                        <div
+                                            className="h-full bg-white rounded-full shadow-[0_0_8px_white] transition-all duration-700"
+                                            style={{ width: `${dailyGoal.progress_pct}%` }}
+                                        />
+                                    </div>
+
+                                    {/* Streak badge - prikazuje se samo ako je niz aktivan (>=1 dan) */}
+                                    {dailyGoal.streak_days > 0 && (
+                                        <div className="mt-4 flex items-center gap-1.5 relative z-10 text-[11px] font-bold uppercase tracking-wider text-white/90">
+                                            <Flame className="h-3.5 w-3.5" />
+                                            {dailyGoal.streak_days}-day streak
+                                        </div>
+                                    )}
+                                </div>
+                            )
+                        })()}
                     </aside>
 
                     {/* --- CHALLENGE GRID --- */}
