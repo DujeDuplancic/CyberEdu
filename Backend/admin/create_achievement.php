@@ -3,7 +3,12 @@
 error_reporting(0); // Isključi error reporting za produkciju
 ini_set('display_errors', 0);
 
-header("Access-Control-Allow-Origin: http://localhost:5173");
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+// Ako zahtjev dolazi s localhosta ili s Vercela, odobri BAŠ TU domenu koja pita
+if ($origin === "http://localhost:5173" || $origin === "https://cyber-edu-p46j.vercel.app") {
+    header("Access-Control-Allow-Origin: " . $origin);
+}
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
