@@ -6,8 +6,8 @@ import {
   Plus, Edit, Trash2, RefreshCw, Flag,
   Paperclip, Trophy, Target, Layers, Search
 } from "lucide-react"
-import CreateChallengeForm from "./components/CreateChallengeForm"
-import EditChallengeForm from "./components/EditChallengeForm"
+import CreateChallengeForm from "./Components/CreateChallengeForm"
+import EditChallengeForm from "./Components/EditChallengeForm"
 import AdminPagination from "./Components/AdminPagination"
 
 // Broj izazova po stranici
