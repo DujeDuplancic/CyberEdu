@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Header } from '@/Components/Header';
+import { Footer } from '@/Components/Footer';
+import { Card, CardContent } from '@/Components/ui/card';
+import { Button } from '@/Components/ui/button';
 import { ArrowLeft, Clock, Eye, User, Calendar, AlertTriangle, BookOpen, Loader2 } from 'lucide-react';
 
 export default function WikiArticle() {

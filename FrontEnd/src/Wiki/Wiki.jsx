@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { Header } from "@/components/Header"
-import { Footer } from "@/components/Footer"
+import { Header } from "@/Components/Header"
+import { Footer } from "@/Components/Footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/Components/ui/badge"
 import { 
     Lock, Code, Key, ImageIcon, Globe, 
     BookOpen, Loader2, ChevronRight, MonitorPlay, Search, X 
